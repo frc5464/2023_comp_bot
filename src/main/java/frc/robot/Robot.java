@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -25,6 +28,11 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private SparkMaxPIDController elExtendPid;
+  // private SparkMaxPIDController elWinchPid;
+
+  public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+
   //Motor Controllers for the Drive Train
   CANSparkMax frontleft = new CANSparkMax(2, MotorType.kBrushless);
   CANSparkMax frontright = new CANSparkMax(6, MotorType.kBrushless);
@@ -38,11 +46,18 @@ public class Robot extends TimedRobot {
 
   //Drive Train
   MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
-  double maxspeed = 0.7;
+  double maxspeed = 1;
+  double rampRate = 0.25;
 
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
+
+  AHRS navx = new AHRS();
+
+  RelativeEncoder elExtendEncoder;
+  RelativeEncoder winch_encoder;
+
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -53,6 +68,45 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    elExtendEncoder = elextend.getEncoder();
+    winch_encoder = elwinch.getEncoder();
+
+    elExtendPid = elextend.getPIDController();
+    // elWinchPid = elwinch.getPIDController();
+
+    // PID coefficients
+    kP = 0.1; 
+    kI = 1e-4;
+    kD = 1; 
+    kIz = 0; 
+    kFF = 0; 
+    kMaxOutput = 1; 
+    kMinOutput = -1;
+
+    // set PID coefficients
+    elExtendPid.setP(kP);
+    elExtendPid.setI(kI);
+    elExtendPid.setD(kD);
+    elExtendPid.setIZone(kIz);
+    elExtendPid.setFF(kFF);
+    elExtendPid.setOutputRange(kMinOutput, kMaxOutput);
+
+    // display PID coefficients on SmartDashboard
+    SmartDashboard.putNumber("P Gain", kP);
+    SmartDashboard.putNumber("I Gain", kI);
+    SmartDashboard.putNumber("D Gain", kD);
+    SmartDashboard.putNumber("I Zone", kIz);
+    SmartDashboard.putNumber("Feed Forward", kFF);
+    SmartDashboard.putNumber("Max Output", kMaxOutput);
+    SmartDashboard.putNumber("Min Output", kMinOutput);
+    SmartDashboard.putNumber("Set Rotations", 0);    
+
+    frontleft.setOpenLoopRampRate(rampRate);
+    frontright.setOpenLoopRampRate(rampRate);
+    backleft.setOpenLoopRampRate(rampRate);
+    backright.setOpenLoopRampRate(rampRate);
+
   }
 
   /**
@@ -63,7 +117,20 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    SmartDashboard.putNumber("Yaw", navx.getYaw());
+    SmartDashboard.putNumber("Roll", navx.getRoll());
+    SmartDashboard.putNumber("Pitch", navx.getPitch());
+    SmartDashboard.putNumber("RawX", navx.getRawGyroX());
+    SmartDashboard.putNumber("RawY", navx.getRawGyroY());
+    SmartDashboard.putNumber("RawZ", navx.getRawGyroZ());
+
+    SmartDashboard.putNumber("extension encoder",elExtendEncoder.getPosition());
+    SmartDashboard.putNumber("winch encoder",winch_encoder.getPosition());
+
+ 
+
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -104,6 +171,63 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
+
+    // if(stick.getRawButton(3)){
+    //   elextend.set(1);
+    // }
+    // else if(stick.getRawButton(4)){
+    //   elextend.set(-1);
+    // }
+    // else{
+    //   elextend.set(0);
+    // }    
+
+    if(stick.getRawButton(2)){
+      elwinch.set(1);
+    }
+    else if(stick.getRawButton(1)){
+      elwinch.set(-1);
+    }
+    else{
+      elwinch.set(0);
+    }    
+
+    if(stick.getRawButton(5)){
+      intake.set(1);
+    }
+    else if(stick.getRawButton(6)){
+      intake.set(-1);
+    }
+    else{
+      intake.set(0);
+    }   
+
+    // read PID coefficients from SmartDashboard
+    double p = SmartDashboard.getNumber("P Gain", 0);
+    double i = SmartDashboard.getNumber("I Gain", 0);
+    double d = SmartDashboard.getNumber("D Gain", 0);
+    double iz = SmartDashboard.getNumber("I Zone", 0);
+    double ff = SmartDashboard.getNumber("Feed Forward", 0);
+    double max = SmartDashboard.getNumber("Max Output", 0);
+    double min = SmartDashboard.getNumber("Min Output", 0);
+    double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    if((p != kP)) { elExtendPid.setP(p); kP = p; }
+    if((i != kI)) { elExtendPid.setI(i); kI = i; }
+    if((d != kD)) { elExtendPid.setD(d); kD = d; }
+    if((iz != kIz)) { elExtendPid.setIZone(iz); kIz = iz; }
+    if((ff != kFF)) { elExtendPid.setFF(ff); kFF = ff; }
+    if((max != kMaxOutput) || (min != kMinOutput)) { 
+      elExtendPid.setOutputRange(min, max); 
+      kMinOutput = min; kMaxOutput = max; 
+    }   
+
+    elExtendPid.setReference(rotations, CANSparkMax.ControlType.kPosition);
+
+    SmartDashboard.putNumber("SetPoint", rotations);
+    SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());
+
   }
 
   /** This function is called once when the robot is disabled. */
