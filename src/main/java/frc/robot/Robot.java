@@ -5,11 +5,17 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -56,8 +62,22 @@ public class Robot extends TimedRobot {
   AHRS navx = new AHRS();
 
   RelativeEncoder elExtendEncoder;
+  RelativeEncoder elRotateEncoder;
+
+  AbsoluteEncoder elExtendEncoderAbs;
+
   RelativeEncoder winch_encoder;
 
+  // this is a flag which indicates if the elevator's encoders have been zeroed out.
+  // if this is not done, the robot will not be able to safely operate
+  // start out with this as false to indicate it has not been done
+  boolean elevator_zeroed = false;
+  
+  DigitalInput elRotateLimitSwitch = new DigitalInput(0);
+  DigitalInput elExtendLimitSwitch = new DigitalInput(1);
+
+  AddressableLED ledStrip = new AddressableLED(0);
+  AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(62);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -70,9 +90,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
 
     elExtendEncoder = elextend.getEncoder();
+    elExtendEncoderAbs = elextend.getAbsoluteEncoder(Type.kDutyCycle);
+
     winch_encoder = elwinch.getEncoder();
 
     elExtendPid = elextend.getPIDController();
+    
     // elWinchPid = elwinch.getPIDController();
 
     // PID coefficients
@@ -91,7 +114,7 @@ public class Robot extends TimedRobot {
     elExtendPid.setIZone(kIz);
     elExtendPid.setFF(kFF);
     elExtendPid.setOutputRange(kMinOutput, kMaxOutput);
-
+    
     // display PID coefficients on SmartDashboard
     SmartDashboard.putNumber("P Gain", kP);
     SmartDashboard.putNumber("I Gain", kI);
@@ -107,6 +130,19 @@ public class Robot extends TimedRobot {
     backleft.setOpenLoopRampRate(rampRate);
     backright.setOpenLoopRampRate(rampRate);
 
+    elwinch.setIdleMode(IdleMode.kCoast);
+    elextend.setIdleMode(IdleMode.kCoast);
+    // DO NOT RUN THIS EVERY TIME! ONLY WHEN IT REEEEALLY NEEDS TO BE RUN!
+    //navx.calibrate();
+
+    ledStrip.setLength(ledBuffer.getLength());
+    for (var i = 0; i < ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      ledBuffer.setRGB(i, 20, 0, 20);
+   }
+   
+   ledStrip.setData(ledBuffer);
+   ledStrip.start();
   }
 
   /**
@@ -118,17 +154,25 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    // NAVX STUFF!!!
     SmartDashboard.putNumber("Yaw", navx.getYaw());
     SmartDashboard.putNumber("Roll", navx.getRoll());
     SmartDashboard.putNumber("Pitch", navx.getPitch());
     SmartDashboard.putNumber("RawX", navx.getRawGyroX());
     SmartDashboard.putNumber("RawY", navx.getRawGyroY());
     SmartDashboard.putNumber("RawZ", navx.getRawGyroZ());
+    SmartDashboard.putNumber("dispX", navx.getDisplacementX());
+    SmartDashboard.putNumber("dispY", navx.getDisplacementY());
+    SmartDashboard.putNumber("dispZ", navx.getDisplacementZ());    
 
     SmartDashboard.putNumber("extension encoder",elExtendEncoder.getPosition());
     SmartDashboard.putNumber("winch encoder",winch_encoder.getPosition());
 
- 
+    SmartDashboard.putNumber("Absolute ext encoder", elExtendEncoderAbs.getPosition());
+    SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
+
+    SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
+    SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
 
   }
 
@@ -165,7 +209,10 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    elwinch.setIdleMode(IdleMode.kBrake);
+    elextend.setIdleMode(IdleMode.kBrake);
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -191,6 +238,16 @@ public class Robot extends TimedRobot {
     else{
       elwinch.set(0);
     }    
+
+    // the 'back' key will run the 'zeroing' process for elevator safety
+    if(stick.getRawButtonPressed(7)){
+      // check our limit switches to make sure that we are actually at the zero point
+      // this should prevent the possibility of zeroing during a match
+      if(!elExtendLimitSwitch.get() && !elRotateLimitSwitch.get()){
+        elExtendEncoder.setPosition(0);
+        elRotateEncoder.setPosition(0);
+      }
+    }
 
     if(stick.getRawButton(5)){
       intake.set(1);
