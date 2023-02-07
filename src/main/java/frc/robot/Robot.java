@@ -174,6 +174,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
     SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
 
+    
   }
 
   /**
@@ -219,15 +220,15 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
-    // if(stick.getRawButton(3)){
-    //   elextend.set(1);
-    // }
-    // else if(stick.getRawButton(4)){
-    //   elextend.set(-1);
-    // }
-    // else{
-    //   elextend.set(0);
-    // }    
+    if(stick.getRawButton(3)){
+      elextend.set(1);
+    }
+    else if(stick.getRawButton(4)){
+      elextend.set(-1);
+    }
+    else{
+      elextend.set(0);
+    }    
 
     if(stick.getRawButton(2)){
       elwinch.set(1);
@@ -280,7 +281,7 @@ public class Robot extends TimedRobot {
       kMinOutput = min; kMaxOutput = max; 
     }   
 
-    elExtendPid.setReference(rotations, CANSparkMax.ControlType.kPosition);
+    //elExtendPid.setReference(rotations, CANSparkMax.ControlType.kPosition);
 
     SmartDashboard.putNumber("SetPoint", rotations);
     SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());
