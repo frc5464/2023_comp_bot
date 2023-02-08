@@ -7,21 +7,10 @@ package frc.robot;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
-
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -38,26 +27,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  //Motor Controllers for the Drive Train
-  CANSparkMax frontleft = new CANSparkMax(2, MotorType.kBrushless);
-  CANSparkMax frontright = new CANSparkMax(6, MotorType.kBrushless);
-  CANSparkMax backleft = new CANSparkMax(7, MotorType.kBrushless);
-  CANSparkMax backright = new CANSparkMax(5, MotorType.kBrushless);
-
   CANSparkMax intake = new CANSparkMax(8, MotorType.kBrushless);
-
-  //Drive Train
-  MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
-  double maxspeed = 1;
-  double rampRate = 0.25;
 
   boolean elManualMode = false;
 
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
-
-  AHRS navx = new AHRS();
 
    //Charge station autonomous
    private static final String kTokyoDrift = "Tokyo Drift";
@@ -78,10 +54,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private String score_preset_selected;
    private final SendableChooser<String> score_preset_chooser = new SendableChooser<>();
 
-
-  AddressableLED ledStrip = new AddressableLED(0);
-  AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(62);
-
   //Camera 
   PhotonCamera camera = new PhotonCamera("photonvision");
   double camerax;
@@ -100,25 +72,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     SmartDashboard.putData("Auto choices", m_chooser);
 
     elevator.Init();
+    // TODO: initialize the LEDs here!
+    // TODO: initialize the drivetrain here!
 
-
-
-    frontleft.setOpenLoopRampRate(rampRate);
-    frontright.setOpenLoopRampRate(rampRate);
-    backleft.setOpenLoopRampRate(rampRate);
-    backright.setOpenLoopRampRate(rampRate);
-
-    // DO NOT RUN THIS EVERY TIME! ONLY WHEN IT REEEEALLY NEEDS TO BE RUN!
-    //navx.calibrate();
-
-    ledStrip.setLength(ledBuffer.getLength());
-    for (var i = 0; i < ledBuffer.getLength(); i++) {
-      // Sets the specified LED to the RGB values for red
-      ledBuffer.setRGB(i, 20, 0, 20);
-   }
-   
-   ledStrip.setData(ledBuffer);
-   ledStrip.start();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
 
@@ -147,20 +103,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    */
   @Override
   public void robotPeriodic() {
-    // NAVX STUFF!!!
-    SmartDashboard.putNumber("Yaw", navx.getYaw());
-    SmartDashboard.putNumber("Roll", navx.getRoll());
-    SmartDashboard.putNumber("Pitch", navx.getPitch());
-    SmartDashboard.putNumber("RawX", navx.getRawGyroX());
-    SmartDashboard.putNumber("RawY", navx.getRawGyroY());
-    SmartDashboard.putNumber("RawZ", navx.getRawGyroZ());
-    SmartDashboard.putNumber("dispX", navx.getDisplacementX());
-    SmartDashboard.putNumber("dispY", navx.getDisplacementY());
-    SmartDashboard.putNumber("dispZ", navx.getDisplacementZ());    
-
-
-
-
+    //TODO: call the functions which print out navx and elevator stats here!
 
     var result = camera.getLatestResult();
     boolean hasTargets = result.hasTargets();
@@ -191,8 +134,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // tell the parent routine if we are ready to move on
     return ready;
   }
-
-  
+ 
   public boolean sConeEl(){
     // flag indicating elevator height and extension are lined up
     boolean ready = false;
@@ -340,28 +282,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  //IMPORTANT: WANTED TO ADD ALL CANSPARKS TOGETHER IN ONE VARIBLE BUT IT DID NOT WORK 
 
     //When pitch ~ 0 then stop
-  if(navx.getPitch() == 0){
-    frontleft.set(0);
-    backleft.set(0); 
-    frontright.set(0);
-    backright.set(0);
-  }
+  // if(navx.getPitch() == 0){
+  //   frontleft.set(0);
+  //   backleft.set(0); 
+  //   frontright.set(0);
+  //   backright.set(0);
+  // }
    
-  //When pitch > 0 then move forward
-  if(navx.getPitch() > 0){
-    frontleft.set(1);
-    backleft.set(1);
-    frontright.set(1);
-    backright.set(1);
-  }
+  // //When pitch > 0 then move forward
+  // if(navx.getPitch() > 0){
+  //   frontleft.set(1);
+  //   backleft.set(1);
+  //   frontright.set(1);
+  //   backright.set(1);
+  // }
     
-  //When pitch < 0 then move backward
-  if(navx.getPitch() < 0){
-    frontleft.set(-1);
-    backleft.set(-1);
-    frontright.set(-1);
-    backright.set(-1);
-  }
+  // //When pitch < 0 then move backward
+  // if(navx.getPitch() < 0){
+  //   frontleft.set(-1);
+  //   backleft.set(-1);
+  //   frontright.set(-1);
+  //   backright.set(-1);
+  // }
     return ready;
     //Focus on pitch when level value reads around 0
   }
@@ -756,10 +698,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
+    
+    // TODO: after creating a Drivetrain class, call its 'Move' method here!
+    // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     // this is the MANUAL OVERRIDE to the PID loop
-    // TODO: Find a definite elevator 'manual mode' button on controller 1.
     // For now, this will be the following id:
     if(stick.getRawButtonPressed(9)){
       elManualMode = !elManualMode; // invert mode
