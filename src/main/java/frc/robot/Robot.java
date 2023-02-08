@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
@@ -99,6 +102,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   AddressableLED ledStrip = new AddressableLED(0);
   AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(62);
+
+  //Camera 
+  PhotonCamera camera = new PhotonCamera("photonvision");
+  double camerax;
+  double cameray;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -211,13 +219,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
     SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
+
+    var result = camera.getLatestResult();
+    boolean hasTargets = result.hasTargets();
+    SmartDashboard.putBoolean("Target?", hasTargets);
+    if(hasTargets){
+      PhotonTrackedTarget target = result.getBestTarget();
+      cameray = target.getPitch();
+      camerax = target.getYaw();
+    }
+    SmartDashboard.putNumber("targetx", camerax);
+    SmartDashboard.putNumber("targety", cameray);
   }
+
      // This is step 0 in 'Tokyo Drift' subroutine!
   // Drives forward with Limelight, so we can be at the correct distance to score
   public boolean scorePrep(){
     // flag indicating we are lined up
     boolean ready = false;
-
+    camera.setPipelineIndex(1);
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: drive forward and check distance with Vision.
@@ -861,7 +881,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     SmartDashboard.putNumber("SetPoint", rotations);
     SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());
-
   }
 
   /** This function is called once when the robot is disabled. */
