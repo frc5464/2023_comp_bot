@@ -21,6 +21,8 @@ public class Elevator {
     public String extPosition;
     public String winchPosition;
 
+    // this is the motor safety flag which prevents us from moving winch/ext until we zero things out
+    public boolean elevator_zeroed = false;
     // ============================================== Private Variables
     // Variables the rest of the robot does not care about
     private CANSparkMax elextend = new CANSparkMax(3, MotorType.kBrushless);
@@ -31,7 +33,7 @@ public class Elevator {
     private SparkMaxPIDController elWinchPid;
     private DigitalInput elRotateLimitSwitch = new DigitalInput(0);
     private DigitalInput elExtendLimitSwitch = new DigitalInput(1);
-    private boolean elevator_zeroed = false;
+    
     private double extP, extI, extD, extIz, extFF, extMaxOutput, extMinOutput;
     private double winchP, winchI, winchD, winchIz, winchFF, winchMaxOutput, winchMinOutput;
 
@@ -45,6 +47,7 @@ public class Elevator {
         elExtendPid = elextend.getPIDController();
         elWinchPid = elwinch.getPIDController();
         extendPidSetup();
+        winchPidSetup();
     }
 
     public void setElevatorToCoast(){
@@ -61,12 +64,17 @@ public class Elevator {
         SmartDashboard.putNumber("extension encoder",elExtendEncoder.getPosition());
         SmartDashboard.putNumber("winch encoder",elWinchEncoder.getPosition());
         SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
-
         SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
     }
 
     public void checkForPidChanges(){
+        // step into two private functions which check for PID updates
+        checkForExtPidChanges();
+        checkForWinchPidChanges();
+    }
+
+    private void checkForExtPidChanges(){
         // read Extension PID coefficients from SmartDashboard
         double p = SmartDashboard.getNumber("ext P Gain", 0);
         double i = SmartDashboard.getNumber("ext I Gain", 0);
@@ -89,7 +97,33 @@ public class Elevator {
         }   
 
         SmartDashboard.putNumber("SetPoint", rotations);
-        SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());        
+        SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());  
+    }
+
+    private void checkForWinchPidChanges(){
+        // read winchension PID coefficients from SmartDashboard
+        double p = SmartDashboard.getNumber("winch P Gain", 0);
+        double i = SmartDashboard.getNumber("winch I Gain", 0);
+        double d = SmartDashboard.getNumber("winch D Gain", 0);
+        double iz = SmartDashboard.getNumber("winch I Zone", 0);
+        double ff = SmartDashboard.getNumber("winch Feed Forward", 0);
+        double max = SmartDashboard.getNumber("winch Max Output", 0);
+        double min = SmartDashboard.getNumber("winch Min Output", 0);
+        double rotations = SmartDashboard.getNumber("winch Set Rotations", 0);
+
+        // if winch PID coefficients on SmartDashboard have changed, write new values to controller
+        if((p != winchP)) { elWinchPid.setP(p); winchP = p; }
+        if((i != winchI)) { elWinchPid.setI(i); winchI = i; }
+        if((d != winchD)) { elWinchPid.setD(d); winchD = d; }
+        if((iz != winchIz)) { elWinchPid.setIZone(iz); winchIz = iz; }
+        if((ff != winchFF)) { elWinchPid.setFF(ff); winchFF = ff; }
+        if((max != winchMaxOutput) || (min != winchMinOutput)) { 
+            elWinchPid.setOutputRange(min, max); 
+            winchMinOutput = min; winchMaxOutput = max; 
+        }   
+
+        SmartDashboard.putNumber("SetPoint", rotations);
+        SmartDashboard.putNumber("ProcessVariable", elWinchEncoder.getPosition());  
     }
 
     public void jogExtend(double val){
@@ -121,7 +155,7 @@ public class Elevator {
     public void setElevatorPosition(String str){
         switch (str){
             case "ScoreHighCone":
-                // TODO: JAKE JUST FILLED IN GARBAGE HERE! FIX IT!
+                // TODO: Jake filled in garbage here. Fix this with actual values!
                 extTargetRotations = 250;
                 winchTargetRotations = -150;
                 // TODO: FILL IN MORE CASES!
@@ -164,7 +198,32 @@ public class Elevator {
     }  
     
     private void winchPidSetup(){
-        //TODO: fill in with control variables
+        // PID coefficients
+        extP = 0.05; 
+        extI = 1e-4;
+        extD = 0; 
+        extIz = 0; 
+        extFF = 0.001; 
+        extMaxOutput = 1; 
+        extMinOutput = -1;
+
+        // set PID coefficients
+        elExtendPid.setP(extP);
+        elExtendPid.setI(extI);
+        elExtendPid.setD(extD);
+        elExtendPid.setIZone(extIz);
+        elExtendPid.setFF(extFF);
+        elExtendPid.setOutputRange(extMinOutput, extMaxOutput);
+        
+        // display PID coefficients on SmartDashboard
+        SmartDashboard.putNumber("winch P Gain", winchP);
+        SmartDashboard.putNumber("winch I Gain", winchI);
+        SmartDashboard.putNumber("winch D Gain", winchD);
+        SmartDashboard.putNumber("winch I Zone", winchIz);
+        SmartDashboard.putNumber("winch Feed Forward", winchFF);
+        SmartDashboard.putNumber("winch Max Output", winchMaxOutput);
+        SmartDashboard.putNumber("winch Min Output", winchMinOutput);
+        SmartDashboard.putNumber("ext Set Rotations", 0);    
     }
 
 

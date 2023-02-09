@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Joystick;
@@ -42,10 +39,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    //Scoring autonomous
    private static final String kFirstScore = "First Score";
    private static final String kSecondScore = "Second Score";
-   private static final String kThirdScore = "Third Score";
- 
+   private static final String kThirdScore = "Third Score"; 
    private static final String kFadeAway = "Fade Away";
- 
    private static final String kHigh = "High";
    private static final String kMid = "Mid";
    private static final String kLow = "Low";
@@ -54,12 +49,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private String score_preset_selected;
    private final SendableChooser<String> score_preset_chooser = new SendableChooser<>();
 
-  //Camera 
-  PhotonCamera camera = new PhotonCamera("photonvision");
-  double camerax;
-  double cameray;
 
+
+
+  //5464-created classes!
   Elevator elevator = new Elevator();
+  //TODO: create more instances of our custom classes! What is there besides the elevator?
+  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -81,7 +77,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     m_chooser.addOption("Tokyo Drift", kTokyoDrift);
     m_chooser.addOption("Hitch Route", kHitchRoute);
     m_chooser.addOption("Fade Away", kFadeAway);
-
     m_chooser.addOption("First Score", kFirstScore);
     m_chooser.addOption("Second Score", kSecondScore);
     m_chooser.addOption("Third Score", kThirdScore);
@@ -103,26 +98,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    */
   @Override
   public void robotPeriodic() {
-    //TODO: call the functions which print out navx and elevator stats here!
+    //TODO: call the functions which print out navx, elevator, and other class stats here!
 
-    var result = camera.getLatestResult();
-    boolean hasTargets = result.hasTargets();
-    SmartDashboard.putBoolean("Target?", hasTargets);
-    if(hasTargets){
-      PhotonTrackedTarget target = result.getBestTarget();
-      cameray = target.getPitch();
-      camerax = target.getYaw();
-    }
-    SmartDashboard.putNumber("targetx", camerax);
-    SmartDashboard.putNumber("targety", cameray);
+    //TODO: call the function that updates PID values for the el extend and winch
+
+    //TODO: call the function that updates the X,Y values from vision!
+
   }
 
-     // This is step 0 in 'Tokyo Drift' subroutine!
+  // This is step 0 in 'Tokyo Drift' subroutine!
   // Drives forward with Limelight, so we can be at the correct distance to score
   public boolean scorePrep(){
     // flag indicating we are lined up
     boolean ready = false;
-    camera.setPipelineIndex(1);
+    //TODO: change the vision pipeline using the custom function in the Vision Class
+
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: drive forward and check distance with Vision.
@@ -180,7 +170,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
   
   public boolean TokyoEscape(){
-    // flag indicating 
+    // flag indicates if we have moved out of the community
     boolean ready = false;
     return ready;
   }
@@ -280,6 +270,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     boolean ready = false;
 
  //IMPORTANT: WANTED TO ADD ALL CANSPARKS TOGETHER IN ONE VARIBLE BUT IT DID NOT WORK 
+    //What this mean yo. Just drive with the drivetrain instance
 
     //When pitch ~ 0 then stop
   // if(navx.getPitch() == 0){
@@ -705,7 +696,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // this is the MANUAL OVERRIDE to the PID loop
     // For now, this will be the following id:
     if(stick.getRawButtonPressed(9)){
-      elManualMode = !elManualMode; // invert mode
+      if(elManualMode){
+        elManualMode = false;
+        // TODO: make some LED feedback to indicate that control is PID now
+      }
+      else{
+        elManualMode = true;
+        // TODO: make some LED feedback to indicate that control is manual now
+      }
     }
     if(elManualMode){
       if(stick.getRawButton(3)){

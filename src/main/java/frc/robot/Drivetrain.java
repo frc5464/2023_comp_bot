@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
@@ -26,11 +27,14 @@ public class Drivetrain {
     // Drive Train
     MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
 
+    RelativeEncoder frontleftEncoder;
+    //TODO: make other relativeEncoders for our drivetrain here!
+
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
     double rampRate = 0.25;
 
-    
+
     
 
     public void Init(){
@@ -38,7 +42,10 @@ public class Drivetrain {
         frontleft.setOpenLoopRampRate(rampRate);
         frontright.setOpenLoopRampRate(rampRate);
         backleft.setOpenLoopRampRate(rampRate);
-        backright.setOpenLoopRampRate(rampRate);        
+        backright.setOpenLoopRampRate(rampRate);      
+        
+        //TODO: set up other drive encoders here
+        frontleftEncoder = frontleft.getEncoder();
     }
 
     // ============================================= Public Functions
@@ -48,6 +55,11 @@ public class Drivetrain {
         // And this function will use those values
         // x = forward, y = strafe, rot = rotate the bot
         drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed);
+    }
+
+    public void DisplayStats(){
+        SmartDashboard.putNumber("front left rotations", frontleftEncoder.getPosition());
+        //TODO: print out other drive motor rotations!
     }
 
     // ============================================= Private Functions
