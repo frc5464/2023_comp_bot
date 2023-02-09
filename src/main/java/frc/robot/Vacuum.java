@@ -9,4 +9,13 @@ public class Vacuum {
     public void inrun(){
         intake.set(0.7);
     }
+    
+    public void outrun(){
+        intake.set(-1);
+    }
+
+    public void stoprun(){
+        intake.set(0);
+    }
+
 }

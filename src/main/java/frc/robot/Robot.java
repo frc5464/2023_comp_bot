@@ -740,10 +740,10 @@ import pabeles.concurrency.IntRangeTask;
       intake.inrun();
     }
     else if(stick.getRawButton(6)){
-      intake.set(-1);
+      intake.outrun();
     }
     else{
-      intake.set(0);
+      intake.stoprun();
     }   
 
 
