@@ -19,11 +19,6 @@ public class Leds {
         // first time setting the length of the LEDs
         ledStrip.setLength(ledBuffer.getLength());
         
-        // Populate with a dim, nauseating purple
-        for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 20, 0, 20);
-        }
-        
         ledStrip.setData(ledBuffer);
         ledStrip.start();
     }
@@ -31,6 +26,20 @@ public class Leds {
     public void setBlindingBlue(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i, 0, 0, 255);
+        }
+        ledStrip.setData(ledBuffer);        
+    }
+
+    public void Manualmode(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 20, 0, 20);
+        }
+        ledStrip.setData(ledBuffer);        
+    }
+
+    public void Pidmode(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 20, 20, 50);
         }
         ledStrip.setData(ledBuffer);        
     }

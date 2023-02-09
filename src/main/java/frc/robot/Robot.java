@@ -113,7 +113,7 @@ import pabeles.concurrency.IntRangeTask;
   public boolean scorePrep(){
     // flag indicating we are lined up
     boolean ready = false;
-    
+
     double xcord = vision.camerax;
     double ycord = vision.cameray;
     vision.changeVisionType("reflective"); 
@@ -687,27 +687,27 @@ import pabeles.concurrency.IntRangeTask;
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    // TODO: call the function from the Elevator class that sets us in brake mode!
-
+    elevator.setElevatorToBrake();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     
-    // TODO: after creating a Drivetrain class, call its 'Move' method here!
+    drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     // this is the MANUAL OVERRIDE to the PID loop
     // For now, this will be the following id:
-    if(stick.getRawButtonPressed(9)){
+    if(stick.getRawButtonPressed(7)){
       if(elManualMode){
+        Leds.Pidmode();
         elManualMode = false;
-        // TODO: make some LED feedback to indicate that control is PID now
       }
       else{
+        Leds.Manualmode();
         elManualMode = true;
-        // TODO: make some LED feedback to indicate that control is manual now
       }
     }
     if(elManualMode){
@@ -756,7 +756,7 @@ import pabeles.concurrency.IntRangeTask;
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    // TODO: call the function from the elevator class that puts us in coast mode!
+    elevator.setElevatorToCoast();
   }
 
   /** This function is called periodically when disabled. */
