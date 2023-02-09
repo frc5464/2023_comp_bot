@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import pabeles.concurrency.IntRangeTask;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,8 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  CANSparkMax intake = new CANSparkMax(8, MotorType.kBrushless);
-
   boolean elManualMode = false;
 
   //Joystick
@@ -35,27 +34,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    //Charge station autonomous
    private static final String kTokyoDrift = "Tokyo Drift";
    private static final String kHitchRoute = "Hitch Route";
+   private static final String kFadeAway = "Fade Away";
  
    //Scoring autonomous
    private static final String kFirstScore = "First Score";
    private static final String kSecondScore = "Second Score";
    private static final String kThirdScore = "Third Score"; 
-   private static final String kFadeAway = "Fade Away";
+
+   //Presets for cone scoring
    private static final String kHigh = "High";
    private static final String kMid = "Mid";
    private static final String kLow = "Low";
-   // TODO: make a 'Tokyo Drift' option here!
 
    private String score_preset_selected;
    private final SendableChooser<String> score_preset_chooser = new SendableChooser<>();
 
-
-
-
   //5464-created classes!
+  Drivetrain drivetrain = new Drivetrain();
   Elevator elevator = new Elevator();
-  //TODO: create more instances of our custom classes! What is there besides the elevator?
-  
+  Gyro gyro = new Gyro();
+  Leds Leds = new Leds();
+  Vacuum intake = new Vacuum();
+  Vision vision = new Vision();  
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -68,6 +68,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     SmartDashboard.putData("Auto choices", m_chooser);
 
     elevator.Init();
+    
     // TODO: initialize the LEDs here!
     // TODO: initialize the drivetrain here!
 
@@ -736,7 +737,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
     if(stick.getRawButton(5)){
-      intake.set(1);
+      intake.inrun();
     }
     else if(stick.getRawButton(6)){
       intake.set(-1);
