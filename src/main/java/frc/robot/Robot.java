@@ -68,9 +68,9 @@ import pabeles.concurrency.IntRangeTask;
     SmartDashboard.putData("Auto choices", m_chooser);
 
     elevator.Init();
-    
-    // TODO: initialize the LEDs here!
-    // TODO: initialize the drivetrain here!
+    Leds.Init();
+    drivetrain.Init();
+
 
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
@@ -99,12 +99,13 @@ import pabeles.concurrency.IntRangeTask;
    */
   @Override
   public void robotPeriodic() {
-    //TODO: call the functions which print out navx, elevator, and other class stats here!
+    drivetrain.DisplayStats();
+    elevator.DisplayStats();
+    elevator.checkForPidChanges();
+    gyro.DisplayStats();
+    vision.DisplayStats();
 
-    //TODO: call the function that updates PID values for the el extend and winch
-
-    //TODO: call the function that updates the X,Y values from vision!
-
+    vision.ReturnBestTargetXY(); 
   }
 
   // This is step 0 in 'Tokyo Drift' subroutine!
@@ -112,8 +113,11 @@ import pabeles.concurrency.IntRangeTask;
   public boolean scorePrep(){
     // flag indicating we are lined up
     boolean ready = false;
-    //TODO: change the vision pipeline using the custom function in the Vision Class
-
+    
+    double xcord = vision.camerax;
+    double ycord = vision.cameray;
+    vision.changeVisionType("reflective"); 
+    
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: drive forward and check distance with Vision.
