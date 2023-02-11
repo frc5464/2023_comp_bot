@@ -120,6 +120,7 @@ import pabeles.concurrency.IntRangeTask;
     vision.ReturnBestTargetXY(); 
 
     intake.DistanceCheck();
+
   }
 
   // This is step 0 in 'Tokyo Drift' subroutine!
@@ -764,6 +765,13 @@ import pabeles.concurrency.IntRangeTask;
       intake.stoprun();
     }   
 
+    if(stick2.getRawButton(autoStep)){
+      Leds.PickCone();
+    }
+
+    if(stick2.getRawButton(autoStep)){
+      Leds.PickCube();
+    }
 
   }
 

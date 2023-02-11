@@ -167,7 +167,7 @@ public class Elevator {
     public boolean zeroRotations(){
       // check our limit switches to make sure that we are actually at the zero point
       // this should prevent the possibility of zeroing during a match
-      if(elExtendLimitSwitch.get() && elRotateLimitSwitch.get()){
+      if(elRetractLimitSwitch.get() && elRotateLimitSwitch.get()){
         elExtendEncoder.setPosition(0);
         elWinchEncoder.setPosition(0);
         elevator_zeroed = true;

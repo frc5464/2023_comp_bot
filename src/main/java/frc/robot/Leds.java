@@ -49,4 +49,18 @@ public class Leds {
         }
         ledStrip.setData(ledBuffer);        
     }
+
+    public void PickCone(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 50,20 ,0 );
+        }
+        ledStrip.setData(ledBuffer);  
+    }
+
+    public void PickCube(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 20,0 ,20);
+        }
+        ledStrip.setData(ledBuffer);  
+    }
 }
