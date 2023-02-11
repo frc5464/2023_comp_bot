@@ -113,6 +113,8 @@ import pabeles.concurrency.IntRangeTask;
     vision.DisplayStats();
 
     vision.ReturnBestTargetXY(); 
+
+    intake.DistanceCheck();
   }
 
   // This is step 0 in 'Tokyo Drift' subroutine!
