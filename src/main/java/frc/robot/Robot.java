@@ -25,7 +25,7 @@ import pabeles.concurrency.IntRangeTask;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  boolean elManualMode = false;
+  boolean elManualMode = true;
 
   //Joystick
   Joystick stick = new Joystick(0);
@@ -712,13 +712,13 @@ import pabeles.concurrency.IntRangeTask;
     }
     if(elManualMode){
       if(stick.getRawButton(3)){
-        elevator.jogExtend(1);
+        elevator.Extend();
       }
       else if(stick.getRawButton(4)){
-        elevator.jogExtend(-1);
+        elevator.Retract();
       }
       else{
-        elevator.jogExtend(0);
+        elevator.Shutdown();
       }     
       if(stick.getRawButton(2)){
         elevator.jogWinch(1);

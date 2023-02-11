@@ -1,5 +1,6 @@
 package frc.robot;
 
+import com.fasterxml.jackson.databind.util.PrimitiveArrayBuilder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -31,8 +32,9 @@ public class Elevator {
     private RelativeEncoder elWinchEncoder;
     private SparkMaxPIDController elExtendPid;
     private SparkMaxPIDController elWinchPid;
-    private DigitalInput elRotateLimitSwitch = new DigitalInput(0);
-    private DigitalInput elExtendLimitSwitch = new DigitalInput(1);
+    private DigitalInput elRotateLimitSwitch = new DigitalInput(2);
+    private DigitalInput elExtendLimitSwitch = new DigitalInput(0);
+    private DigitalInput elRetractLimitSwitch = new DigitalInput(1);
     
     private double extP, extI, extD, extIz, extFF, extMaxOutput, extMinOutput;
     private double winchP, winchI, winchD, winchIz, winchFF, winchMaxOutput, winchMinOutput;
@@ -66,6 +68,7 @@ public class Elevator {
         SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
         SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
+        SmartDashboard.putBoolean("Rectract Limit Switch", elRetractLimitSwitch.get());
     }
 
     public void checkForPidChanges(){
@@ -126,8 +129,27 @@ public class Elevator {
         SmartDashboard.putNumber("ProcessVariable", elWinchEncoder.getPosition());  
     }
 
-    public void jogExtend(double val){
-        elextend.set(val);
+    public void Extend(){
+        if(elExtendLimitSwitch.get() == false){
+            elextend.set(0.7);
+        }
+            else{
+                elextend.set(0);
+            }
+    }
+
+    
+    public void Retract(){
+        if(elRetractLimitSwitch.get() == false){
+            elextend.set(-0.7);
+        }
+            else{
+                elextend.set(0);
+            }
+    }
+
+    public void Shutdown(){
+        elextend.set(0);
     }
 
     public void jogWinch(double val){

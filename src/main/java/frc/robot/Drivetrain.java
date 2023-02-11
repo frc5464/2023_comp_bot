@@ -28,7 +28,9 @@ public class Drivetrain {
     MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
 
     RelativeEncoder frontleftEncoder;
-    //TODO: make other relativeEncoders for our drivetrain here!
+    RelativeEncoder frontrightEncoder;
+    RelativeEncoder backleftEncoder;
+    RelativeEncoder backrightEncoder;
 
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
@@ -44,8 +46,10 @@ public class Drivetrain {
         backleft.setOpenLoopRampRate(rampRate);
         backright.setOpenLoopRampRate(rampRate);      
         
-        //TODO: set up other drive encoders here
         frontleftEncoder = frontleft.getEncoder();
+        frontrightEncoder = frontright.getEncoder();
+        backleftEncoder = backleft.getEncoder();
+        backrightEncoder = backright.getEncoder();
     }
 
     // ============================================= Public Functions
