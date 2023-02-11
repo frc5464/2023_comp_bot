@@ -63,4 +63,11 @@ public class Leds {
         }
         ledStrip.setData(ledBuffer);  
     }
+
+    public void HybridPickConeCube(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 0,50 ,0);
+        }
+        ledStrip.setData(ledBuffer);  
+    }
 }

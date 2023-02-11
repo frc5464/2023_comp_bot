@@ -13,7 +13,7 @@ public class Vacuum {
     double distcm = 0;
 
 public void DistanceCheck(){
-    distcm = (distancesense.getAverageVoltage())*(1024);
+    distcm = (distancesense.getAverageVoltage())*(1000);
     SmartDashboard.putNumber("Distance (cm)", distcm);
     
 }

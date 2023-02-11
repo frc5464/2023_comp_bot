@@ -177,11 +177,45 @@ public class Elevator {
 
     public void setElevatorPosition(String str){
         switch (str){
+            case "Drive":
+                winchTargetRotations = -90;
+                extTargetRotations = 50;
+
+            case "ConePickupHigh":
+                winchTargetRotations = -130;
+                extTargetRotations = 200;
+
+            case "ConePickupLow":
+                //TBA
+
             case "ScoreHighCone":
-                // TODO: Jake filled in garbage here. Fix this with actual values!
-                extTargetRotations = 250;
-                winchTargetRotations = -150;
-                // TODO: FILL IN MORE CASES!
+                winchTargetRotations = -130;
+                extTargetRotations = 360;
+
+            case "ScoreMidCone":
+                winchTargetRotations = -130;
+                extTargetRotations = 140;
+            
+            case "CubePickupHigh":
+                winchTargetRotations = -130;
+                extTargetRotations = 240;
+
+            case "CubePickupLow":
+                winchTargetRotations = -20;
+                extTargetRotations = 50;
+
+            case "ScoreHighCube":
+                winchTargetRotations = -110;
+                extTargetRotations = 380;
+
+            case "ScoreMidCube":
+                winchTargetRotations = -110;
+                extTargetRotations = 220;
+
+            case "ScoreLowCone/Cube":
+                winchTargetRotations = -130;
+                extTargetRotations = 30;
+
             default:
                 extTargetRotations = 250;
                 winchTargetRotations = -150;    

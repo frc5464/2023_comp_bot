@@ -765,14 +765,64 @@ import pabeles.concurrency.IntRangeTask;
       intake.stoprun();
     }   
 
-    if(stick2.getRawButton(autoStep)){
+    if(stick2.getRawAxis(2) > 0.1){
       Leds.PickCone();
     }
 
-    if(stick2.getRawButton(autoStep)){
+    if(stick2.getRawAxis(3) > 0.1){
       Leds.PickCube();
     }
 
+    //Encoders
+    if(stick2.getRawButtonPressed(5)){
+      elevator.setElevatorPosition("Drive");
+      //Leds stay in PID
+    }
+
+    if(stick2.getRawButtonPressed(3)){
+      elevator.setElevatorPosition("ConePickupHigh");
+      Leds.PickCone();
+    }
+
+    if(stick2.getRawButtonPressed(1)){
+      elevator.setElevatorPosition("ConePickupLow");
+      Leds.PickCone();
+    }
+    
+    if(stick2.getRawButtonPressed(4)){
+      elevator.setElevatorPosition("ScoreHighCone");
+      Leds.PickCone();
+    }
+
+    if(stick2.getRawButtonPressed(2)){
+      elevator.setElevatorPosition("ScoreMidCone");
+      Leds.PickCone();
+    }
+
+    if(stick2.getPOV() == 270){
+      elevator.setElevatorPosition("CubePickupHigh");
+      Leds.PickCube();
+    }
+
+    if(stick2.getPOV() == 180){
+      elevator.setElevatorPosition("CubePickupLow");
+      Leds.PickCube();
+    }
+
+    if(stick2.getPOV() == 0){
+      elevator.setElevatorPosition("ScoreHighCube");
+      Leds.PickCube();
+    }
+
+    if(stick2.getPOV(0) == 90){
+      elevator.setElevatorPosition("ScoreMidCube");
+      Leds.PickCube();
+    }
+
+    if(stick2.getRawButtonPressed(6)){
+      elevator.setElevatorPosition("ScoreLowCone/Cube");
+      Leds.HybridPickConeCube();
+    }
   }
 
   /** This function is called once when the robot is disabled. */
