@@ -88,6 +88,13 @@ import pabeles.concurrency.IntRangeTask;
     score_preset_chooser.addOption("Mid", kMid);
     score_preset_chooser.addOption("Low", kLow);
     SmartDashboard.putData("Score Preset Choices", score_preset_chooser);
+
+    if(elevator.zeroRotations() == false){
+      Leds.QuestionError();
+    }
+      else{
+        Leds.Pidmode();
+     }
   }
 
   /**

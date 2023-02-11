@@ -18,9 +18,15 @@ public class Leds {
     public void Init(){
         // first time setting the length of the LEDs
         ledStrip.setLength(ledBuffer.getLength());
-        
+
         ledStrip.setData(ledBuffer);
         ledStrip.start();
+    }
+
+    public void QuestionError(){
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i, 50, 0, 0);
+        }
     }
 
     public void setBlindingBlue(){
