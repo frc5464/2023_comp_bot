@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import java.io.Console;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import pabeles.concurrency.IntRangeTask;
 
 /**
@@ -91,9 +94,11 @@ import pabeles.concurrency.IntRangeTask;
 
     if(elevator.zeroRotations() == false){
       Leds.QuestionError();
+      System.out.println("Not zeroed!");
     }
       else{
         Leds.Pidmode();
+        System.out.println("ALL GOOD! PID INITALIZED");
      }
   }
 

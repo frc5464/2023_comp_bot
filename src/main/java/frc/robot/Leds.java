@@ -17,8 +17,7 @@ public class Leds {
     // ============================================= Public Functions
     public void Init(){
         // first time setting the length of the LEDs
-        ledStrip.setLength(ledBuffer.getLength());
-
+        ledStrip.setLength(ledBuffer.getLength()); 
         ledStrip.setData(ledBuffer);
         ledStrip.start();
     }
@@ -27,11 +26,12 @@ public class Leds {
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i, 50, 0, 0);
         }
+        ledStrip.setData(ledBuffer);
     }
 
-    public void setBlindingBlue(){
+    public void DefaultLight(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 0, 0, 255);
+            ledBuffer.setRGB(i, 0, 0,50);
         }
         ledStrip.setData(ledBuffer);        
     }
