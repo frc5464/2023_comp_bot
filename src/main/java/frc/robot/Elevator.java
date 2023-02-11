@@ -99,8 +99,8 @@ public class Elevator {
         extMinOutput = min; extMaxOutput = max; 
         }   
 
-        SmartDashboard.putNumber("SetPoint", rotations);
-        SmartDashboard.putNumber("ProcessVariable", elExtendEncoder.getPosition());  
+        SmartDashboard.putNumber("ext Set Rotations", rotations);
+        SmartDashboard.putNumber("ext ProcessVariable", elExtendEncoder.getPosition());  
     }
 
     private void checkForWinchPidChanges(){
@@ -125,8 +125,8 @@ public class Elevator {
             winchMinOutput = min; winchMaxOutput = max; 
         }   
 
-        SmartDashboard.putNumber("SetPoint", rotations);
-        SmartDashboard.putNumber("ProcessVariable", elWinchEncoder.getPosition());  
+        SmartDashboard.putNumber("winch Set Rotations", rotations);
+        SmartDashboard.putNumber("winch ProcessVariable", elWinchEncoder.getPosition());  
     }
 
     public void Extend(){
@@ -256,21 +256,21 @@ public class Elevator {
     
     private void winchPidSetup(){
         // PID coefficients
-        extP = 0.05; 
-        extI = 1e-4;
-        extD = 0; 
-        extIz = 0; 
-        extFF = 0.001; 
-        extMaxOutput = 1; 
-        extMinOutput = -1;
+        winchP = 0.05; 
+        winchI = 1e-4;
+        winchD = 0; 
+        winchIz = 0; 
+        winchFF = 0.001; 
+        winchMaxOutput = 1; 
+        winchMinOutput = -1;
 
         // set PID coefficients
-        elExtendPid.setP(extP);
-        elExtendPid.setI(extI);
-        elExtendPid.setD(extD);
-        elExtendPid.setIZone(extIz);
-        elExtendPid.setFF(extFF);
-        elExtendPid.setOutputRange(extMinOutput, extMaxOutput);
+        elWinchPid.setP(winchP);
+        elWinchPid.setI(winchI);
+        elWinchPid.setD(winchD);
+        elWinchPid.setIZone(winchIz);
+        elWinchPid.setFF(winchFF);
+        elWinchPid.setOutputRange(winchMinOutput, winchMaxOutput);
         
         // display PID coefficients on SmartDashboard
         SmartDashboard.putNumber("winch P Gain", winchP);
