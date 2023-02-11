@@ -3,8 +3,20 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.hal.simulation.AnalogInDataJNI;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 public class Vacuum {
     CANSparkMax intake = new CANSparkMax(8, MotorType.kBrushless);
+    AnalogInput distancesense = new AnalogInput(1);
+    double distcm = 0;
+
+public void DistanceCheck(){
+    distcm = (distancesense.getAverageVoltage())*(1024);
+    SmartDashboard.putNumber("Distance (cm)", distcm);
+    
+}
 
     public void inrun(){
         intake.set(0.7);
