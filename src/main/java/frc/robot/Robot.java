@@ -286,7 +286,7 @@ import pabeles.concurrency.IntRangeTask;
     boolean ready = false;
 
  //IMPORTANT: WANTED TO ADD ALL CANSPARKS TOGETHER IN ONE VARIBLE BUT IT DID NOT WORK 
-    //What this mean yo. Just drive with the drivetrain instance
+    //What this mean yo. Just drive with the drivetrain instance *cries*
 
     //When pitch ~ 0 then stop
   // if(navx.getPitch() == 0){
