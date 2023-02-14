@@ -121,6 +121,11 @@ import pabeles.concurrency.IntRangeTask;
 
     intake.DistanceCheck();
 
+    // the 'back' key will run the 'zeroing' process for elevator safety
+    if(stick.getRawButtonPressed(7)){
+      elevator.zeroRotations();
+    }
+
   }
 
   // This is step 0 in 'Tokyo Drift' subroutine!
@@ -703,6 +708,7 @@ import pabeles.concurrency.IntRangeTask;
   @Override
   public void teleopInit() {
     elevator.setElevatorToBrake();
+    elevator.Init();
   }
 
   /** This function is called periodically during operator control. */
@@ -715,13 +721,15 @@ import pabeles.concurrency.IntRangeTask;
 
     // this is the MANUAL OVERRIDE to the PID loop
     // For now, this will be the following id:
-    if(stick.getRawButtonPressed(7)){
+    if(stick.getRawButtonPressed(8)){
       if(elManualMode){
+        System.out.println("We're in automatic mode!");
         Leds.Pidmode();
         elManualMode = false;
       }
       else{
         Leds.Manualmode();
+        System.out.println("We're in manual mode!");
         elManualMode = true;
       }
     }
@@ -750,10 +758,7 @@ import pabeles.concurrency.IntRangeTask;
       elevator.pidControl(); 
     }
 
-    // the 'back' key will run the 'zeroing' process for elevator safety
-    if(stick.getRawButtonPressed(7)){
-      elevator.zeroRotations();
-    }
+
 
     if(stick.getRawButton(5)){
       intake.inrun();

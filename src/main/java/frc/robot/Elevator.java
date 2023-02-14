@@ -32,10 +32,11 @@ public class Elevator {
     private RelativeEncoder elWinchEncoder;
     private SparkMaxPIDController elExtendPid;
     private SparkMaxPIDController elWinchPid;
-    private DigitalInput elRotateLimitSwitch = new DigitalInput(2);
+    
     private DigitalInput elExtendLimitSwitch = new DigitalInput(0);
     private DigitalInput elRetractLimitSwitch = new DigitalInput(1);
-    
+    private DigitalInput elRotateLimitSwitch = new DigitalInput(2);
+
     private double extP, extI, extD, extIz, extFF, extMaxOutput, extMinOutput;
     private double winchP, winchI, winchD, winchIz, winchFF, winchMaxOutput, winchMinOutput;
 
@@ -69,6 +70,7 @@ public class Elevator {
         SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
         SmartDashboard.putBoolean("Rectract Limit Switch", elRetractLimitSwitch.get());
+        SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
     }
 
     public void checkForPidChanges(){
@@ -86,7 +88,7 @@ public class Elevator {
         double ff = SmartDashboard.getNumber("ext Feed Forward", 0);
         double max = SmartDashboard.getNumber("ext Max Output", 0);
         double min = SmartDashboard.getNumber("ext Min Output", 0);
-        double rotations = SmartDashboard.getNumber("ext Set Rotations", 0);
+        extTargetRotations = SmartDashboard.getNumber("ext Set Rotations", 0);
 
         // if Ext PID coefficients on SmartDashboard have changed, write new values to controller
         if((p != extP)) { elExtendPid.setP(p); extP = p; }
@@ -99,7 +101,7 @@ public class Elevator {
         extMinOutput = min; extMaxOutput = max; 
         }   
 
-        SmartDashboard.putNumber("ext Set Rotations", rotations);
+        SmartDashboard.putNumber("ext Set Rotations", extTargetRotations);
         SmartDashboard.putNumber("ext ProcessVariable", elExtendEncoder.getPosition());  
     }
 
@@ -112,7 +114,7 @@ public class Elevator {
         double ff = SmartDashboard.getNumber("winch Feed Forward", 0);
         double max = SmartDashboard.getNumber("winch Max Output", 0);
         double min = SmartDashboard.getNumber("winch Min Output", 0);
-        double rotations = SmartDashboard.getNumber("winch Set Rotations", 0);
+        winchTargetRotations = SmartDashboard.getNumber("winch Set Rotations", 0);
 
         // if winch PID coefficients on SmartDashboard have changed, write new values to controller
         if((p != winchP)) { elWinchPid.setP(p); winchP = p; }
@@ -125,7 +127,7 @@ public class Elevator {
             winchMinOutput = min; winchMaxOutput = max; 
         }   
 
-        SmartDashboard.putNumber("winch Set Rotations", rotations);
+        SmartDashboard.putNumber("winch Set Rotations", winchTargetRotations);
         SmartDashboard.putNumber("winch ProcessVariable", elWinchEncoder.getPosition());  
     }
 
@@ -171,6 +173,10 @@ public class Elevator {
         elExtendEncoder.setPosition(0);
         elWinchEncoder.setPosition(0);
         elevator_zeroed = true;
+        System.out.println("Elevator zeroed out!");
+      }
+      else{
+        System.out.println("Elevator NOT zeroed out! Check Limit Switches!");
       }
       return elevator_zeroed;        
     }
@@ -178,47 +184,47 @@ public class Elevator {
     public void setElevatorPosition(String str){
         switch (str){
             case "Drive":
-                winchTargetRotations = -90;
+                winchTargetRotations = 90;
                 extTargetRotations = 50;
 
             case "ConePickupHigh":
-                winchTargetRotations = -130;
+                winchTargetRotations = 130;
                 extTargetRotations = 200;
 
             case "ConePickupLow":
                 //TBA
 
             case "ScoreHighCone":
-                winchTargetRotations = -130;
+                winchTargetRotations = 130;
                 extTargetRotations = 360;
 
             case "ScoreMidCone":
-                winchTargetRotations = -130;
+                winchTargetRotations = 130;
                 extTargetRotations = 140;
             
             case "CubePickupHigh":
-                winchTargetRotations = -130;
+                winchTargetRotations = 130;
                 extTargetRotations = 240;
 
             case "CubePickupLow":
-                winchTargetRotations = -20;
+                winchTargetRotations = 20;
                 extTargetRotations = 50;
 
             case "ScoreHighCube":
-                winchTargetRotations = -110;
+                winchTargetRotations = 110;
                 extTargetRotations = 380;
 
             case "ScoreMidCube":
-                winchTargetRotations = -110;
+                winchTargetRotations = 110;
                 extTargetRotations = 220;
 
             case "ScoreLowCone/Cube":
-                winchTargetRotations = -130;
+                winchTargetRotations = 130;
                 extTargetRotations = 30;
 
             default:
                 extTargetRotations = 250;
-                winchTargetRotations = -150;    
+                winchTargetRotations =150;    
         }
            
 
@@ -231,8 +237,8 @@ public class Elevator {
         extD = 0; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 1; 
-        extMinOutput = -1;
+        extMaxOutput = 0; 
+        extMinOutput = 0;
 
         // set PID coefficients
         elExtendPid.setP(extP);
@@ -250,7 +256,7 @@ public class Elevator {
         SmartDashboard.putNumber("ext Feed Forward", extFF);
         SmartDashboard.putNumber("ext Max Output", extMaxOutput);
         SmartDashboard.putNumber("ext Min Output", extMinOutput);
-        SmartDashboard.putNumber("ext Set Rotations", 0);    
+        SmartDashboard.putNumber("ext Set Rotations", extTargetRotations);    
 
     }  
     
@@ -258,7 +264,7 @@ public class Elevator {
         // PID coefficients
         winchP = 0.05; 
         winchI = 1e-4;
-        winchD = 0; 
+        winchD = 0;
         winchIz = 0; 
         winchFF = 0.001; 
         winchMaxOutput = 1; 
@@ -280,7 +286,7 @@ public class Elevator {
         SmartDashboard.putNumber("winch Feed Forward", winchFF);
         SmartDashboard.putNumber("winch Max Output", winchMaxOutput);
         SmartDashboard.putNumber("winch Min Output", winchMinOutput);
-        SmartDashboard.putNumber("ext Set Rotations", 0);    
+        SmartDashboard.putNumber("ext Set Rotations", winchTargetRotations);    
     }
 
 
