@@ -43,6 +43,17 @@ public class Elevator {
     private double extTargetRotations;
     private double winchTargetRotations;
 
+    private static final String kDrive = "Drive";
+    private static final String kConePickupHigh = "ConePickupHigh";
+    private static final String kConePickupLow = "ConePickupLow";
+    private static final String kScoreHighCone = "ScoreHighCone"; 
+    private static final String kScoreMidCone = "ScoreMidCone";
+    private static final String kCubePickupHigh = "CubePickupHigh";
+    private static final String kCubePickupLow = "CubePickupLow";
+    private static final String kScoreHighCube = "ScoreHighCube"; 
+    private static final String kScoreMidCube = "ScoreMidCube"; 
+    private static final String kScoreLowConeCube = "ScoreLowCube"; 
+
     // ============================================= Public Functions
     public void Init(){
         elExtendEncoder = elextend.getEncoder();
@@ -185,42 +196,42 @@ public class Elevator {
     public void setElevatorPosition(String str){
         System.out.println(str);
         switch (str){
-            case "Drive":
+            case kDrive:
                 winchTargetRotations = 20;
                 extTargetRotations = 20;
 
-            case "ConePickupHigh":
+            case kConePickupHigh:
                 winchTargetRotations = 40;
-                extTargetRotations = 50;
+                extTargetRotations = 40;
 
-            case "ConePickupLow":
+            case kConePickupLow:
                 //TBA
 
-            case "ScoreHighCone":
+            case kScoreHighCone:
                 winchTargetRotations = 130;
                 extTargetRotations = 360;
 
-            case "ScoreMidCone":
+            case kScoreMidCone:
                 winchTargetRotations = 130;
                 extTargetRotations = 140;
-            
-            case "CubePickupHigh":
-                winchTargetRotations = 130;
-                extTargetRotations = 240;
 
-            case "CubePickupLow":
+            case kCubePickupHigh:
                 winchTargetRotations = 20;
                 extTargetRotations = 50;
-
-            case "ScoreHighCube":
+            
+            case kCubePickupLow:
+                winchTargetRotations = 20;
+                extTargetRotations = 20;
+                
+            case kScoreHighCube:
                 winchTargetRotations = 110;
                 extTargetRotations = 380;
 
-            case "ScoreMidCube":
+            case kScoreMidCube:
                 winchTargetRotations = 110;
                 extTargetRotations = 220;
 
-            case "ScoreLowCone/Cube":
+            case kScoreLowConeCube:
                 winchTargetRotations = 130;
                 extTargetRotations = 30;
 
