@@ -160,29 +160,20 @@ import pabeles.concurrency.IntRangeTask;
     switch (score_preset_selected) {
       
       case kHigh:
-        //reach elevator and extension for high cone
-        //set ready to true once conditions are met
-
+        elevator.setElevatorPosition("ScoreHighCone");
+          ready = true;
         break;
 
       case kMid:
-        //reach elevator and extension for mid cone
-        //set ready to true once conditions are met
-
+        elevator.setElevatorPosition("ScoreHScoreMidCone");
+          ready = true;
         break;
 
       case kLow:
-        //reach elevator and extension for low cone
-        //set ready to true once conditions are met
-
+        elevator.setElevatorPosition("ScoreLowCone");
+          ready = true;
         break;
-
-      default:
-        //high preset code, in case selector BREAKS!
-        //set ready to true once conditions are met
-
-        break;
-    }
+    }    
     return ready;
   }
 
@@ -753,23 +744,9 @@ import pabeles.concurrency.IntRangeTask;
         elevator.jogWinch(0);
       }   
     }
-    // PID MODE
     else{
       // holds the elevator according to PID control
-      if(stick.getRawButton(2)){
-        // set it to something else here
-        elevator.setElevatorPosition("Drive");
-        elevator.pidControl(); 
-      }
-      else if(stick.getRawButton(1)){
-        // set it to something here
-        elevator.setElevatorPosition("ScoreHighCone");
-        elevator.pidControl(); 
-      }
-      else{
-        elevator.Shutdown();
-      }   
-      
+      elevator.pidControl(); 
     }
 
 

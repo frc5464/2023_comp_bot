@@ -162,7 +162,7 @@ public class Elevator {
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
             elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
-            // elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+            elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
         }
     }
 
@@ -185,11 +185,11 @@ public class Elevator {
         switch (str){
             case "Drive":
                 winchTargetRotations = 90;
-                extTargetRotations = 20;
+                extTargetRotations = 50;
 
             case "ConePickupHigh":
                 winchTargetRotations = 130;
-                extTargetRotations = 50;
+                extTargetRotations = 200;
 
             case "ConePickupLow":
                 //TBA
@@ -222,7 +222,7 @@ public class Elevator {
                 winchTargetRotations = 130;
                 extTargetRotations = 30;
 
-            default: 
+            default:
                 extTargetRotations = 250;
                 winchTargetRotations =150;    
         }
