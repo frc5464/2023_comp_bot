@@ -753,9 +753,23 @@ import pabeles.concurrency.IntRangeTask;
         elevator.jogWinch(0);
       }   
     }
+    // PID MODE
     else{
       // holds the elevator according to PID control
-      elevator.pidControl(); 
+      if(stick.getRawButton(2)){
+        // set it to something else here
+        elevator.setElevatorPosition("Drive");
+        elevator.pidControl(); 
+      }
+      else if(stick.getRawButton(1)){
+        // set it to something here
+        elevator.setElevatorPosition("ScoreHighCone");
+        elevator.pidControl(); 
+      }
+      else{
+        elevator.Shutdown();
+      }   
+      
     }
 
 
