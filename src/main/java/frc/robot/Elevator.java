@@ -196,47 +196,48 @@ public class Elevator {
     public void setElevatorPosition(String str){
         switch (str){
             case kDrive:
-                winchTargetRotations = 20;
-                extTargetRotations = 20;
+                winchTargetRotations = 83;
+                extTargetRotations = 0;
                 break;
             case kConePickupHigh:
-                winchTargetRotations = 40;
-                extTargetRotations = 40;
+                winchTargetRotations = 66;
+                extTargetRotations = 75;
                 break;
             case kConePickupLow:
-                //TBA
+                winchTargetRotations = 10;
+                extTargetRotations = 13;
                 break;
             case kScoreHighCone:
-                winchTargetRotations = 130;
-                extTargetRotations = 360;
+                winchTargetRotations = 92;
+                extTargetRotations = 70;
                 break;
             case kScoreMidCone:
-                winchTargetRotations = 130;
-                extTargetRotations = 140;
+                winchTargetRotations = 77;
+                extTargetRotations = 34;
                 break;
             case kCubePickupHigh:
-                winchTargetRotations = 20;
-                extTargetRotations = 50;
+                winchTargetRotations = 100;
+                extTargetRotations = 35;
                 break;
             case kCubePickupLow:
-                winchTargetRotations = 20;
-                extTargetRotations = 20;
+                winchTargetRotations = 10;
+                extTargetRotations = 13;
                 break;
             case kScoreHighCube:
-                winchTargetRotations = 110;
-                extTargetRotations = 380;
+                winchTargetRotations = 99;
+                extTargetRotations = 71;
                 break;
             case kScoreMidCube:
-                winchTargetRotations = 110;
-                extTargetRotations = 220;
+                winchTargetRotations = 88;
+                extTargetRotations = 56;
                 break;
             case kScoreLowConeCube:
-                winchTargetRotations = 130;
-                extTargetRotations = 30;
+                winchTargetRotations = 37;
+                extTargetRotations = 0;
                 break;
             default: 
-                extTargetRotations = 40;
-                winchTargetRotations =40;    
+                extTargetRotations = 0;
+                winchTargetRotations = 83;    
                 System.out.println("Default elevator val");
         }
            
