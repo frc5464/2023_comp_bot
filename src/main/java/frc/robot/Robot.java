@@ -59,6 +59,7 @@ import pabeles.concurrency.IntRangeTask;
   Leds Leds = new Leds();
   Vacuum intake = new Vacuum();
   Vision vision = new Vision();  
+  Pneumatics pneumatics = new Pneumatics();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -818,6 +819,10 @@ import pabeles.concurrency.IntRangeTask;
     if(stick2.getRawButtonPressed(6)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
+    }
+
+    if(stick2.getRawButtonPressed(8)){
+      pneumatics.ToggleSolenoids();
     }
   }
 
