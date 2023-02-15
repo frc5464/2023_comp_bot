@@ -173,7 +173,7 @@ public class Elevator {
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            //elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+            elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
         }
     }
@@ -194,47 +194,46 @@ public class Elevator {
     }
 
     public void setElevatorPosition(String str){
-        System.out.println(str);
         switch (str){
             case kDrive:
                 winchTargetRotations = 20;
                 extTargetRotations = 20;
-
+                break;
             case kConePickupHigh:
                 winchTargetRotations = 40;
                 extTargetRotations = 40;
-
+                break;
             case kConePickupLow:
                 //TBA
-
+                break;
             case kScoreHighCone:
                 winchTargetRotations = 130;
                 extTargetRotations = 360;
-
+                break;
             case kScoreMidCone:
                 winchTargetRotations = 130;
                 extTargetRotations = 140;
-
+                break;
             case kCubePickupHigh:
                 winchTargetRotations = 20;
                 extTargetRotations = 50;
-            
+                break;
             case kCubePickupLow:
                 winchTargetRotations = 20;
                 extTargetRotations = 20;
-                
+                break;
             case kScoreHighCube:
                 winchTargetRotations = 110;
                 extTargetRotations = 380;
-
+                break;
             case kScoreMidCube:
                 winchTargetRotations = 110;
                 extTargetRotations = 220;
-
+                break;
             case kScoreLowConeCube:
                 winchTargetRotations = 130;
                 extTargetRotations = 30;
-
+                break;
             default: 
                 extTargetRotations = 40;
                 winchTargetRotations =40;    
@@ -246,13 +245,13 @@ public class Elevator {
     // ============================================= Private Functions
     private void extendPidSetup(){
         // PID coefficients
-        extP = 0.05; 
-        extI = 1e-4;
-        extD = 0; 
+        extP = 0.3; 
+        extI = 0.0001;
+        extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0; 
-        extMinOutput = 0;
+        extMaxOutput = 1; 
+        extMinOutput = -1;
 
         // set PID coefficients
         elExtendPid.setP(extP);
@@ -277,13 +276,13 @@ public class Elevator {
     
     private void winchPidSetup(){
         // PID coefficients
-        winchP = 0.05; 
-        winchI = 1e-4;
+        winchP = 0.3; 
+        winchI = 0.0001;
         winchD = 0;
         winchIz = 0; 
         winchFF = 0.001; 
-        winchMaxOutput = 1; 
-        winchMinOutput = -1;
+        winchMaxOutput = 0.8; 
+        winchMinOutput = -0.8;
 
         // set PID coefficients
         elWinchPid.setP(winchP);

@@ -746,19 +746,7 @@ import pabeles.concurrency.IntRangeTask;
     }
     else{
       // holds the elevator according to PID control
-      
-
-      if(stick.getRawButton(2)){
-        elevator.setElevatorPosition("Drive");
-        elevator.pidControl();
-      }
-      else if(stick.getRawButton(1)){
-        elevator.setElevatorPosition("ConePickupHigh");
-        elevator.pidControl();
-      }
-      else{
-        elevator.Shutdown();
-      }       
+      elevator.pidControl();   
     }
 
 
