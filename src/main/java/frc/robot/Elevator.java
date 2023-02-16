@@ -99,7 +99,7 @@ public class Elevator {
         double ff = SmartDashboard.getNumber("ext Feed Forward", 0);
         double max = SmartDashboard.getNumber("ext Max Output", 0);
         double min = SmartDashboard.getNumber("ext Min Output", 0);
-        extTargetRotations = SmartDashboard.getNumber("ext Set Rotations", 0);
+        //extTargetRotations = SmartDashboard.getNumber("ext Set Rotations", 0);
 
         // if Ext PID coefficients on SmartDashboard have changed, write new values to controller
         if((p != extP)) { elExtendPid.setP(p); extP = p; }

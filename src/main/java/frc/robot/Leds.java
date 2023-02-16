@@ -24,49 +24,49 @@ public class Leds {
 
     public void QuestionError(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 50, 0, 0);
+            ledBuffer.setRGB(i, 120, 0, 0);
         }
         ledStrip.setData(ledBuffer);
     }
 
     public void DefaultLight(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 0, 0,50);
+            ledBuffer.setRGB(i, 0, 0,120);
         }
         ledStrip.setData(ledBuffer);        
     }
 
     public void Manualmode(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 20, 0, 20);
+            ledBuffer.setRGB(i, 60, 0, 60);
         }
         ledStrip.setData(ledBuffer);        
     }
 
     public void Pidmode(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 20, 20, 50);
+            ledBuffer.setRGB(i, 60, 60, 120);
         }
         ledStrip.setData(ledBuffer);        
     }
 
     public void PickCone(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 50,20 ,0 );
+            ledBuffer.setRGB(i, 90,40 ,0 );
         }
         ledStrip.setData(ledBuffer);  
     }
 
     public void PickCube(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 20,0 ,20);
+            ledBuffer.setRGB(i, 60,0 ,60);
         }
         ledStrip.setData(ledBuffer);  
     }
 
     public void HybridPickConeCube(){
         for (var i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setRGB(i, 0,50 ,0);
+            ledBuffer.setRGB(i, 0,120 ,0);
         }
         ledStrip.setData(ledBuffer);  
     }

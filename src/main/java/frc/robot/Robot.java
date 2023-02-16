@@ -4,16 +4,12 @@
 
 package frc.robot;
 
-import java.io.Console;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
-import pabeles.concurrency.IntRangeTask;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -33,6 +29,8 @@ import pabeles.concurrency.IntRangeTask;
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
+
+  PowerDistribution PDThing = new PowerDistribution(0,ModuleType.kCTRE);
 
    //Charge station autonomous
    private static final String kTokyoDrift = "Tokyo Drift";
@@ -142,10 +140,10 @@ import pabeles.concurrency.IntRangeTask;
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: drive forward and check distance with Vision.
-    
-    // if(  /* check some limelight variable here */    ){
-    //   ready = true;
-    // }
+
+    if ((xcord < 2) && (xcord > -2) && (ycord < 2) && (ycord > -2)){
+    ready = true;
+    }
 
     // tell the parent routine if we are ready to move on
     return ready;
@@ -824,6 +822,13 @@ import pabeles.concurrency.IntRangeTask;
     if(stick2.getRawButtonPressed(8)){
       pneumatics.ToggleSolenoids();
     }
+
+    if(stick2.getRawButtonPressed(9)){
+      PDThing.setSwitchableChannel(true);
+    }
+      else{
+        PDThing.setSwitchableChannel(false);
+      }
   }
 
   /** This function is called once when the robot is disabled. */
