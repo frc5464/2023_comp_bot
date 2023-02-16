@@ -72,8 +72,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     elevator.Init();
     Leds.Init();
     drivetrain.Init();
-
-
+    pneumatics.Init();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
 
@@ -836,6 +835,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
       else{
         PDThing.setSwitchableChannel(false);
+      }
+
+      if(stick.getRawButtonPressed(5)){
+        pneumatics.CompOnOffOn();
       }
   }
 

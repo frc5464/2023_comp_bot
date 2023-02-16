@@ -13,14 +13,27 @@ public class Pneumatics {
     DoubleSolenoid pcm2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
     DoubleSolenoid pcm3 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
     DoubleSolenoid pcm4 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
+
+    boolean compoffon = false;
     
 public void Init(){
 
-    compressor.enableDigital();
+    compressor.disable();
     pcm1.set(Value.kForward);
     pcm2.set(Value.kForward);
     pcm3.set(Value.kForward);
     pcm4.set(Value.kForward);
+}
+
+public void CompOnOffOn(){
+    if(compoffon == false){
+        compoffon = true;
+        compressor.enableDigital();
+    }
+    if(compoffon == true){
+        compoffon = false;
+        compressor.disable();
+    }
 }
 
 public void ToggleSolenoids(){
