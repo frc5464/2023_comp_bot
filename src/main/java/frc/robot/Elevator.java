@@ -197,26 +197,26 @@ public class Elevator {
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            // if(avoidingExtDangerZoneInner){
-            //     elExtendPid.setReference(extDangerZoneInner, CANSparkMax.ControlType.kPosition);
-            // }
-            // else if(avoidingExtDangerZoneOuter){
-            //     elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
-            // }
-            // else{
-            //     elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
-            // }
+            if(avoidingExtDangerZoneInner){
+                //elExtendPid.setReference(extDangerZoneInner, CANSparkMax.ControlType.kPosition);
+            }
+            else if(avoidingExtDangerZoneOuter){
+                elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
+            }
+            else{
+                elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+            }
 
-            // if(avoidingwinchDangerZone){
-            //     elWinchPid.setReference(winchDangerZone, CANSparkMax.ControlType.kPosition);
-            // }
-            // else{
-            //     elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
-            // }
+            if(avoidingwinchDangerZone){
+                elWinchPid.setReference(winchDangerZone, CANSparkMax.ControlType.kPosition);
+            }
+            else{
+                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+            }
 
             // TODO: change out these two lines with the stuff above to have things (hopefully) run safer
-            elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
-            elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+            // elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+            // elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
         }
     }
 
@@ -365,8 +365,8 @@ public class Elevator {
         extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0.4; 
-        extMinOutput = -0.4;
+        extMaxOutput = 0.25; 
+        extMinOutput = -0.25;
 
         // set PID coefficients
         elExtendPid.setP(extP);
