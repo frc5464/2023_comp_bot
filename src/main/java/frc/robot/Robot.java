@@ -701,6 +701,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void teleopInit() {
     elevator.setElevatorToBrake();
     elevator.Init();
+    pneumatics.Init();
   }
 
   /** This function is called periodically during operator control. */
@@ -839,6 +840,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
       if(stick.getRawButtonPressed(5)){
         pneumatics.CompOnOffOn();
+      }
+
+      if(stick.getRawButtonPressed(6)){ 
+        pneumatics.SolBreak();
       }
   }
 

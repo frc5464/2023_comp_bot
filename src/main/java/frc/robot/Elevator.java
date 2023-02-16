@@ -201,7 +201,7 @@ public class Elevator {
                 //elExtendPid.setReference(extDangerZoneInner, CANSparkMax.ControlType.kPosition);
             }
             else if(avoidingExtDangerZoneOuter){
-                elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
+                //elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
             }
             else{
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
