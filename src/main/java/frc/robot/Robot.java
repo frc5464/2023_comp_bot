@@ -114,10 +114,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     gyro.DisplayStats();
     vision.DisplayStats();
 
+    pneumatics.DisplayPressure();
+
     vision.ReturnBestTargetXY(); 
 
     intake.DistanceCheck();
-
+    
     // the 'back' key will run the 'zeroing' process for elevator safety
     if(stick.getRawButtonPressed(7)){
       zeroed = elevator.zeroRotations();

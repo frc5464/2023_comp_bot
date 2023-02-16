@@ -1,9 +1,12 @@
 package frc.robot;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Pneumatics {
 
@@ -53,7 +56,10 @@ public void SolBreak(){
         pcm3.set(Value.kForward);
         pcm4.set(Value.kForward);
     }
+}
 
+public void DisplayPressure(){
+    SmartDashboard.getNumber("Compressor's Pressure", compressor.getPressure());
 }
 
 }
