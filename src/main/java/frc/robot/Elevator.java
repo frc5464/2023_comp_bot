@@ -54,9 +54,9 @@ public class Elevator {
     private static final String kScoreLowConeCube = "ScoreLowCube";
 
     //TODO: Manually find the correct rotational values that are a few inches away from hitting those cylinders!
-    double extDangerZoneInner = 20;
-    double extDangerZoneOuter = 35;
-    double winchDangerZone = 30;
+    double extDangerZoneInner = 34;
+    double extDangerZoneOuter = 54;
+    double winchDangerZone = 40;
     boolean avoidingExtDangerZoneInner = false;
     boolean avoidingExtDangerZoneOuter = false;
     boolean avoidingwinchDangerZone = false;
