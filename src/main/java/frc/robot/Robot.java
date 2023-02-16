@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  boolean elManualMode = true;
-
+  boolean elManualMode = false;
+  boolean zeroed = false;
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
@@ -111,8 +111,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   @Override
   public void robotPeriodic() {
     drivetrain.DisplayStats();
-    elevator.DisplayStats();
-    elevator.checkForPidChanges();
+    elevator.PeriodicTasks();
     gyro.DisplayStats();
     vision.DisplayStats();
 
@@ -122,7 +121,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     // the 'back' key will run the 'zeroing' process for elevator safety
     if(stick.getRawButtonPressed(7)){
-      elevator.zeroRotations();
+      zeroed = elevator.zeroRotations();
+      if(zeroed){ 
+        if(elManualMode){Leds.Manualmode();}
+        else{ Leds.Pidmode();}
+      }
     }
 
   }
@@ -710,11 +713,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     // this is the MANUAL OVERRIDE to the PID loop
-    // For now, this will be the following id:
+    // TODO: PUT THIS IN ROBOTPERIODIC!
     if(stick.getRawButtonPressed(8)){
       if(elManualMode){
         System.out.println("We're in automatic mode!");
-        Leds.Pidmode();
+        if(zeroed){Leds.Pidmode();}
+        else{Leds.QuestionError();}
         elManualMode = false;
       }
       else{
@@ -723,6 +727,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         elManualMode = true;
       }
     }
+
+
+
+
     if(elManualMode){
       if(stick.getRawButton(3)){
         elevator.Extend();

@@ -1,12 +1,11 @@
 package frc.robot;
 
-import com.fasterxml.jackson.databind.util.PrimitiveArrayBuilder;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -52,7 +51,19 @@ public class Elevator {
     private static final String kCubePickupLow = "CubePickupLow";
     private static final String kScoreHighCube = "ScoreHighCube"; 
     private static final String kScoreMidCube = "ScoreMidCube"; 
-    private static final String kScoreLowConeCube = "ScoreLowCube"; 
+    private static final String kScoreLowConeCube = "ScoreLowCube";
+
+    //TODO: Manually find the correct rotational values that are a few inches away from hitting those cylinders!
+    double extDangerZoneInner = 20;
+    double extDangerZoneOuter = 35;
+    double winchDangerZone = 30;
+    boolean avoidingExtDangerZoneInner = false;
+    boolean avoidingExtDangerZoneOuter = false;
+    boolean avoidingwinchDangerZone = false;
+    boolean extOnInnerSide = true;
+
+    double extCurrentRotations;
+    double winchCurrentRotations;
 
     // ============================================= Public Functions
     public void Init(){
@@ -74,14 +85,28 @@ public class Elevator {
         elextend.setIdleMode(IdleMode.kBrake);
     }
 
-    public void DisplayStats(){
-        SmartDashboard.putNumber("extension encoder",elExtendEncoder.getPosition());
-        SmartDashboard.putNumber("winch encoder",elWinchEncoder.getPosition());
+    public void PeriodicTasks(){
+        // check our encoder values once per tick
+        extCurrentRotations = elExtendEncoder.getPosition();
+        winchCurrentRotations = elWinchEncoder.getPosition();
+        
+        dangerZoneAvoidance();
+        checkForPidChanges();
+
+        SmartDashboard.putNumber("extension encoder",extCurrentRotations);
+        SmartDashboard.putNumber("winch encoder",winchCurrentRotations);
         SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
         SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
-        SmartDashboard.putBoolean("Rectract Limit Switch", elRetractLimitSwitch.get());
+        SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
+
+        SmartDashboard.putBoolean("avoidingExtDangerZoneInner", avoidingExtDangerZoneInner);
+        SmartDashboard.putBoolean("AvoidingExtDangerZoneOuter", avoidingExtDangerZoneInner);
+        SmartDashboard.putBoolean("avoidingwinchDangerZone", avoidingwinchDangerZone);
+        SmartDashboard.putBoolean("extOnInnerSide", extOnInnerSide);
+
+
     }
 
     public void checkForPidChanges(){
@@ -146,19 +171,18 @@ public class Elevator {
         if(elExtendLimitSwitch.get() == false){
             elextend.set(0.7);
         }
-            else{
-                elextend.set(0);
-            }
+        else{
+            elextend.set(0);
+        }
     }
 
-    
     public void Retract(){
         if(elRetractLimitSwitch.get() == false){
             elextend.set(-0.7);
         }
-            else{
-                elextend.set(0);
-            }
+        else{
+            elextend.set(0);
+        }
     }
 
     public void Shutdown(){
@@ -173,8 +197,98 @@ public class Elevator {
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+            // if(avoidingExtDangerZoneInner){
+            //     elExtendPid.setReference(extDangerZoneInner, CANSparkMax.ControlType.kPosition);
+            // }
+            // else if(avoidingExtDangerZoneOuter){
+            //     elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
+            // }
+            // else{
+            //     elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+            // }
+
+            // if(avoidingwinchDangerZone){
+            //     elWinchPid.setReference(winchDangerZone, CANSparkMax.ControlType.kPosition);
+            // }
+            // else{
+            //     elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+            // }
+
+            // TODO: change out these two lines with the stuff above to have things (hopefully) run safer
             elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+            elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+        }
+    }
+
+    public void dangerZoneAvoidance(){
+        // This method sets three flags:
+        //  - avoidingExtDangerZoneInner: Keep us from banging into the pneumatic pistons while extending
+        //  - avoidingExtDangerZoneOuter: Keep us from banging into the pneumatic pistons while retracting
+        //  - avoidingwinchDangerZone   : Keep us from banging into the pneumatic pistones while rotating
+        
+        // A few cases exist here.
+        // 1. Winch is low, moving high, and extension has to wait until we are rotated out
+        // 2. Winch is high, moving low, and the extension must be in/out before the winch moves
+        // In no routine will we simply 'pass' the danger zone.
+
+        extOnInnerSide = true;
+        
+        // Check which side of the danger zone we are on
+        if(extCurrentRotations < extDangerZoneInner){
+            extOnInnerSide = true;
+        }
+        else if(extCurrentRotations > extDangerZoneOuter){
+            extOnInnerSide = false;
+        }
+        else{
+            // this means we are hitting things. Oh no!
+            System.out.println("Elevator says: oops I might be hitting things.");
+        } 
+        
+        // Check if we in the danger zone (case 1)
+        if(elWinchEncoder.getPosition() < winchDangerZone){
+            
+            // See if we are wanting to move outward
+            if(extOnInnerSide && (extTargetRotations > extDangerZoneInner)){
+                // This is where we temporarily set our PID to not go into the danger zone
+                // It will 'snap' us into place right at the edge the danger zone
+                // This will be cleared when the winch is high enough
+                avoidingExtDangerZoneInner = true;
+            }
+
+            // See if we are wanting to move inward
+            else if((!extOnInnerSide) && (extTargetRotations < extDangerZoneOuter)){
+                // This is where we temporarily set our PID to not go into the danger zone
+                // It will 'snap' us into place right at the edge of the danger zone
+                // This will be cleared when the winch is high enough
+                avoidingExtDangerZoneOuter = true;              
+            }
+            else{
+                avoidingExtDangerZoneInner = false;
+                avoidingExtDangerZoneOuter = false;                
+            }
+        }
+
+        // Check if we are going to the danger zone with the winch (case 2)
+        else if((winchCurrentRotations > winchDangerZone) && (winchTargetRotations < winchDangerZone)){
+            
+            // See if we need to wait for the extension to get on the correct side of the danger zone
+            if((!extOnInnerSide) && (extTargetRotations < extDangerZoneInner)){
+                avoidingwinchDangerZone = true;
+            }
+            else if(extOnInnerSide && (extTargetRotations > extDangerZoneOuter)){
+                avoidingwinchDangerZone = true;
+            }
+            else{
+                avoidingwinchDangerZone = false;
+            }
+        }
+
+        // This is the case where all is good in the world. No danger present.
+        else{
+            avoidingExtDangerZoneInner = false;
+            avoidingExtDangerZoneOuter = false;
+            avoidingwinchDangerZone = false;
         }
     }
 
@@ -304,6 +418,5 @@ public class Elevator {
         SmartDashboard.putNumber("winch Set Rotations", winchTargetRotations);    
         
     }
-
 
 }
