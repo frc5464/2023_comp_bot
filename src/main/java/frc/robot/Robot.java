@@ -827,10 +827,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.HybridPickConeCube();
     }
 
-    if(stick2.getRawButtonPressed(8)){
-      pneumatics.ToggleSolenoids();
-    }
-
     if(stick2.getRawButtonPressed(9)){
       PDThing.setSwitchableChannel(true);
     }

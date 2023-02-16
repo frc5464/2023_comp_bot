@@ -56,13 +56,6 @@ public void SolBreak(){
 
 }
 
-public void ToggleSolenoids(){
-    pcm1.toggle();
-    pcm2.toggle();
-    pcm3.toggle();
-    pcm4.toggle();
-}
-
 }
 
 
