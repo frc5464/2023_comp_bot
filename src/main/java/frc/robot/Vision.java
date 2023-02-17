@@ -13,49 +13,40 @@ public class Vision {
     // ============================================== Public Variables
     // What we want the rest of the robot to know
 
-    public double camerax;
-    public double cameray;
+    public double USBcamerax;
+    public double USBcameray;
     public boolean hasTargets;
     // ============================================== Private Variables
     // What the rest of the robot does not care about
     
     //Camera 
     private PhotonCamera camera = new PhotonCamera("apriltags");
+    private PhotonCamera USBcamera = new PhotonCamera("reflective");
     
     // ============================================= Public Functions
     public void Init(){
         // put one-time setup steps here
-
+        USBcamera.setPipelineIndex(0);
     }
 
     public void ReturnBestTargetXY(){
-        var result = camera.getLatestResult();
+        var result = USBcamera.getLatestResult();
         hasTargets = result.hasTargets();
         
         if(hasTargets){
           PhotonTrackedTarget target = result.getBestTarget();
-          cameray = target.getPitch();
-          camerax = target.getYaw();
+          USBcameray = target.getPitch();
+          USBcamerax = target.getYaw();
         }
     }
 
-    public void changeVisionType(String selection){
-        if(selection == "reflective"){
-            camera.setPipelineIndex(1);
-        }
-        else if(selection == "apriltags"){
-            camera.setPipelineIndex(0);
-        }
-        else{
-            System.out.println("wrong vision type selected!");
-        }       
-    }
 
     public void DisplayStats(){
         SmartDashboard.putBoolean("Target?", hasTargets);
-        SmartDashboard.putNumber("targetx", camerax);
-        SmartDashboard.putNumber("targety", cameray);
+        SmartDashboard.putNumber("targetx", USBcamerax);
+        SmartDashboard.putNumber("targety", USBcameray);
     }
     // ============================================= Private Functions
+
            
 }
