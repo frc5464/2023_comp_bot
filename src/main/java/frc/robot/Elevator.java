@@ -215,35 +215,16 @@ public class Elevator {
         elwinch.set(val);
     }
 
-
-
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            if(avoidingExtDangerZoneInner){
-                //elExtendPid.setReference(extDangerZoneInner, CANSparkMax.ControlType.kPosition);
-            }
-            else if(avoidingExtDangerZoneOuter){
-                //elExtendPid.setReference(extDangerZoneOuter, CANSparkMax.ControlType.kPosition);
-            }
-            else{
+            if(safe_to_extend){
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
-
-            if(avoidingwinchDangerZone){
-                elWinchPid.setReference(winchDangerZone, CANSparkMax.ControlType.kPosition);
-            }
             else{
-                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
+                elExtendPid.setReference(extCurrentRotations, CANSparkMax.ControlType.kPosition);
             }
-
-            // TODO: change out these two lines with the stuff above to have things (hopefully) run safer
-            // elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
-            // elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
-        }
-        else{
-            elwinch.set(0);
-            elextend.set(0);
+                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
         }
     }
 
@@ -392,8 +373,8 @@ public class Elevator {
         extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0.25; 
-        extMinOutput = -0.25;
+        extMaxOutput = 0.6; 
+        extMinOutput = -0.6;
 
         // set PID coefficients
         elExtendPid.setP(extP);
