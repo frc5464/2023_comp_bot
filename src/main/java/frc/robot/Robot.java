@@ -73,6 +73,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     Leds.Init();
     drivetrain.Init();
     pneumatics.Init();
+    vision.Init();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
 
@@ -135,6 +136,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         if(zeroed){Leds.Pidmode();}
         else{Leds.QuestionError();}
         elManualMode = false;
+        
       }
       else{
         if(zeroed){Leds.Manualmode();}
@@ -152,9 +154,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // flag indicating we are lined up
     boolean ready = false;
 
-    double xcord = vision.camerax;
-    double ycord = vision.cameray;
-    vision.changeVisionType("reflective"); 
+    double xcord = vision.USBcamerax;
+    double ycord = vision.USBcameray;
+    //vision.changeVisionType("reflective"); 
     
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
@@ -725,14 +727,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   @Override
   public void teleopPeriodic() {
     
-    drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+    if(stick.getRawAxis(2) > 0.1){
+      drivetrain.Move(-stick.getRawAxis(1), vision.USBcamerax/120, stick.getRawAxis(0)); 
+    }
+    else{
+      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+    }
 
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
-
-
-
-
-
 
     if(elManualMode){
       if(stick.getRawButton(3)){
