@@ -24,13 +24,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
-  boolean elManualMode = false;
+  boolean elManualMode = true;
   boolean zeroed = false;
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
 
-  PowerDistribution PDThing = new PowerDistribution(0,ModuleType.kCTRE);
+  PowerDistribution PDThing = new PowerDistribution(1,ModuleType.kCTRE);
 
    //Charge station autonomous
    private static final String kTokyoDrift = "Tokyo Drift";
@@ -94,9 +94,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.QuestionError();
       System.out.println("Not zeroed!");
     }
-      else{
-        Leds.Pidmode();
-        System.out.println("ALL GOOD! PID INITALIZED");
+    else{
+      System.out.println("ALL GOOD! PID INITALIZED");
      }
   }
 
@@ -126,6 +125,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       if(zeroed){ 
         if(elManualMode){Leds.Manualmode();}
         else{ Leds.Pidmode();}
+      }
+    }
+
+    // this is the MANUAL OVERRIDE to the PID loop
+    if(stick.getRawButtonPressed(8)){
+      if(elManualMode){
+        System.out.println("We're in automatic mode!");
+        if(zeroed){Leds.Pidmode();}
+        else{Leds.QuestionError();}
+        elManualMode = false;
+      }
+      else{
+        if(zeroed){Leds.Manualmode();}
+        
+        System.out.println("We're in manual mode!");
+        elManualMode = true;
       }
     }
 
@@ -714,21 +729,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
-    // this is the MANUAL OVERRIDE to the PID loop
-    // TODO: PUT THIS IN ROBOTPERIODIC!
-    if(stick.getRawButtonPressed(8)){
-      if(elManualMode){
-        System.out.println("We're in automatic mode!");
-        if(zeroed){Leds.Pidmode();}
-        else{Leds.QuestionError();}
-        elManualMode = false;
-      }
-      else{
-        Leds.Manualmode();
-        System.out.println("We're in manual mode!");
-        elManualMode = true;
-      }
-    }
+
 
 
 
@@ -829,18 +830,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.HybridPickConeCube();
     }
 
-    if(stick2.getRawButtonPressed(9)){
+    if(stick2.getRawButton(9)){
       PDThing.setSwitchableChannel(true);
     }
-      else{
-        PDThing.setSwitchableChannel(false);
-      }
+    else{
+      PDThing.setSwitchableChannel(false);
+    }
 
-      if(stick.getRawButtonPressed(5)){
+      if(stick.getRawButtonPressed(9)){
         pneumatics.CompOnOffOn();
       }
 
-      if(stick.getRawButtonPressed(6)){ 
+      if(stick.getRawButtonPressed(10)){ 
         pneumatics.SolBreak();
       }
   }

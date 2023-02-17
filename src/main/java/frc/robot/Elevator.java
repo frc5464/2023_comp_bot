@@ -65,6 +65,8 @@ public class Elevator {
     double extCurrentRotations;
     double winchCurrentRotations;
 
+    boolean safe_to_extend = false;
+
     // ============================================= Public Functions
     public void Init(){
         elExtendEncoder = elextend.getEncoder();
@@ -92,7 +94,8 @@ public class Elevator {
         
         dangerZoneAvoidance();
         checkForPidChanges();
-
+        checkForSafeToExtend();
+        
         SmartDashboard.putNumber("extension encoder",extCurrentRotations);
         SmartDashboard.putNumber("winch encoder",winchCurrentRotations);
         SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
@@ -106,6 +109,16 @@ public class Elevator {
         SmartDashboard.putBoolean("avoidingwinchDangerZone", avoidingwinchDangerZone);
         SmartDashboard.putBoolean("extOnInnerSide", extOnInnerSide);
 
+
+    }
+
+    public void checkForSafeToExtend(){
+        if (winchCurrentRotations < winchDangerZone){
+           safe_to_extend = false;
+        }
+        else{
+            safe_to_extend = true;
+        }
 
     }
 
@@ -169,7 +182,11 @@ public class Elevator {
 
     public void Extend(){
         if(elExtendLimitSwitch.get() == false){
-            elextend.set(0.7);
+            if(safe_to_extend){
+                if(elevator_zeroed){
+                elextend.set(0.7);
+            }
+        }
         }
         else{
             elextend.set(0);
@@ -178,7 +195,11 @@ public class Elevator {
 
     public void Retract(){
         if(elRetractLimitSwitch.get() == false){
-            elextend.set(-0.7);
+            if(safe_to_extend){
+                if(elevator_zeroed){
+                elextend.set(-0.7);
+            }
+            }
         }
         else{
             elextend.set(0);
@@ -193,6 +214,8 @@ public class Elevator {
     public void jogWinch(double val){
         elwinch.set(val);
     }
+
+
 
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
@@ -217,6 +240,10 @@ public class Elevator {
             // TODO: change out these two lines with the stuff above to have things (hopefully) run safer
             // elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             // elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
+        }
+        else{
+            elwinch.set(0);
+            elextend.set(0);
         }
     }
 
