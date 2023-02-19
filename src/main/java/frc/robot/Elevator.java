@@ -16,10 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Elevator {
     // ============================================== Public Variables
     // Variables we want the rest of the robot to know about
-    
-    // these strings will deteremine what position we go to
-    public String extPosition;
-    public String winchPosition;
 
     // this is the motor safety flag which prevents us from moving winch/ext until we zero things out
     public boolean elevator_zeroed = false;
@@ -53,22 +49,14 @@ public class Elevator {
     private static final String kScoreMidCube = "ScoreMidCube"; 
     private static final String kScoreLowConeCube = "ScoreLowCube";
 
-    //TODO: Manually find the correct rotational values that are a few inches away from hitting those cylinders!
-    double extDangerZoneInner = 34;
-    double extDangerZoneOuter = 54;
-    double winchDangerZone = 40;
-    boolean avoidingExtDangerZoneInner = false;
-    boolean avoidingExtDangerZoneOuter = false;
-    boolean avoidingwinchDangerZone = false;
-    boolean extOnInnerSide = true;
 
+    double winchDangerZone = 40;
     double extCurrentRotations = 10;
     double winchCurrentRotations = 10;
 
     boolean extend_zone_ok = false;
     boolean retract_zone_ok = false;
     boolean winch_up_zone_ok = false;
-
     boolean waiting_for_ext = false;
 
 
@@ -93,6 +81,9 @@ public class Elevator {
     }
 
     public void PeriodicTasks(){
+        // TODO: Hey guess what we should put a physical digitalInput button to zero things.
+        // TODO: Work with fab to get a button/switch wired in that they can push on the field.
+        
         // check our encoder values once per tick
         extCurrentRotations = elExtendEncoder.getPosition();
         winchCurrentRotations = elWinchEncoder.getPosition();
@@ -109,7 +100,6 @@ public class Elevator {
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
         SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
-
         SmartDashboard.putBoolean("Safe to extend?", extend_zone_ok);
         SmartDashboard.putBoolean("Safe to retract?", retract_zone_ok);
         SmartDashboard.putBoolean("Safe to winch up?", winch_up_zone_ok);
@@ -120,8 +110,7 @@ public class Elevator {
         // Check that we are not extending in the dangerous "low zone"
         if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations < 80)){
             // Check the we are not near the limits of the extension zone
-                extend_zone_ok = true;
-            //extend_zone_ok = true;   // REMOVE THIS LINE OF CODE LATER
+            extend_zone_ok = true;
         }
         else{
             extend_zone_ok = false;
@@ -132,8 +121,7 @@ public class Elevator {
         // Check that we are not extending in the dangerous "low zone"
         if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations > 5)){
             // Check the we are not near the limits of the extension zone
-                retract_zone_ok = true;
-           // retract_zone_ok = true;   // REMOVE THIS LINE OF CODE LATER
+            retract_zone_ok = true;
         }
         else{
             retract_zone_ok = false;
