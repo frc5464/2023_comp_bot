@@ -34,7 +34,7 @@ public class Drivetrain {
 
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
-    double rampRate = 0.25;
+    double rampRate = 0.1;
 
 
     

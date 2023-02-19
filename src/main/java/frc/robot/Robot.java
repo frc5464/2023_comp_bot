@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,6 +27,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   boolean elManualMode = true;
   boolean zeroed = false;
+  Timer sorryEva = new Timer();
+
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
@@ -91,13 +94,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     score_preset_chooser.addOption("Low", kLow);
     SmartDashboard.putData("Score Preset Choices", score_preset_chooser);
 
-    if(elevator.zeroRotations() == false){
-      Leds.QuestionError();
-      System.out.println("Not zeroed!");
-    }
-    else{
-      System.out.println("ALL GOOD! PID INITALIZED");
-     }
+    // if(elevator.zeroRotations() == false){
+    //   Leds.QuestionError();
+    //   System.out.println("Not zeroed!");
+    // }
+    // else{
+    //   System.out.println("ALL GOOD! PID INITALIZED");
+    //  }
+
+    Leds.QuestionError();
   }
 
   /**
@@ -673,6 +678,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
     System.out.println("Preset selected: " + score_preset_selected);
+
+    sorryEva.stop();
+    sorryEva.reset();
+    sorryEva.start();
   }
 
     /** This function is called periodically during autonomous. */
@@ -737,20 +746,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     if(elManualMode){
-      if(stick.getRawButton(3)){
+      if(stick2.getRawButton(3)){
         elevator.Extend();
       }
-      else if(stick.getRawButton(4)){
+      else if(stick2.getRawButton(4)){
         elevator.Retract();
       }
       else{
         elevator.Shutdown();
       }     
-      if(stick.getRawButton(2)){
-        elevator.jogWinch(1);
+      if(stick2.getRawButton(1)){
+        elevator.jogWinch(0.7);
       }
-      else if(stick.getRawButton(1)){
-        elevator.jogWinch(-1);
+      else if(stick2.getRawButton(2)){
+        elevator.jogWinch(-0.7);
       }
       else{
         elevator.jogWinch(0);
@@ -782,7 +791,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
     //Encoders
-    if(stick2.getRawButtonPressed(5)){
+    if(stick2.getRawButtonPressed(7)){
       elevator.setElevatorPosition("Drive");
       //Leds stay in PID
     }
@@ -798,7 +807,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
     
     if(stick2.getRawButtonPressed(4)){
-      elevator.setElevatorPosition("ScoreHighCone");
+       elevator.setElevatorPosition("ScoreHighCone");
       Leds.PickCone();
     }
 
@@ -840,18 +849,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
       if(stick.getRawButtonPressed(9)){
-        pneumatics.CompOnOffOn();
+        //pneumatics.CompOnOffOn();
       }
 
       if(stick.getRawButtonPressed(10)){ 
-        pneumatics.SolBreak();
+        //pneumatics.SolBreak();
       }
-  }
+
+    }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    elevator.setElevatorToCoast();
+    elevator.setElevatorToBrake();
   }
 
   /** This function is called periodically when disabled. */
