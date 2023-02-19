@@ -65,9 +65,12 @@ public class Elevator {
     double extCurrentRotations = 10;
     double winchCurrentRotations = 10;
 
-    boolean safe_to_extend = false;
-    boolean safe_to_retract = false;
-    boolean safe_to_winch_up = false;
+    boolean extend_zone_ok = false;
+    boolean retract_zone_ok = false;
+    boolean winch_up_zone_ok = false;
+
+    boolean waiting_for_ext = false;
+
 
     // ============================================= Public Functions
     public void Init(){
@@ -107,9 +110,9 @@ public class Elevator {
         SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
 
-        SmartDashboard.putBoolean("Safe to extend?", safe_to_extend);
-        SmartDashboard.putBoolean("Safe to retract?", safe_to_retract);
-        SmartDashboard.putBoolean("Safe to winch up?", safe_to_winch_up);
+        SmartDashboard.putBoolean("Safe to extend?", extend_zone_ok);
+        SmartDashboard.putBoolean("Safe to retract?", retract_zone_ok);
+        SmartDashboard.putBoolean("Safe to winch up?", winch_up_zone_ok);
 
     }
 
@@ -117,11 +120,11 @@ public class Elevator {
         // Check that we are not extending in the dangerous "low zone"
         if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations < 80)){
             // Check the we are not near the limits of the extension zone
-                safe_to_extend = true;
-            //safe_to_extend = true;   // REMOVE THIS LINE OF CODE LATER
+                extend_zone_ok = true;
+            //extend_zone_ok = true;   // REMOVE THIS LINE OF CODE LATER
         }
         else{
-            safe_to_extend = false;
+            extend_zone_ok = false;
         }
     }
 
@@ -129,20 +132,20 @@ public class Elevator {
         // Check that we are not extending in the dangerous "low zone"
         if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations > 5)){
             // Check the we are not near the limits of the extension zone
-                safe_to_retract = true;
-           // safe_to_retract = true;   // REMOVE THIS LINE OF CODE LATER
+                retract_zone_ok = true;
+           // retract_zone_ok = true;   // REMOVE THIS LINE OF CODE LATER
         }
         else{
-            safe_to_retract = false;
+            retract_zone_ok = false;
         }
     }
 
     public void checkForSafeToRotate(){
         if(winchCurrentRotations < 130){
-            safe_to_winch_up = true;
+            winch_up_zone_ok = true;
         }
         else{
-            safe_to_winch_up = false;
+            winch_up_zone_ok = false;
         }
     }
 
@@ -206,7 +209,7 @@ public class Elevator {
 
     public void Extend(){
         if(elExtendLimitSwitch.get() == false){
-            if(safe_to_extend){
+            if(extend_zone_ok){
                 if(elevator_zeroed){
                 elextend.set(0.6);
             }
@@ -219,7 +222,7 @@ public class Elevator {
 
     public void Retract(){
         if(elRetractLimitSwitch.get() == false){
-            if(safe_to_retract){
+            if(retract_zone_ok){
                 if(elevator_zeroed){
                     elextend.set(-0.6);
             }
@@ -242,22 +245,30 @@ public class Elevator {
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            if(safe_to_extend && safe_to_retract){
+            if(extend_zone_ok && retract_zone_ok){
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
-            else if(!safe_to_extend){
+            else if(!extend_zone_ok){
                 elextend.set(-0.3);    //move us backwards a bit
             }
-            else if(!safe_to_retract){
+            else if(!retract_zone_ok){
                 elextend.set(0.3);  //move us forward a bit
             }
 
-            if(safe_to_winch_up){
+            if(winch_up_zone_ok && !waiting_for_ext){
                 elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             }
             else{
                 elwinch.set(-0.3);  // back it off a bit yo
             }
+
+            // Check for the extension/retraction homing hitting its target
+            if(waiting_for_ext){
+                if(Math.abs(extCurrentRotations - extTargetRotations) < 5){
+                    waiting_for_ext = false;
+                }
+            }
+
         }
     }
 
@@ -277,6 +288,12 @@ public class Elevator {
     }
 
     public void setElevatorPosition(String str){
+        // Check if we are above the danger zone, and moving into it!
+        // If this is the case, extension/retraction must be complete before rotation.
+        if((winchCurrentRotations > winchDangerZone)&&(winchTargetRotations < winchDangerZone)){
+            waiting_for_ext = true;
+        }
+        
         switch (str){
             case kDrive:
                 winchTargetRotations = 83;
