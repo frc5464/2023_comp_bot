@@ -62,10 +62,12 @@ public class Elevator {
     boolean avoidingwinchDangerZone = false;
     boolean extOnInnerSide = true;
 
-    double extCurrentRotations;
-    double winchCurrentRotations;
+    double extCurrentRotations = 10;
+    double winchCurrentRotations = 10;
 
     boolean safe_to_extend = false;
+    boolean safe_to_retract = false;
+    boolean safe_to_winch_up = false;
 
     // ============================================= Public Functions
     public void Init(){
@@ -92,9 +94,10 @@ public class Elevator {
         extCurrentRotations = elExtendEncoder.getPosition();
         winchCurrentRotations = elWinchEncoder.getPosition();
         
-        dangerZoneAvoidance();
         checkForPidChanges();
         checkForSafeToExtend();
+        checkForSafeToRetract();
+        checkForSafeToRotate();
         
         SmartDashboard.putNumber("extension encoder",extCurrentRotations);
         SmartDashboard.putNumber("winch encoder",winchCurrentRotations);
@@ -104,22 +107,43 @@ public class Elevator {
         SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
 
-        SmartDashboard.putBoolean("avoidingExtDangerZoneInner", avoidingExtDangerZoneInner);
-        SmartDashboard.putBoolean("AvoidingExtDangerZoneOuter", avoidingExtDangerZoneInner);
-        SmartDashboard.putBoolean("avoidingwinchDangerZone", avoidingwinchDangerZone);
-        SmartDashboard.putBoolean("extOnInnerSide", extOnInnerSide);
-
+        SmartDashboard.putBoolean("Safe to extend?", safe_to_extend);
+        SmartDashboard.putBoolean("Safe to retract?", safe_to_retract);
+        SmartDashboard.putBoolean("Safe to winch up?", safe_to_winch_up);
 
     }
 
     public void checkForSafeToExtend(){
-        if (winchCurrentRotations < winchDangerZone){
-           safe_to_extend = false;
+        // Check that we are not extending in the dangerous "low zone"
+        if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations < 80)){
+            // Check the we are not near the limits of the extension zone
+                safe_to_extend = true;
+            //safe_to_extend = true;   // REMOVE THIS LINE OF CODE LATER
         }
         else{
-            safe_to_extend = true;
+            safe_to_extend = false;
         }
+    }
 
+    public void checkForSafeToRetract(){
+        // Check that we are not extending in the dangerous "low zone"
+        if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations > 5)){
+            // Check the we are not near the limits of the extension zone
+                safe_to_retract = true;
+           // safe_to_retract = true;   // REMOVE THIS LINE OF CODE LATER
+        }
+        else{
+            safe_to_retract = false;
+        }
+    }
+
+    public void checkForSafeToRotate(){
+        if(winchCurrentRotations < 130){
+            safe_to_winch_up = true;
+        }
+        else{
+            safe_to_winch_up = false;
+        }
     }
 
     public void checkForPidChanges(){
@@ -184,7 +208,7 @@ public class Elevator {
         if(elExtendLimitSwitch.get() == false){
             if(safe_to_extend){
                 if(elevator_zeroed){
-                elextend.set(0.7);
+                elextend.set(0.6);
             }
         }
         }
@@ -195,9 +219,9 @@ public class Elevator {
 
     public void Retract(){
         if(elRetractLimitSwitch.get() == false){
-            if(safe_to_extend){
+            if(safe_to_retract){
                 if(elevator_zeroed){
-                elextend.set(-0.7);
+                    elextend.set(-0.6);
             }
             }
         }
@@ -218,94 +242,31 @@ public class Elevator {
     public void pidControl(){
         // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
         if(elevator_zeroed){
-            if(safe_to_extend){
+            if(safe_to_extend && safe_to_retract){
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
-            else{
-                elExtendPid.setReference(extCurrentRotations, CANSparkMax.ControlType.kPosition);
+            else if(!safe_to_extend){
+                elextend.set(-0.3);    //move us backwards a bit
             }
+            else if(!safe_to_retract){
+                elextend.set(0.3);  //move us forward a bit
+            }
+
+            if(safe_to_winch_up){
                 elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
-        }
-    }
-
-    public void dangerZoneAvoidance(){
-        // This method sets three flags:
-        //  - avoidingExtDangerZoneInner: Keep us from banging into the pneumatic pistons while extending
-        //  - avoidingExtDangerZoneOuter: Keep us from banging into the pneumatic pistons while retracting
-        //  - avoidingwinchDangerZone   : Keep us from banging into the pneumatic pistones while rotating
-        
-        // A few cases exist here.
-        // 1. Winch is low, moving high, and extension has to wait until we are rotated out
-        // 2. Winch is high, moving low, and the extension must be in/out before the winch moves
-        // In no routine will we simply 'pass' the danger zone.
-
-        extOnInnerSide = true;
-        
-        // Check which side of the danger zone we are on
-        if(extCurrentRotations < extDangerZoneInner){
-            extOnInnerSide = true;
-        }
-        else if(extCurrentRotations > extDangerZoneOuter){
-            extOnInnerSide = false;
-        }
-        else{
-            // this means we are hitting things. Oh no!
-            System.out.println("Elevator says: oops I might be hitting things.");
-        } 
-        
-        // Check if we in the danger zone (case 1)
-        if(elWinchEncoder.getPosition() < winchDangerZone){
-            
-            // See if we are wanting to move outward
-            if(extOnInnerSide && (extTargetRotations > extDangerZoneInner)){
-                // This is where we temporarily set our PID to not go into the danger zone
-                // It will 'snap' us into place right at the edge the danger zone
-                // This will be cleared when the winch is high enough
-                avoidingExtDangerZoneInner = true;
-            }
-
-            // See if we are wanting to move inward
-            else if((!extOnInnerSide) && (extTargetRotations < extDangerZoneOuter)){
-                // This is where we temporarily set our PID to not go into the danger zone
-                // It will 'snap' us into place right at the edge of the danger zone
-                // This will be cleared when the winch is high enough
-                avoidingExtDangerZoneOuter = true;              
             }
             else{
-                avoidingExtDangerZoneInner = false;
-                avoidingExtDangerZoneOuter = false;                
+                elwinch.set(-0.3);  // back it off a bit yo
             }
-        }
-
-        // Check if we are going to the danger zone with the winch (case 2)
-        else if((winchCurrentRotations > winchDangerZone) && (winchTargetRotations < winchDangerZone)){
-            
-            // See if we need to wait for the extension to get on the correct side of the danger zone
-            if((!extOnInnerSide) && (extTargetRotations < extDangerZoneInner)){
-                avoidingwinchDangerZone = true;
-            }
-            else if(extOnInnerSide && (extTargetRotations > extDangerZoneOuter)){
-                avoidingwinchDangerZone = true;
-            }
-            else{
-                avoidingwinchDangerZone = false;
-            }
-        }
-
-        // This is the case where all is good in the world. No danger present.
-        else{
-            avoidingExtDangerZoneInner = false;
-            avoidingExtDangerZoneOuter = false;
-            avoidingwinchDangerZone = false;
         }
     }
 
     public boolean zeroRotations(){
       // check our limit switches to make sure that we are actually at the zero point
       // this should prevent the possibility of zeroing during a match
-      if(elRetractLimitSwitch.get() && elRotateLimitSwitch.get()){
+      if(elRetractLimitSwitch.get()){
         elExtendEncoder.setPosition(0);
-        elWinchEncoder.setPosition(0);
+        elWinchEncoder.setPosition(130);
         elevator_zeroed = true;
         System.out.println("Elevator zeroed out!");
       }
@@ -319,7 +280,7 @@ public class Elevator {
         switch (str){
             case kDrive:
                 winchTargetRotations = 83;
-                extTargetRotations = 0;
+                extTargetRotations = 8;
                 break;
             case kConePickupHigh:
                 winchTargetRotations = 66;
@@ -355,10 +316,10 @@ public class Elevator {
                 break;
             case kScoreLowConeCube:
                 winchTargetRotations = 37;
-                extTargetRotations = 0;
+                extTargetRotations = 8;
                 break;
             default: 
-                extTargetRotations = 0;
+                extTargetRotations = 8;
                 winchTargetRotations = 83;    
                 System.out.println("Default elevator val");
         }
