@@ -20,7 +20,7 @@ public class Vision {
     // What the rest of the robot does not care about
     
     //Camera 
-    private PhotonCamera camera = new PhotonCamera("apriltags");
+    private PhotonCamera piCamera = new PhotonCamera("apriltags");
     private PhotonCamera USBcamera = new PhotonCamera("reflective");
     
     // ============================================= Public Functions

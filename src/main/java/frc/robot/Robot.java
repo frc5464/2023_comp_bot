@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   boolean elManualMode = true;
   boolean zeroed = false;
-  Timer sorryEva = new Timer();
+  Timer exampleTimer = new Timer();
 
   //Joystick
   Joystick stick = new Joystick(0);
@@ -93,15 +93,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     score_preset_chooser.addOption("Mid", kMid);
     score_preset_chooser.addOption("Low", kLow);
     SmartDashboard.putData("Score Preset Choices", score_preset_chooser);
-
-    // if(elevator.zeroRotations() == false){
-    //   Leds.QuestionError();
-    //   System.out.println("Not zeroed!");
-    // }
-    // else{
-    //   System.out.println("ALL GOOD! PID INITALIZED");
-    //  }
-
     Leds.QuestionError();
   }
 
@@ -126,6 +117,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     intake.DistanceCheck();
     
     // the 'back' key will run the 'zeroing' process for elevator safety
+    // TODO: Give Clayton (stick2) control over manualmode
     if(stick.getRawButtonPressed(7)){
       zeroed = elevator.zeroRotations();
       if(zeroed){ 
@@ -186,26 +178,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       
       case kHigh:
         elevator.setElevatorPosition("ScoreHighCone");
-          ready = true;
+         // ready = true;
         break;
 
       case kMid:
         elevator.setElevatorPosition("ScoreHScoreMidCone");
-          ready = true;
+         // ready = true;
         break;
 
       case kLow:
         elevator.setElevatorPosition("ScoreLowCone");
-          ready = true;
+         // ready = true;
         break;
     }    
+    // TODO: Use a function from the elevator class to set 'ready' correctly!
+    // Otherwise, we might spit out the game piece early!!!! Oh no!
+
     return ready;
   }
 
   public boolean Score(){
     // flag indicating cone has been dropped
     boolean ready = false;
-    // release cone motors until encoders read a certain value = cone is dropped
+    // TODO: tell us we have spit out the game pieces based on a timer OR encoders.
+
     // set ready to true once conditions are met
     return ready;
   }
@@ -213,6 +209,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public boolean TokyoEscape(){
     // flag indicates if we have moved out of the community
     boolean ready = false;
+    // TODO: Make this function tell us we are ready, based on either motor encoders or vision!
     return ready;
   }
 
@@ -284,6 +281,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public boolean TokyoDrift(){
     boolean ready = false;
+    // TODO: Make this read out 'ready' when we have moved sideways enough!
+    // How is that going to happen???
     return ready;
   }
 
@@ -299,11 +298,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public boolean Arrival(){
     boolean ready = false;
+    // TODO: Make this read out'ready' when we are in position charge at the charge station
+
     return ready;
   }
 
   public boolean Gunit(){
     boolean ready = false;
+    // TODO: Make this charge forward until we are level on the charge station.
+    // Hint: We start level, end up tilted high one direction, and then end up level on top.
+    // Make it read out 'ready' when that final level value is seen.
     return ready;
   }
 
@@ -312,6 +316,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
  //IMPORTANT: WANTED TO ADD ALL CANSPARKS TOGETHER IN ONE VARIBLE BUT IT DID NOT WORK 
     //What this mean yo. Just drive with the drivetrain instance *cries*
+    //TODO: Make this work a bit better by using the drivetrain.move() function!
 
     //When pitch ~ 0 then stop
   // if(navx.getPitch() == 0){
@@ -342,161 +347,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public boolean Generic_Backup(){
     boolean ready = false;
+    // TODO: Set ready to 'true' based on encoder rotations on the drivetrain
     return ready;
-  }
-
-  public void AutoFirstScore(){
-    boolean ready = false;
-    switch(autoStep){
-      case 0:
-        ready = scorePrep();
-
-      case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = FirstEscape();
-
-      case 4: 
-        ready = Spin180Gyro();
-
-      case 5: 
-        ready = ConeDetect();
-
-      case 6:
-        ready = IntakeRun();
-
-      case 7: 
-        ready = IntakeDead();
-
-      case 8:
-        ready = Spin180Gyro();
-
-      case 9: 
-        ready = FirstFormation();
-
-      case 10:
-        ready = scorePrep();
-
-      case 11:
-        ready = sConeEl();
-
-      case 12:
-        ready = Score();
-
-      case 13:
-        break;
-    }
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
-  }
-
-  public void AutoSecondScore(){
-    boolean ready = false;
-    switch(autoStep){
-      case 0:
-        ready = scorePrep();
-
-      case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = SecondEscape();
-
-      case 4: 
-        ready = Spin180Gyro();
-
-      case 5: 
-        ready = ConeDetect();
-
-      case 6:
-        ready = IntakeRun();
-
-      case 7: 
-        ready = IntakeDead();
-
-      case 8:
-        ready = Spin180Gyro();
-
-      case 9: 
-        ready = SecondFormation();
-
-      case 10:
-        ready = scorePrep();
-
-      case 11:
-        ready = sConeEl();
-
-      case 12:
-        ready = Score();  
-
-      case 13:
-        break;
-    }
-    // if an autonomous step is complete, move on to the next one!
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
-  }
-
-  public void AutoThirdScore(){
-    boolean ready = false;
-    switch(autoStep){
-      case 0:
-        ready = scorePrep();
-
-      case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = ThirdEscape();
-
-      case 4: 
-        ready = Spin180Gyro();
-
-      case 5: 
-        ready = ConeDetect();
-
-      case 6:
-        ready = IntakeRun();
-
-      case 7: 
-        ready = IntakeDead();
-
-      case 8:
-        ready = Spin180Gyro();
-
-      case 9: 
-        ready = ThirdEscape();
-
-      case 10:
-        ready = scorePrep();
-
-      case 11:
-        ready = sConeEl();
-
-      case 12:
-        ready = Score();  
-
-      case 13:
-        break;
-    }
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
   }
 
   // This autonomous routine is for a start in front of a cone-scoring post
@@ -541,82 +393,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  // This autonomous routine starts in the middle position, scores a cone,
-  // backs up past the charge station, and drives back on it
-  public void AutoHitchRoute(){
-    boolean ready = false;
-    switch(autoStep){
-      case 0:
-        ready = scorePrep();
 
-      case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = HitchEscape();
-
-      case 4:
-        ready = HitchDrift();
-
-      case 5: 
-        ready = Arrival();
-
-      case 6:
-        ready = Gunit();
-
-      case 7:
-        ready = Balance();
-
-      case 8:
-        break;
-    }
-    // if an autonomous step is complete, move on to the next one!
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
-  }
-
-  // This autonomous routine starts in the left position, scores a cone,
-  // backs up past the charge station, strafes to the left, and drives back on it
-  public void AutoFadeAway(){
-    boolean ready = false;
-    switch(autoStep){
-      case 0:
-        ready = scorePrep();
-
-      case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = FadeEscape();
-
-      case 4:
-        ready = FadeDrift();
-
-      case 5: 
-        ready = Arrival();
-
-      case 6:
-        ready = Gunit();
-
-      case 7:
-        ready = Balance();
-
-      case 8:
-        break;
-    }
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
-  }
 
   // This autonomous routine starts anywhere in front of a cone scoring location
   // It drives forward, scores, backs out of community
@@ -630,7 +407,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         ready = sConeEl();
 
       case 2:
-        // ready = ?
         ready = Score();
 
       case 3:
@@ -679,9 +455,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println("Auto selected: " + m_autoSelected);
     System.out.println("Preset selected: " + score_preset_selected);
 
-    sorryEva.stop();
-    sorryEva.reset();
-    sorryEva.start();
+    exampleTimer.stop();
+    exampleTimer.reset();
+    //exampleTimer.start();
   }
 
     /** This function is called periodically during autonomous. */
@@ -692,36 +468,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         case kTokyoDrift:
           // If we select 'Tokyo Drift' on Drivers' station, it will run this function!
           AutoTokyoDrift();        
-        break;
-  
-        case kHitchRoute:
-          AutoHitchRoute();
           break;
   
-        case kFadeAway:
-          AutoFadeAway();
-          break;
+        // case kHitchRoute:
+        //   AutoHitchRoute();
+        //   break;
   
-        case kFirstScore:
-          AutoFirstScore();
-        break;
+        // case kFadeAway:
+        //   AutoFadeAway();
+        //   break;
   
-        case kSecondScore:
-          AutoSecondScore();
-        break;
+        // case kFirstScore:
+        //   AutoFirstScore();
+        // break;
   
-        case kThirdScore:
-          AutoThirdScore();
-        break;
+        // case kSecondScore:
+        //   AutoSecondScore();
+        // break;
   
-        case kDefaultAuto:
-          AutoDefault();
-          break;
+        // case kThirdScore:
+        //   AutoThirdScore();
+        // break;
+  
+        // case kDefaultAuto:
+        //   AutoDefault();
+        //   break;
           
         default:
           AutoDefault();
           break;
       }
+
+      SmartDashboard.putNumber("autoSep", autoStep);
     }
 
   /** This function is called once when teleop is enabled. */
@@ -771,7 +549,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
 
-
+    // TODO: Give Clayton these controls, find new buttons for his homing stuff
     if(stick.getRawButton(5)){
       intake.inrun();
     }

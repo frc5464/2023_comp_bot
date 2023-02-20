@@ -328,9 +328,20 @@ public class Elevator {
                 winchTargetRotations = 83;    
                 System.out.println("Default elevator val");
         }
-           
-
     }
+
+    public boolean checkForPidHomed(){
+        // TODO: Make a function that checks the winch rotations and extender rotations.
+        // If We are within a few rotations of each, return true!
+        // Otherwise, we need to be returning false. This will be used in autonomous steps.
+        // This is for Eva since she didn't want to do time-based stuff lol.
+        boolean homed = false;
+
+        // TODO: set 'homed' to true if the correct conditions are met.
+
+        return homed;
+    }
+
     // ============================================= Private Functions
     private void extendPidSetup(){
         // PID coefficients
