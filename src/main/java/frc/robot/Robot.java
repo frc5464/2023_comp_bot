@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -52,6 +53,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
    private String score_preset_selected;
    private final SendableChooser<String> score_preset_chooser = new SendableChooser<>();
+
+   private DigitalInput zeroedbutton = new DigitalInput(3);
+   boolean buttonpressed = false;
 
   //5464-created classes!
   Drivetrain drivetrain = new Drivetrain();
@@ -208,6 +212,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   
   public boolean TokyoEscape(){
     // flag indicates if we have moved out of the community
+    
+
     boolean ready = false;
     // TODO: Make this function tell us we are ready, based on either motor encoders or vision!
     return ready;
@@ -644,7 +650,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic(){
+
+    // if(){
+    // buttonpressed = true;
+    // elevator.elevator_zeroed;
+    // }
+
+  } 
 
   /** This function is called once when test mode is enabled. */
   @Override
