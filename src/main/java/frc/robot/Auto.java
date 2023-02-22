@@ -1,6 +1,6 @@
 package frc.robot;
 
-public class Auto {
+public class Auto{
     //5464-created classes!    
     Drivetrain drivetrain = new Drivetrain();
     Elevator elevator = new Elevator();

@@ -60,7 +60,6 @@ public class Vision {
 
     }
 
-
     public void DisplayStats(){
         SmartDashboard.putBoolean("ReflectiveTape.Target?", USBhasTargets);
         SmartDashboard.putNumber("ReflectiveTape.targetx", USBcamerax);

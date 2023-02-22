@@ -57,6 +57,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private DigitalInput zeroedbutton = new DigitalInput(3);
    boolean buttonpressed = false;
 
+   double startingYAW;
+
   //5464-created classes!
   Drivetrain drivetrain = new Drivetrain();
   Elevator elevator = new Elevator();
@@ -210,13 +212,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     return ready;
   }
   
-  public boolean TokyoEscape(){
+  public void TokyoEscape(){
     // flag indicates if we have moved out of the community
-    
+    //boolean ready = true;
+    drivetrain.Move(-0.5,0 , 0);
+    System.out.println(drivetrain.frontleftrotations);
+    if(drivetrain.frontleftrotations < -58.0){
+      //ready = true;
+      autoStep = 1;
+    }
 
-    boolean ready = false;
-    // TODO: Make this function tell us we are ready, based on either motor encoders or vision!
-    return ready;
+    //return ready;
   }
 
   public boolean HitchEscape(){
@@ -366,20 +372,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void AutoTokyoDrift(){
     boolean ready = false;
     switch(autoStep){
+      // case 0:
+      //   ready = scorePrep();
+
+      // case 1:
+      //   ready = sConeEl();
+
+      // case 2:
+      //   ready = Score();
+
       case 0:
-        ready = scorePrep();
+        TokyoEscape();
 
       case 1:
-        ready = sConeEl();
-
-      case 2:
-        ready = Score();
-
-      case 3:
-        ready = TokyoEscape();
-
-      case 4:
-        ready = TokyoDrift();
+        TokyoDrift();
 
       case 5: 
         ready = Arrival();
@@ -392,11 +398,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
       case 8:
         break;
+      default:
+        drivetrain.Move(0, 0, 0);
     }
-    if(ready){
-      ready = false;
-      autoStep++;
-    }
+    // if(ready){
+    //   ready = false;
+    //   autoStep++;
+    // }
   }
 
 
@@ -464,16 +472,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     exampleTimer.stop();
     exampleTimer.reset();
     //exampleTimer.start();
+
+    startingYAW = gyro.Yaw;
+  
+    autoStep = 0;
+
+    drivetrain.DriveEncodersZeroed();
   }
 
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+      System.out.println(autoStep);
+      
       switch (m_autoSelected) {
         
         case kTokyoDrift:
           // If we select 'Tokyo Drift' on Drivers' station, it will run this function!
-          AutoTokyoDrift();        
+          AutoTokyoDrift();     
           break;
   
         // case kHitchRoute:

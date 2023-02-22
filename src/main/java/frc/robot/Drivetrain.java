@@ -32,12 +32,11 @@ public class Drivetrain {
     RelativeEncoder backleftEncoder;
     RelativeEncoder backrightEncoder;
 
+    public double frontleftrotations;
+
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
     double rampRate = 0.1;
-
-
-    
 
     public void Init(){
         // put one-time setup steps here
@@ -63,7 +62,12 @@ public class Drivetrain {
 
     public void DisplayStats(){
         SmartDashboard.putNumber("front left rotations", frontleftEncoder.getPosition());
-        //TODO: print out other drive motor rotations!
+        //TODO: print out other drive motor rotations
+        frontleftrotations = frontleftEncoder.getPosition();
+    }
+
+    public void DriveEncodersZeroed(){
+        frontleftEncoder.setPosition(0);
     }
 
     // ============================================= Private Functions
