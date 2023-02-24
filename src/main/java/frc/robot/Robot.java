@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   boolean elManualMode = true;
   boolean zeroed = false;
-  Timer exampleTimer = new Timer();
+  Timer autoTimer = new Timer();
 
   //Joystick
   Joystick stick = new Joystick(0);
@@ -83,6 +83,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.Init();
     pneumatics.Init();
     vision.Init();
+    intake.Init();
 
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
 
@@ -114,8 +115,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.DisplayStats();
     elevator.PeriodicTasks();
     gyro.DisplayStats();
+    gyro.UpdateGyro();
     vision.DisplayStats();
-
+    intake.DisplayStats();
     pneumatics.DisplayPressure();
 
     vision.ReturnBestTargetXY(); 
@@ -153,9 +155,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   // This is step 0 in 'Tokyo Drift' subroutine!
   // Drives forward with Limelight, so we can be at the correct distance to score
-  public boolean scorePrep(){
-    // flag indicating we are lined up
-    boolean ready = false;
+  public void scorePrep(){
 
     double xcord = vision.USBcamerax;
     double ycord = vision.USBcameray;
@@ -163,19 +163,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
-    // TODO: drive forward and check distance with Vision.
+    // TODO: verify our x & y coords
+
+    drivetrain.Move(0, vision.USBcamerax/120, 0); 
 
     if ((xcord < 2) && (xcord > -2) && (ycord < 2) && (ycord > -2)){
-    ready = true;
+      autoStep++;
     }
-
-    // tell the parent routine if we are ready to move on
-    return ready;
   }
  
-  public boolean sConeEl(){
-    // flag indicating elevator height and extension are lined up
-    boolean ready = false;
+  public void sConeEl(){
 
     // checking elevator encoder
     // checking extension encoder
@@ -184,48 +181,43 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       
       case kHigh:
         elevator.setElevatorPosition("ScoreHighCone");
-         // ready = true;
+        autoStep++;
         break;
 
       case kMid:
         elevator.setElevatorPosition("ScoreHScoreMidCone");
-         // ready = true;
+        autoStep++;
         break;
 
       case kLow:
         elevator.setElevatorPosition("ScoreLowCone");
-         // ready = true;
+         autoStep++;
         break;
     }    
     // TODO: Use a function from the elevator class to set 'ready' correctly!
     // Otherwise, we might spit out the game piece early!!!! Oh no!
 
-    return ready;
   }
 
-  public boolean Score(){
-    // flag indicating cone has been dropped
-    boolean ready = false;
-    // TODO: tell us we have spit out the game pieces based on a timer OR encoders.
-
-    // set ready to true once conditions are met
-    return ready;
+  public void Score(){
+    // run the intake to spit out the cone
+    intake.outrun();
+    if(intake.intakeRotations > 20){
+      intake.stoprun();
+      autoStep++; //TODO:Decide rotations
+    }
   }
   
+  //TODO: Make everything but 'hitchEscape' a generic escape
   public void TokyoEscape(){
-    // flag indicates if we have moved out of the community
-    //boolean ready = true;
     drivetrain.Move(-0.5,0 , 0);
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations < -58.0){
-      //ready = true;
-      autoStep = 1;
+      autoStep++;
     }
-
-    //return ready;
   }
 
-  public boolean HitchEscape(){
+  public boolean HitchEscape(){   // This one is different than the rest
     // flag indicating 
     boolean ready = false;
     return ready;
@@ -293,8 +285,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public boolean TokyoDrift(){
     boolean ready = false;
-    // TODO: Make this read out 'ready' when we have moved sideways enough!
-    // How is that going to happen???
+    drivetrain.Move(0, 0.5 , 0);
+    System.out.println(drivetrain.frontleftrotations);
+    if(drivetrain.frontleftrotations > 0){  // TODO: Fill in encoder values correctly
+      autoStep++;
+    }
     return ready;
   }
 
@@ -308,52 +303,54 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     return ready;
   }
 
-  public boolean Arrival(){
-    boolean ready = false;
-    // TODO: Make this read out'ready' when we are in position charge at the charge station
+  public void Arrival(){
+    
+    double x = vision.tag7x;
+    double y = vision.tag7y;
 
-    return ready;
+    // TODO: Get actual x & y vals needed here, and put in drivetrain.move method, look at ScorePrep
+
+
+
+    if((x < 2) && (x > -2) && (y < 2) && (y > -2)){
+      autoStep++;
+    }
+
+    
   }
 
-  public boolean Gunit(){
-    boolean ready = false;
+  public void Gunit(){
     // TODO: Make this charge forward until we are level on the charge station.
     // Hint: We start level, end up tilted high one direction, and then end up level on top.
     // Make it read out 'ready' when that final level value is seen.
-    return ready;
+    drivetrain.Move(0.7, 0 , 0);
+    System.out.println(drivetrain.frontleftrotations);
+    if(drivetrain.frontleftrotations > 20){  // TODO: Fill in encoder values correctly
+      autoTimer.start();
+      autoStep++;
+    }
   }
 
-  public boolean Balance(){
-    boolean ready = false;
-
- //IMPORTANT: WANTED TO ADD ALL CANSPARKS TOGETHER IN ONE VARIBLE BUT IT DID NOT WORK 
-    //What this mean yo. Just drive with the drivetrain instance *cries*
-    //TODO: Make this work a bit better by using the drivetrain.move() function!
-
+  public void Balance(){
     //When pitch ~ 0 then stop
-  // if(navx.getPitch() == 0){
-  //   frontleft.set(0);
-  //   backleft.set(0); 
-  //   frontright.set(0);
-  //   backright.set(0);
-  // }
-   
-  // //When pitch > 0 then move forward
-  // if(navx.getPitch() > 0){
-  //   frontleft.set(1);
-  //   backleft.set(1);
-  //   frontright.set(1);
-  //   backright.set(1);
-  // }
+    if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
+      drivetrain.Move(0,0 ,0 );
+      if(autoTimer.get() > 2.0){
+        autoStep++;
+      }
+    }
     
-  // //When pitch < 0 then move backward
-  // if(navx.getPitch() < 0){
-  //   frontleft.set(-1);
-  //   backleft.set(-1);
-  //   frontright.set(-1);
-  //   backright.set(-1);
-  // }
-    return ready;
+    //When pitch > 0 then move forward
+    if(gyro.Pitch > 0){
+      autoTimer.reset();
+      drivetrain.Move(0.2,0 ,0 );
+    }
+      
+    //When pitch < 0 then move backward
+    if(gyro.Pitch < 0){
+      autoTimer.reset();
+      drivetrain.Move(-0.2,0 ,0 );
+    }
     //Focus on pitch when level value reads around 0
   }
 
@@ -370,31 +367,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   // This autonomous routine starts in the right position, scores a cone,
   // backs up past the charge station, strafes right, and drives back on it
   public void AutoTokyoDrift(){
-    boolean ready = false;
     switch(autoStep){
-      // case 0:
-      //   ready = scorePrep();
-
-      // case 1:
-      //   ready = sConeEl();
-
-      // case 2:
-      //   ready = Score();
-
       case 0:
-        TokyoEscape();
+        scorePrep();
 
       case 1:
+        sConeEl();
+
+      case 2:
+        Score();
+
+      case 3:
+        TokyoEscape();
+
+      case 4:
         TokyoDrift();
 
       case 5: 
-        ready = Arrival();
+        Arrival();
 
       case 6:
-        ready = Gunit();
+        Gunit();
 
       case 7:
-        ready = Balance();
+        Balance();
 
       case 8:
         break;

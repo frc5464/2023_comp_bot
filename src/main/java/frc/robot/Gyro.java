@@ -17,7 +17,8 @@ public class Gyro {
     // What the rest of the robot does not care about
     AHRS navx = new AHRS();
     
-public double Yaw;
+    public double Yaw;
+    public double Pitch;
 
     // ============================================= Public Functions
     public void Init(){
@@ -25,8 +26,9 @@ public double Yaw;
 
     }
 
-    public void UpdateYaw(){
-        Yaw = navx.getYaw(); 
+    public void UpdateGyro(){
+        Yaw = navx.getYaw();
+        Pitch = navx.getPitch();
     }
 
     public void DisplayStats(){
