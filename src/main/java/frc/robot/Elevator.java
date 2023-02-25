@@ -272,20 +272,31 @@ public class Elevator {
 
         // ONLY if we're out of the danger zone,
         if(winchCurrentRotations > winchDangerZone){
+            // back off for illegal things!
+            if(extCurrentRotations > 80){
+                elextend.set(-0.2);
+            }
+            else if(extCurrentRotations < 2){
+                elextend.set(0.2);
+            }
             // stop the extension arm if we're close enough!
-            if(Math.abs(extCurrentRotations - extTargetRotations) < 3){
-                elextend.set(0);
+            else if(Math.abs(extCurrentRotations - extTargetRotations) < 3){
+                //elextend.set(0);
+                elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
 
             // otherwise, extend if we're not out far enough
             else if(extCurrentRotations < extTargetRotations){
-                elextend.set(nonPidExtHomingSpeed);
+                //elextend.set(nonPidExtHomingSpeed);
+                elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
 
             // or retract if we're too far out
             else if(extCurrentRotations > extTargetRotations){
-                elextend.set(-nonPidExtHomingSpeed);
+                //elextend.set(-nonPidExtHomingSpeed);
+                elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
+            
 
             // by default, do nothing.
             else{
@@ -302,17 +313,24 @@ public class Elevator {
 
         // otherwise,
         else{
+            // back off for illegal things!
+            if(winchCurrentRotations > 128){
+                elwinch.set(-0.2);
+            }
             // stop the winch if we're close enough!
-            if(Math.abs(winchCurrentRotations - winchTargetRotations) < 3){
-                elwinch.set(0);
+            else if(Math.abs(winchCurrentRotations - winchTargetRotations) < 3){
+                // elwinch.set(0);
+                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             }
             // otherwise, winch us higher if we need to go higher
             else if(winchCurrentRotations < winchTargetRotations){
-                elwinch.set(nonPidWinchHomingSpeed);
+                //elwinch.set(nonPidWinchHomingSpeed);
+                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             }
             // and winch us lower if we need to go lower
             else if(winchCurrentRotations > winchTargetRotations){
-                elwinch.set(-nonPidWinchHomingSpeed);
+                // elwinch.set(-nonPidWinchHomingSpeed);
+                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             }                
             else{
                 elwinch.set(0);
