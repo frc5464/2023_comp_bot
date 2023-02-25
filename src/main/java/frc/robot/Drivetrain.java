@@ -52,12 +52,12 @@ public class Drivetrain {
     }
 
     // ============================================= Public Functions
-    public void Move(double x,double y,double rot){
+    public void Move(double x,double rot,double y){
         // This could be a function that we call when we want to move the robot.
         // We will "pass in" three values from our main Robot Class,
         // And this function will use those values
         // x = forward, y = strafe, rot = rotate the bot
-        drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed);
+        drivetrain.driveCartesian(x*maxspeed, rot*maxspeed, y*maxspeed);
     }
 
     public void Turbo(double x,double y,double rot){

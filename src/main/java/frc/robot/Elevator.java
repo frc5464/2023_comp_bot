@@ -47,6 +47,7 @@ public class Elevator {
     private static final String kScoreHighCube = "ScoreHighCube"; 
     private static final String kScoreMidCube = "ScoreMidCube"; 
     private static final String kScoreLowConeCube = "ScoreLowConeCube";
+    private static final String KAprilTags = "AprilTagEncoder";
 
 
     double winchDangerZone = 40;
@@ -70,7 +71,7 @@ public class Elevator {
     }
 
     public void setElevatorToCoast(){
-        elwinch.setIdleMode(IdleMode.kCoast);
+        //elwinch.setIdleMode(IdleMode.kCoast);
         elextend.setIdleMode(IdleMode.kCoast);
     }
 
@@ -360,20 +361,20 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kConePickupHigh:
-                winchTargetRotations = 66;
-                extTargetRotations = 75;
+                winchTargetRotations = 96;
+                extTargetRotations = 30;
                 break;
             case kConeCubePickupLow:
-                winchTargetRotations = 5;
-                extTargetRotations = 5;
+                winchTargetRotations = 2;
+                extTargetRotations = 8;
                 break;
             case kScoreHighCone:
-                winchTargetRotations = 92;
-                extTargetRotations = 70;
+                winchTargetRotations = 77;
+                extTargetRotations = 77;
                 break;
             case kScoreMidCone:
-                winchTargetRotations = 77;
-                extTargetRotations = 34;
+                winchTargetRotations = 105;
+                extTargetRotations = 7;
                 break;
             case kCubePickupHigh:
                 winchTargetRotations = 100;
@@ -389,6 +390,10 @@ public class Elevator {
                 break;
             case kScoreLowConeCube:
                 winchTargetRotations = 37;
+                extTargetRotations = 8;
+                break;
+            case KAprilTags:
+                winchTargetRotations = 20;
                 extTargetRotations = 8;
                 break;
             default: 
@@ -410,13 +415,13 @@ public class Elevator {
     // ============================================= Private Functions
     private void extendPidSetup(){
         // PID coefficients
-        extP = 0.3; 
+        extP = 0.6; 
         extI = 0.0001;
         extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0.6; 
-        extMinOutput = -0.6;
+        extMaxOutput = 0.7; 
+        extMinOutput = -0.7;
 
         // set PID coefficients
         elExtendPid.setP(extP);
@@ -441,9 +446,9 @@ public class Elevator {
     
     private void winchPidSetup(){
         // PID coefficients
-        winchP = 0.3; 
+        winchP = 0.8; 
         winchI = 0.0001;
-        winchD = 0;
+        winchD = 0.001;
         winchIz = 0; 
         winchFF = 0.001; 
         winchMaxOutput = 0.8; 

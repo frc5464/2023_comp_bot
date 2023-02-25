@@ -33,7 +33,7 @@ public class Vision {
     
     //Camera 
     private PhotonCamera piCamera = new PhotonCamera("Pi");
-    private PhotonCamera USBcamera = new PhotonCamera("USB");
+    private PhotonCamera USBcamera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
     
     // ============================================= Public Functions
     public void Init(){

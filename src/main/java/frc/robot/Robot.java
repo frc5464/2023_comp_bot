@@ -47,6 +47,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   Integer RStickLeftRightAxis = 4;
   Integer RStickFwdBackAxis = 5;
 
+  double TargetYaw = 0;
+
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
@@ -139,6 +141,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     vision.ReturnBestTargetXY();
     intake.DistanceCheck();
     
+    SmartDashboard.putNumber("autoStep", autoStep);
+    SmartDashboard.putNumber("autoTimer", autoTimer.get());
+
     // This button switches between manual winch/extender control and automatic.
     if(stick2.getRawButtonPressed(StartButton)){
       if(elManualMode){
@@ -168,17 +173,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: verify our x & y coords
     // TODO: Make this drive forward based on the x & y values!
-    drivetrain.Move(0, vision.USBcamerax/120, 0); 
+    drivetrain.Move(0, (vision.USBcamerax-5)/50, 0); 
 
-    if ((xcord < 2) && (xcord > -2) && (ycord < 2) && (ycord > -2)){
+    if ((xcord < 8) && (xcord > 2)){
       autoStep++;
     }
   }
+
+  public void EscapePrep(){
+    // double xcord = vision.USBcamerax;
+
+    // drivetrain.Move(0, (vision.USBcamerax-23)/50, 0); 
+
+    // if ((xcord < 26) && (xcord > 20)){
+    //   autoStep++;
+    // }
+    autoStep++;
+    //JUST IGNORE THIS FOR NOW?
+  }
  
   public void sConeEl(){
-
-    // checking elevator encoder
-    // checking extension encoder
 
     switch (score_preset_selected) {
       
@@ -197,17 +211,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
          autoStep++;
         break;
     }    
-    // Otherwise, we might spit out the game piece early!!!! Oh no!
 
   }
 
   public void Score(){
-    // run the intake to spit out the cone
-    intake.outrun();
-    if(intake.intakeRotations > 20){
+    // run the intake (after a few seconds) to spit out the cone
+    if(autoTimer.get() > 4){
       intake.stoprun();
-      autoStep++; //TODO:Decide rotations
+      autoStep++;
     }
+    
+    if(autoTimer.get() > 2){
+      intake.outrun();      
+    }
+
+
   }
   
   //TODO: Make everything but 'hitchEscape' a generic escape
@@ -215,7 +233,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.Move(-0.5,0 , 0);
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations < -58.0){
-      drivetrain.DriveEncodersZeroed();
+      elevator.setElevatorPosition("AprilTagEncoder");
+      TargetYaw = gyro.Yaw;
       autoStep++;
     }
   }
@@ -286,14 +305,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     return ready;
   }
 
-  public boolean TokyoDrift(){
-    boolean ready = false;
-    drivetrain.Move(0, 0.5 , 0);
+  public void TokyoDrift(){
+    drivetrain.Move(0, (startingYAW-gyro.Yaw)/100, -0.5);
     System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations < -54){  
+    if(drivetrain.frontleftrotations < -133){  
       autoStep++;
     }
-    return ready;
   }
 
   public boolean HitchDrift(){
@@ -307,15 +324,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Arrival(){
-    
     double x = vision.tag7x;
     double y = vision.tag7y;
 
     // TODO: Get actual x & y vals needed here, and put in drivetrain.move method, look at ScorePrep
 
-
-
     if((x < 2) && (x > -2) && (y < 2) && (y > -2)){
+      elevator.setElevatorPosition("Drive");
       autoStep++;
     }
 
@@ -327,8 +342,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // Make it read out 'ready' when that final level value is seen.
     drivetrain.Move(0.7, 0 , 0);
     System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations > 20){  // TODO: Fill in encoder values correctly
-      autoTimer.start();
+    if(drivetrain.frontleftrotations > -54){  // TODO: Fill in encoder values correctly
       autoStep++;
     }
   }
@@ -337,20 +351,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //When pitch ~ 0 then stop
     if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
       drivetrain.Move(0,0 ,0 );
-      if(autoTimer.get() > 2.0){
-        autoStep++;
-      }
+      // if(autoTimer.get() > 2.0){
+      //   autoStep++;
+      // }
     }
     
-    //When pitch > 0 then move forward
-    if(gyro.Pitch > 0){
-      autoTimer.reset();
+    if(gyro.Pitch < 0){
       drivetrain.Move(0.2,0 ,0 );
     }
       
-    //When pitch < 0 then move backward
-    if(gyro.Pitch < 0){
-      autoTimer.reset();
+    if(gyro.Pitch > 0){
       drivetrain.Move(-0.2,0 ,0 );
     }
     //Focus on pitch when level value reads around 0
@@ -371,30 +381,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void AutoTokyoDrift(){
     switch(autoStep){
       case 0:
-        scorePrep();
-
-      case 1:
         sConeEl();
-
+        break;
+      case 1:
+        scorePrep();
+        break;
       case 2:
         Score();
-
+        break;
       case 3:
-        TokyoEscape();
-
+        EscapePrep();
+        break;
       case 4:
+        TokyoEscape();
+        break;
+      case 5:
         TokyoDrift();
-
-      case 5: 
+        break;
+      case 6: 
         Arrival();
-
-      case 6:
-        Gunit();
-
+        break;
       case 7:
-        Balance();
-
+        Gunit();
+        break;
       case 8:
+        Balance();
+        break;
+      case 9:
         break;
       default:
         drivetrain.Move(0, 0, 0);
@@ -469,6 +482,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     autoTimer.stop();
     autoTimer.reset();
+    autoTimer.start();
     //exampleTimer.start();
 
     startingYAW = gyro.Yaw;
@@ -481,6 +495,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
+      elevator.nonPidHoming();
+      
       System.out.println(autoStep);
       
       switch (m_autoSelected) {
@@ -573,10 +589,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       elevator.nonPidHoming(); 
       // elevator.pidControl();
     }
-
+    // THIS INTAKES A CONE OR SPITS OUT A CUBE
     if(stick2.getRawButton(Rbumper)){
       intake.inrun();
     }
+    // THIS INTAKES A CUBE OR SPITS OUT A CONE
     else if(stick2.getRawButton(Lbumper)){
       intake.outrun();
     }
@@ -656,7 +673,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-    elevator.setElevatorToBrake();
+    elevator.setElevatorToCoast();
+    autoTimer.stop();
   }
 
   /** This function is called periodically when disabled. */
