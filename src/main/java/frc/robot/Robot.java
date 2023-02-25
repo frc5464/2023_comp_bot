@@ -139,18 +139,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     vision.ReturnBestTargetXY();
     intake.DistanceCheck();
     
-    // this is the MANUAL OVERRIDE to the PID loop
-    if(stick.getRawButtonPressed(8)){
+    // This button switches between manual winch/extender control and automatic.
+    if(stick2.getRawButtonPressed(StartButton)){
       if(elManualMode){
         System.out.println("We're in automatic mode!");
         if(zeroed){Leds.Pidmode();}
         else{Leds.QuestionError();}
-        elManualMode = false;
-        
+        elManualMode = false;       
       }
       else{
-        if(zeroed){Leds.Manualmode();}
-        
+        if(zeroed){Leds.Manualmode();}        
         System.out.println("We're in manual mode!");
         elManualMode = true;
       }
@@ -541,11 +539,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     else if(stick.getRawButton(Rbumper)){
       drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(4)*0.2, stick.getRawAxis(0)*0.2);
     }
+    else if(stick.getRawAxis(RtriggerAxis) > 0.1){
+      drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+    }
     else{
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
     }
-
-    // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     if(elManualMode){
       if(stick2.getRawButton(RtriggerAxis)){
@@ -568,18 +567,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       }   
     }
     else{
-      // holds the elevator according to PID control
-      //elevator.pidControl();  
-      // not quite PID yo
+      // holds the elevator according to an auto-control scheme that is not as cool as PID
       elevator.nonPidHoming(); 
     }
 
-
-    // TODO: Give Clayton these controls, find new buttons for his homing stuff
-    if(stick.getRawButton(Lbumper)){
+    if(stick2.getRawButton(Rbumper)){
       intake.inrun();
     }
-    else if(stick.getRawButton(Lbumper)){
+    else if(stick2.getRawButton(Lbumper)){
       intake.outrun();
     }
     else{
@@ -594,10 +589,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    //Encoders
-    if(stick2.getRawButtonPressed(BackButton)){
+    // Elevator encoding homing
+    if(stick2.getRawButtonPressed(LStickClick)){
       elevator.setElevatorPosition("Drive");
-      //Leds stay in PID
     }
 
     if(stick2.getRawButtonPressed(RtriggerAxis)){
@@ -611,7 +605,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
     
     if(stick2.getRawButtonPressed(Ybutton)){
-       elevator.setElevatorPosition("ScoreHighCone");
+      elevator.setElevatorPosition("ScoreHighCone");
       Leds.PickCone();
     }
 
@@ -635,28 +629,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getRawButtonPressed(Rbumper)){
+    if(stick2.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
     }
 
-    if(stick2.getRawButton(LStickClick)){
+    if(stick.getRawButtonPressed(BackButton)){
       PDThing.setSwitchableChannel(true);
     }
     else{
       PDThing.setSwitchableChannel(false);
     }
 
-      if(stick.getRawButtonPressed(LStickClick)){
-        //pneumatics.CompOnOffOn();
-      }
-
-      if(stick.getRawButtonPressed(RStickClick)){ 
-        //pneumatics.SolBreak();
-      }
-
-
+    if(stick.getRawButtonPressed(LStickClick)){
+      pneumatics.CompOnOffOn();
     }
+
+    if(stick.getRawButtonPressed(Rbumper)){ 
+      pneumatics.SolBreak();
+    }
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override

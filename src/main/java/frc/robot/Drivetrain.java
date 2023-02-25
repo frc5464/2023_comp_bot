@@ -35,7 +35,7 @@ public class Drivetrain {
     public double frontleftrotations;
 
     // maximum drive speed (0 to 1.0)
-    double maxspeed = 1;
+    double maxspeed = 0.8;
     double rampRate = 0.1;
 
     public void Init(){
@@ -59,6 +59,11 @@ public class Drivetrain {
         // x = forward, y = strafe, rot = rotate the bot
         drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed);
     }
+
+    public void Turbo(double x,double y,double rot){
+        // Ignores all concepts of 'limiting how fast the drivetrain should go'
+        drivetrain.driveCartesian(x, y, rot);
+    }   
 
     public void DisplayStats(){
         SmartDashboard.putNumber("front left rotations", frontleftEncoder.getPosition());
