@@ -103,7 +103,7 @@ public class Elevator {
         SmartDashboard.putNumber("Winch current", elextend.getOutputCurrent());
     }
 
-    public void checkForSafeToExtend(){
+    private void checkForSafeToExtend(){
         // Check that we are not extending in the dangerous "low zone"
         if ((winchCurrentRotations > winchDangerZone) && (extCurrentRotations < 80)){
             // Check the we are not near the limits of the extension zone
@@ -126,6 +126,16 @@ public class Elevator {
     }
 
     public void checkForSafeToRotate(){
+        // Check if we are above the danger zone, and moving into it!
+        // If this is the case, extension/retraction must be complete before rotation.
+        if((winchCurrentRotations > winchDangerZone)&&(winchTargetRotations < winchDangerZone)&&
+                (Math.abs(extCurrentRotations - extTargetRotations) > 5)){
+            waiting_for_ext = true;
+        }
+        else{
+            waiting_for_ext = false;
+        }
+
         if(winchCurrentRotations < 130){
             winch_up_zone_ok = true;
         }
@@ -232,10 +242,10 @@ public class Elevator {
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
             else if(!extend_zone_ok){
-                elextend.set(-0.3);    //move us backwards a bit
+                elextend.set(-0.2);    //move us backwards a bit
             }
             else if(!retract_zone_ok){
-                elextend.set(0.3);  //move us forward a bit
+                elextend.set(0.2);  //move us forward a bit
             }
 
             if(winch_up_zone_ok && !waiting_for_ext){
@@ -246,13 +256,6 @@ public class Elevator {
             }
             else{
                 elwinch.set(-0.3);  // back it off a bit yo
-            }
-
-            // Check for the extension/retraction homing hitting its target
-            if(waiting_for_ext){
-                if(Math.abs(extCurrentRotations - extTargetRotations) < 5){
-                    waiting_for_ext = false;
-                }
             }
 
         }
@@ -333,12 +336,6 @@ public class Elevator {
     }
 
     public void setElevatorPosition(String str){
-        // Check if we are above the danger zone, and moving into it!
-        // If this is the case, extension/retraction must be complete before rotation.
-        if((winchCurrentRotations > winchDangerZone)&&(winchTargetRotations < winchDangerZone)){
-            waiting_for_ext = true;
-        }
-        
         switch (str){
             case kDrive:
                 winchTargetRotations = 83;
