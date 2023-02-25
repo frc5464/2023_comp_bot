@@ -265,7 +265,7 @@ public class Elevator {
         // starting things off slow.....
         // TODO: Speed up this stuff when we have the chance
         double nonPidExtHomingSpeed = 0.3;
-        double nonPidWinchHomingSpeed = 0.3;
+        double nonPidWinchHomingSpeed = 0.8;
 
         // ONLY if we're out of the danger zone,
         if(winchCurrentRotations > winchDangerZone){
@@ -291,7 +291,7 @@ public class Elevator {
         }
 
         // if we are above the danger zone, AND the extender still has to move,
-        if((winchCurrentRotations > winchDangerZone) && 
+        if((winchCurrentRotations > winchDangerZone) && (winchTargetRotations < winchDangerZone) && 
                 (Math.abs(extCurrentRotations - extTargetRotations) > 5)){
             // stop the winch and wait for it to home in!
             elwinch.set(0); 

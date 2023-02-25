@@ -215,6 +215,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.Move(-0.5,0 , 0);
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations < -58.0){
+      drivetrain.DriveEncodersZeroed();
       autoStep++;
     }
   }
@@ -289,7 +290,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     boolean ready = false;
     drivetrain.Move(0, 0.5 , 0);
     System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations > 0){  // TODO: Fill in encoder values correctly
+    if(drivetrain.frontleftrotations < -54){  
       autoStep++;
     }
     return ready;
@@ -527,6 +528,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     elevator.setElevatorToBrake();
     elevator.Init();
     pneumatics.Init();
+    drivetrain.DriveEncodersZeroed();
   }
 
   /** This function is called periodically during operator control. */
@@ -569,6 +571,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     else{
       // holds the elevator according to an auto-control scheme that is not as cool as PID
       elevator.nonPidHoming(); 
+      // elevator.pidControl();
     }
 
     if(stick2.getRawButton(Rbumper)){
