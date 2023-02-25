@@ -136,25 +136,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     vision.DisplayStats();
     intake.DisplayStats();
     pneumatics.DisplayPressure();
-
-    vision.ReturnBestTargetXY(); 
-
+    vision.ReturnBestTargetXY();
     intake.DistanceCheck();
     
-    // the 'back' key will run the 'zeroing' process for elevator safety
-    // TODO: Give Clayton (stick2) control over manualmode
-    if(zeroedbutton.get()){
-      zeroed = elevator.zeroRotations();
-
-      if(elManualMode){
-        Leds.Manualmode();
-      }
-      else{ 
-        Leds.Pidmode();
-      }
-
-    }
-
     // this is the MANUAL OVERRIDE to the PID loop
     if(stick.getRawButtonPressed(8)){
       if(elManualMode){
@@ -185,7 +169,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // do all the stuff we want during this step
     // at some point, once we satisfy conditions, we will do the following:
     // TODO: verify our x & y coords
-
+    // TODO: Make this drive forward based on the x & y values!
     drivetrain.Move(0, vision.USBcamerax/120, 0); 
 
     if ((xcord < 2) && (xcord > -2) && (ycord < 2) && (ycord > -2)){
@@ -585,7 +569,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
     else{
       // holds the elevator according to PID control
-      elevator.pidControl();   
+      //elevator.pidControl();  
+      // not quite PID yo
+      elevator.nonPidHoming(); 
     }
 
 
@@ -681,12 +667,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic(){
+    
+    if(zeroedbutton.get()){
+      zeroed = elevator.zeroRotations();
 
-    // if(){
-    // buttonpressed = true;
-    // elevator.elevator_zeroed;
-    // }
-
+      if(elManualMode){
+        Leds.Manualmode();
+      }
+      else{ 
+        Leds.Pidmode();
+      }
+    }
   } 
 
   /** This function is called once when test mode is enabled. */

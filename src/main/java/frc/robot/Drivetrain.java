@@ -62,7 +62,6 @@ public class Drivetrain {
 
     public void DisplayStats(){
         SmartDashboard.putNumber("front left rotations", frontleftEncoder.getPosition());
-        //TODO: print out other drive motor rotations
         frontleftrotations = frontleftEncoder.getPosition();
     }
 

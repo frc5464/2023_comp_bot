@@ -49,6 +49,3 @@ public class Gyro {
 
     // DO NOT RUN THIS EVERY TIME! ONLY WHEN IT REEEEALLY NEEDS TO BE RUN!
     //navx.calibrate();
-
-    // TODO: Check out this Omnimount article for our NAVX orientation!
-    // https://pdocs.kauailabs.com/navx-mxp/installation/omnimount/

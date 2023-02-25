@@ -99,11 +99,8 @@ public class Elevator {
         SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
         SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
-        SmartDashboard.putBoolean("Safe to extend?", extend_zone_ok);
-        SmartDashboard.putBoolean("Safe to retract?", retract_zone_ok);
-        SmartDashboard.putBoolean("Safe to winch up?", winch_up_zone_ok);
-        SmartDashboard.putBoolean("waiting for ext", waiting_for_ext);
-
+        SmartDashboard.putNumber("Elevator current", elextend.getOutputCurrent());
+        SmartDashboard.putNumber("Winch current", elextend.getOutputCurrent());
     }
 
     public void checkForSafeToExtend(){
@@ -165,8 +162,7 @@ public class Elevator {
         extMinOutput = min; extMaxOutput = max; 
         }   
 
-        SmartDashboard.putNumber("ext SetPoint", extTargetRotations);
-        SmartDashboard.putNumber("ext ProcessVariable", elExtendEncoder.getPosition());  
+        SmartDashboard.putNumber("ext SetPoint", extTargetRotations); 
     }
 
     private void checkForWinchPidChanges(){
@@ -192,7 +188,6 @@ public class Elevator {
         }   
 
         SmartDashboard.putNumber("winch SetPoint", winchTargetRotations);
-        SmartDashboard.putNumber("winch ProcessVariable", elWinchEncoder.getPosition());  
     }
 
     public void Extend(){
@@ -263,6 +258,65 @@ public class Elevator {
         }
     }
 
+    public void nonPidHoming(){
+        // This is going to ignore a lot of the fancy stuff we did before
+        // Something is not working right, and programming has not had time to deal with it
+        
+        // starting things off slow.....
+        // TODO: Speed up this stuff when we have the chance
+        double nonPidExtHomingSpeed = 0.3;
+        double nonPidWinchHomingSpeed = 0.3;
+
+        // ONLY if we're out of the danger zone,
+        if(winchCurrentRotations > winchDangerZone){
+            // stop the extension arm if we're close enough!
+            if(Math.abs(extCurrentRotations - extTargetRotations) < 3){
+                elextend.set(0);
+            }
+
+            // otherwise, extend if we're not out far enough
+            else if(extCurrentRotations < extTargetRotations){
+                elextend.set(nonPidExtHomingSpeed);
+            }
+
+            // or retract if we're too far out
+            else if(extCurrentRotations > extTargetRotations){
+                elextend.set(-nonPidExtHomingSpeed);
+            }
+
+            // by default, do nothing.
+            else{
+                elextend.set(0);
+            }
+        }
+
+        // if we are above the danger zone, AND the extender still has to move,
+        if((winchCurrentRotations > winchDangerZone) && 
+                (Math.abs(extCurrentRotations - extTargetRotations) > 5)){
+            // stop the winch and wait for it to home in!
+            elwinch.set(0); 
+        }
+
+        // otherwise,
+        else{
+            // stop the winch if we're close enough!
+            if(Math.abs(winchCurrentRotations - winchTargetRotations) < 3){
+                elwinch.set(0);
+            }
+            // otherwise, winch us higher if we need to go higher
+            else if(winchCurrentRotations < winchTargetRotations){
+                elwinch.set(nonPidWinchHomingSpeed);
+            }
+            // and winch us lower if we need to go lower
+            else if(winchCurrentRotations > winchTargetRotations){
+                elwinch.set(-nonPidWinchHomingSpeed);
+            }                
+            else{
+                elwinch.set(0);
+            }
+        }
+    }
+
     public boolean zeroRotations(){
       // check our limit switches to make sure that we are actually at the zero point
       // this should prevent the possibility of zeroing during a match
@@ -330,13 +384,10 @@ public class Elevator {
     }
 
     public boolean checkForPidHomed(){
-        // TODO: Make a function that checks the winch rotations and extender rotations.
         // If We are within a few rotations of each, return true!
         // Otherwise, we need to be returning false. This will be used in autonomous steps.
         // This is for Eva since she didn't want to do time-based stuff lol.
         boolean homed = false;
-
-        // TODO: set 'homed' to true if the correct conditions are met.
 
         return homed;
     }
