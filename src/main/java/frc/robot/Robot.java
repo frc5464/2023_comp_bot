@@ -30,6 +30,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   boolean zeroed = false;
   Timer autoTimer = new Timer();
 
+  Integer Abutton = 1;
+  Integer Bbutton = 2;
+  Integer Xbutton = 3;
+  Integer Ybutton = 4;
+  Integer Lbumper = 5;
+  Integer Rbumper = 6; 
+  Integer BackButton = 7;
+  Integer StartButton = 8;
+  Integer LStickClick = 9;
+  Integer RStickClick = 10;
+  Integer LStickLeftRightAxis = 0;
+  Integer LStickFwdBackAxis = 1; 
+  Integer LtriggerAxis = 2;
+  Integer RtriggerAxis = 3;
+  Integer RStickLeftRightAxis = 4;
+  Integer RStickFwdBackAxis = 5;
+
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
@@ -126,12 +143,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     
     // the 'back' key will run the 'zeroing' process for elevator safety
     // TODO: Give Clayton (stick2) control over manualmode
-    if(stick.getRawButtonPressed(7)){
+    if(zeroedbutton.get()){
       zeroed = elevator.zeroRotations();
-      if(zeroed){ 
-        if(elManualMode){Leds.Manualmode();}
-        else{ Leds.Pidmode();}
+
+      if(elManualMode){
+        Leds.Manualmode();
       }
+      else{ 
+        Leds.Pidmode();
+      }
+
     }
 
     // this is the MANUAL OVERRIDE to the PID loop
@@ -194,7 +215,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
          autoStep++;
         break;
     }    
-    // TODO: Use a function from the elevator class to set 'ready' correctly!
     // Otherwise, we might spit out the game piece early!!!! Oh no!
 
   }
@@ -320,7 +340,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Gunit(){
-    // TODO: Make this charge forward until we are level on the charge station.
     // Hint: We start level, end up tilted high one direction, and then end up level on top.
     // Make it read out 'ready' when that final level value is seen.
     drivetrain.Move(0.7, 0 , 0);
@@ -411,13 +430,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     boolean ready = false;
     switch(autoStep){
       case 0:
-        ready = scorePrep();
+        scorePrep();
 
       case 1:
-        ready = sConeEl();
+        sConeEl();
 
       case 2:
-        ready = Score();
+        Score();
 
       case 3:
         ready = Generic_Backup();
@@ -465,8 +484,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println("Auto selected: " + m_autoSelected);
     System.out.println("Preset selected: " + score_preset_selected);
 
-    exampleTimer.stop();
-    exampleTimer.reset();
+    autoTimer.stop();
+    autoTimer.reset();
     //exampleTimer.start();
 
     startingYAW = gyro.Yaw;
@@ -535,6 +554,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(stick.getRawAxis(2) > 0.1){
       drivetrain.Move(-stick.getRawAxis(1), vision.USBcamerax/120, stick.getRawAxis(0)); 
     }
+    else if(stick.getRawButton(Rbumper)){
+      drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(4)*0.2, stick.getRawAxis(0)*0.2);
+    }
     else{
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
     }
@@ -542,7 +564,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // drivetrain.driveCartesian(-stick.getRawAxis(1)*maxspeed, stick.getRawAxis(4)*maxspeed, stick.getRawAxis(0)*maxspeed);
 
     if(elManualMode){
-      if(stick2.getRawButton(3)){
+      if(stick2.getRawButton(RtriggerAxis)){
         elevator.Extend();
       }
       else if(stick2.getRawButton(4)){
@@ -568,57 +590,52 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
     // TODO: Give Clayton these controls, find new buttons for his homing stuff
-    if(stick.getRawButton(5)){
+    if(stick.getRawButton(Lbumper)){
       intake.inrun();
     }
-    else if(stick.getRawButton(6)){
+    else if(stick.getRawButton(Lbumper)){
       intake.outrun();
     }
     else{
       intake.stoprun();
     }   
 
-    if(stick2.getRawAxis(2) > 0.1){
+    if(stick2.getRawAxis(LtriggerAxis) > 0.1){
       Leds.PickCone();
     }
 
-    if(stick2.getRawAxis(3) > 0.1){
+    if(stick2.getRawAxis(RtriggerAxis) > 0.1){
       Leds.PickCube();
     }
 
     //Encoders
-    if(stick2.getRawButtonPressed(7)){
+    if(stick2.getRawButtonPressed(BackButton)){
       elevator.setElevatorPosition("Drive");
       //Leds stay in PID
     }
 
-    if(stick2.getRawButtonPressed(3)){
+    if(stick2.getRawButtonPressed(RtriggerAxis)){
       elevator.setElevatorPosition("ConePickupHigh");
       Leds.PickCone();
     }
 
-    if(stick2.getRawButtonPressed(1)){
-      elevator.setElevatorPosition("ConePickupLow");
+    if(stick2.getRawButtonPressed(Abutton)){
+      elevator.setElevatorPosition("ConeCubePickupLow");
       Leds.PickCone();
     }
     
-    if(stick2.getRawButtonPressed(4)){
+    if(stick2.getRawButtonPressed(Ybutton)){
        elevator.setElevatorPosition("ScoreHighCone");
       Leds.PickCone();
     }
 
-    if(stick2.getRawButtonPressed(2)){
+    if(stick2.getRawButtonPressed(Bbutton)){
       elevator.setElevatorPosition("ScoreMidCone");
       Leds.PickCone();
     }
 
     if(stick2.getPOV() == 270){
       elevator.setElevatorPosition("CubePickupHigh");
-      Leds.PickCube();
-    }
-
-    if(stick2.getPOV() == 180){
-      elevator.setElevatorPosition("CubePickupLow");
       Leds.PickCube();
     }
 
@@ -632,25 +649,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getRawButtonPressed(6)){
+    if(stick2.getRawButtonPressed(Rbumper)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
     }
 
-    if(stick2.getRawButton(9)){
+    if(stick2.getRawButton(LStickClick)){
       PDThing.setSwitchableChannel(true);
     }
     else{
       PDThing.setSwitchableChannel(false);
     }
 
-      if(stick.getRawButtonPressed(9)){
+      if(stick.getRawButtonPressed(LStickClick)){
         //pneumatics.CompOnOffOn();
       }
 
-      if(stick.getRawButtonPressed(10)){ 
+      if(stick.getRawButtonPressed(RStickClick)){ 
         //pneumatics.SolBreak();
       }
+
 
     }
 

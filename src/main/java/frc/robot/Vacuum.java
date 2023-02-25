@@ -30,7 +30,7 @@ public void DistanceCheck(){
 }
 
     public void inrun(){
-        intake.set(0.7);
+        intake.set(1);
     }
     
     public void outrun(){

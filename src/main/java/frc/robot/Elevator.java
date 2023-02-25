@@ -40,14 +40,13 @@ public class Elevator {
 
     private static final String kDrive = "Drive";
     private static final String kConePickupHigh = "ConePickupHigh";
-    private static final String kConePickupLow = "ConePickupLow";
+    private static final String kConeCubePickupLow = "ConeCubePickupLow";
     private static final String kScoreHighCone = "ScoreHighCone"; 
     private static final String kScoreMidCone = "ScoreMidCone";
     private static final String kCubePickupHigh = "CubePickupHigh";
-    private static final String kCubePickupLow = "CubePickupLow";
     private static final String kScoreHighCube = "ScoreHighCube"; 
     private static final String kScoreMidCube = "ScoreMidCube"; 
-    private static final String kScoreLowConeCube = "ScoreLowCube";
+    private static final String kScoreLowConeCube = "ScoreLowConeCube";
 
 
     double winchDangerZone = 40;
@@ -103,6 +102,7 @@ public class Elevator {
         SmartDashboard.putBoolean("Safe to extend?", extend_zone_ok);
         SmartDashboard.putBoolean("Safe to retract?", retract_zone_ok);
         SmartDashboard.putBoolean("Safe to winch up?", winch_up_zone_ok);
+        SmartDashboard.putBoolean("waiting for ext", waiting_for_ext);
 
     }
 
@@ -246,6 +246,9 @@ public class Elevator {
             if(winch_up_zone_ok && !waiting_for_ext){
                 elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
             }
+            else if(waiting_for_ext){
+                elwinch.set(0);
+            }
             else{
                 elwinch.set(-0.3);  // back it off a bit yo
             }
@@ -291,9 +294,9 @@ public class Elevator {
                 winchTargetRotations = 66;
                 extTargetRotations = 75;
                 break;
-            case kConePickupLow:
-                winchTargetRotations = 10;
-                extTargetRotations = 13;
+            case kConeCubePickupLow:
+                winchTargetRotations = 5;
+                extTargetRotations = 5;
                 break;
             case kScoreHighCone:
                 winchTargetRotations = 92;
@@ -306,10 +309,6 @@ public class Elevator {
             case kCubePickupHigh:
                 winchTargetRotations = 100;
                 extTargetRotations = 35;
-                break;
-            case kCubePickupLow:
-                winchTargetRotations = 10;
-                extTargetRotations = 13;
                 break;
             case kScoreHighCube:
                 winchTargetRotations = 99;
