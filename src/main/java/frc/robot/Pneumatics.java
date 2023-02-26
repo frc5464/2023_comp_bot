@@ -6,6 +6,9 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+// TODO: low: start 'componoff' as true, and enable the compressor in our Init() function
+
+
 public class Pneumatics {
 
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM); 

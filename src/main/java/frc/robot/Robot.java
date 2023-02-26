@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   boolean elManualMode = true;
   boolean zeroed = false;
   Timer autoTimer = new Timer();
-  //TODO: Make a new timer here for the balance routine!
+  //TODO: low: Make a new timer here for the balance routine!
 
   Integer Abutton = 1;
   Integer Bbutton = 2;
@@ -166,9 +166,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   // Angles the bot so it can score
   public void scorePrep(){
     
-    // TODO: Verify that these new scoreprep variables work! Everything should be the same as before.
+    // TODO: HIGH: Verify that these new scoreprep variables work! Everything should work the same.
 
-    // What exact X value are we trying to home in on?
+    // The X value we will be homing to
     double targetX = 5;
 
     // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
@@ -189,8 +189,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void EscapePrep(){
     // What exact X value are we trying to home in on?
-    // TODO: This was not homing correctly on Saturday! Is x = 23 too far to travel?
+    // TODO: HIGH: This was not homing correctly on Saturday! Is x = 23 too far to travel?
+    // TODO: HIGH: Check the physical camera alignment is correct (x = 0 when aiming directly at post)
 
+    // The X value we will be homing to
     double targetX = 23;
 
     // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
@@ -232,7 +234,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Score(){  
-    // TODO: Saturday night Jake made the 'else' an 'else if'. Verify that this runs the intake right.
+    // TODO: HIGH: Verify that this turns on/off intake correctly. Adjust timer if needed.
     
     // after shortly running the intake, then move on.
     if(autoTimer.get() > 4){
@@ -261,22 +263,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  }
 
   public void FadeEscape(){
-    // flag indicating 
 
   }
 
   public void FirstEscape(){
-    // flag indicating 
 
   }
 
   public void SecondEscape(){
-    // flag indicating 
 
   }
 
   public void ThirdEscape(){
-    // flag indicating 
 
   }
 
@@ -326,7 +324,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Arrival(){
-    // TODO: This is currently instantly skipped because tag7x/y registers 0,0. Remove?
+    // This is currently instantly skipped because tag7x/y registers 0,0.
+    // TODO: low: Get tag 7 to actually read out with the vision system, or switch this to Gyro lineup.
 
     double x = vision.tag7x;
     double y = vision.tag7y;
@@ -340,13 +339,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Gunit(){
-    // Hint: We start level, end up tilted high one direction, and then end up level on top.
-    // Make it read out 'ready' when that final level value is seen.
     drivetrain.Move(0.7, 0 , 0);
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations > -54){
       autoStep++;
-      // TODO: STOP, RESTART, AND START a new timer here. In that order!
+      // TODO: low: STOP, RESTART, AND START a new timer here. In that order!
     }
   }
 
@@ -354,7 +351,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //When pitch ~ 0 then stop
     if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
       drivetrain.Move(0,0 ,0 );
-      // TODO: Can we start another timer before 'balance', and do the timer reset scheme for this?
+      // TODO: low: use a timer, other than autoClock, to help us count up our time on the charge station
       // if( new timer.get() > 2.0){
       //   autoStep++;
       // }
@@ -362,12 +359,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     
     if(gyro.Pitch < 0){
       drivetrain.Move(0.2,0 ,0 );
+      // reset timer
     }
       
     if(gyro.Pitch > 0){
       drivetrain.Move(-0.2,0 ,0 );
+      // reset timer
     }
-    //Focus on pitch when level value reads around 0
   }
 
   public void Generic_Backup(){
@@ -420,7 +418,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   // This autonomous routine starts anywhere in front of a cone scoring location
   // It drives forward, scores, backs out of community
-  // TODO: Make this routine work as well! We need an auto option that doesn't try for the charge station!
+  // TODO: HIGH: Finish Default auto steps. Once this works, Tokyo Drift will have a more solid start.
   public void AutoDefault(){
     switch(autoStep){
       case 0:
@@ -433,6 +431,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Score();
 
       case 3:
+        // TODO: HIGH: fill this function in with the same code as tokyo escape
         Generic_Backup();
 
       case 8:
@@ -544,12 +543,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    // TODO: Finish filling in the correct axes variables that Eva defined!
+    // TODO: low: Finish filling in the correct axes variables that Eva defined!
     if(stick.getRawAxis(2) > 0.1){
       drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.USBcamerax/120); 
     }
-    // TODO: If there is time, make a new stick1 left trigger "else if" option that homes to Apriltags.
-    // TODO: This would likely require a new pipeline for the USB cam to be set.
+    // TODO: low: If there is time, make a new stick1 left trigger "else if" option that homes to Apriltags.
+    // TODO: low: Possibly make this switch to a different pipeline on left trigger.
     else if(stick.getRawButton(Rbumper)){
       drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
     }

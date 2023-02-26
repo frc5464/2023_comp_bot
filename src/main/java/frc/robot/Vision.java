@@ -4,12 +4,11 @@ import java.util.List;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // this bot's got EYES
 // 
-// 
+// TODO: low: If there is time, within Photonvision, make a new Apriltag pipeline.
 
 public class Vision {
     // ============================================== Public Variables
@@ -43,6 +42,7 @@ public class Vision {
         piCamera.setPipelineIndex(1);
     }
 
+    // This function updates XY values for both of our cameras.
     public void ReturnBestTargetXY(){
         var result = USBcamera.getLatestResult();
         USBhasTargets = result.hasTargets();
@@ -57,20 +57,31 @@ public class Vision {
         PihasTargets = Piresult.hasTargets();
         
         if(PihasTargets){
+            
+            // Make a list of current targets!
             List<PhotonTrackedTarget> targets = result.getTargets();
-            // loop through things in this list
+            
+            // Look at each tag within the list 
+            System.out.print("Pi-cam Tags:");
             for ( int i = 0; i < targets.size(); i++){
                 
+                // fetch the id of the current tag
+                int id = targets.get(i).getFiducialId();
+                
+                //print out the tag's id
+                System.out.print(i);
+                System.out.print(" ");
+
                 // we do be lookin for the one with id = 7
-                if(targets.get(i).getFiducialId() == 7){
-                    
+                if(id == 7){                    
                     tag7x = targets.get(i).getYaw();
                     tag7y = targets.get(i).getPitch();
                 }
-
-
             }
+            // print a new line on the Rio log
+            System.out.println("");
 
+            // get the x,y of the best target that is detected.
             PhotonTrackedTarget Pitarget = Piresult.getBestTarget();
             Picameray = Pitarget.getPitch();
             Picamerax = Pitarget.getYaw();
@@ -91,6 +102,12 @@ public class Vision {
         SmartDashboard.putNumber("AprilTags.tag7y", tag7y);
 
     }
+
+    // TODO: low: If time, fill in method here that changes pipelines on USB camera, if we want apriltags on it
+    public void renameThisFunction(int pipelineIndex){
+
+    }
+
     // ============================================= Private Functions
 
            
