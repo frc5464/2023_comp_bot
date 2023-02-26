@@ -162,12 +162,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   // This is step 0 in 'Tokyo Drift' subroutine!
-  // Drives forward with Limelight, so we can be at the correct distance to score
+  // Angles the bot so it can score
   public void scorePrep(){
 
     double xcord = vision.USBcamerax;
-    
-    drivetrain.Move(0, (vision.USBcamerax-5)/50, 0); 
+
+    drivetrain.Move(0, 0, (vision.USBcamerax-5)/50); 
 
     if ((xcord < 8) && (xcord > 2)){
       autoStep++;
@@ -177,7 +177,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void EscapePrep(){
     // double xcord = vision.USBcamerax;
 
-    // drivetrain.Move(0, (vision.USBcamerax-23)/50, 0); 
+    // drivetrain.Move(0, 0, (vision.USBcamerax-23)/50); 
 
     // if ((xcord < 26) && (xcord > 20)){
     //   autoStep++;
@@ -299,7 +299,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void TokyoDrift(){
-    drivetrain.Move(0, (startingYAW-gyro.Yaw)/100, -0.5);
+    drivetrain.Move(0, -0.5, (startingYAW-gyro.Yaw)/100);
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations < -133){  
       autoStep++;
@@ -542,16 +542,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void teleopPeriodic() {
     
     if(stick.getRawAxis(2) > 0.1){
-      drivetrain.Move(-stick.getRawAxis(1), vision.USBcamerax/120, stick.getRawAxis(0)); 
+      drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.USBcamerax/120); 
     }
     else if(stick.getRawButton(Rbumper)){
-      drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(4)*0.2, stick.getRawAxis(0)*0.2);
+      drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
     }
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){
-      drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+      drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
     else{
-      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(4), stick.getRawAxis(0));
+      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
 
     if(elManualMode){
