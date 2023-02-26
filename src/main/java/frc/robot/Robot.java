@@ -166,13 +166,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void scorePrep(){
 
     double xcord = vision.USBcamerax;
-    double ycord = vision.USBcameray;
-    //vision.changeVisionType("reflective"); 
     
-    // do all the stuff we want during this step
-    // at some point, once we satisfy conditions, we will do the following:
-    // TODO: verify our x & y coords
-    // TODO: Make this drive forward based on the x & y values!
     drivetrain.Move(0, (vision.USBcamerax-5)/50, 0); 
 
     if ((xcord < 8) && (xcord > 2)){
@@ -228,7 +222,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   }
   
-  //TODO: Make everything but 'hitchEscape' a generic escape
   public void TokyoEscape(){
     drivetrain.Move(-0.5,0 , 0);
     System.out.println(drivetrain.frontleftrotations);
@@ -327,8 +320,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     double x = vision.tag7x;
     double y = vision.tag7y;
 
-    // TODO: Get actual x & y vals needed here, and put in drivetrain.move method, look at ScorePrep
-
     if((x < 2) && (x > -2) && (y < 2) && (y > -2)){
       elevator.setElevatorPosition("Drive");
       autoStep++;
@@ -342,7 +333,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // Make it read out 'ready' when that final level value is seen.
     drivetrain.Move(0.7, 0 , 0);
     System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations > -54){  // TODO: Fill in encoder values correctly
+    if(drivetrain.frontleftrotations > -54){
       autoStep++;
     }
   }
@@ -368,7 +359,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public boolean Generic_Backup(){
     boolean ready = false;
-    // TODO: Set ready to 'true' based on encoder rotations on the drivetrain
     return ready;
   }
 

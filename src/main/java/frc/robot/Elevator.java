@@ -81,8 +81,6 @@ public class Elevator {
     }
 
     public void PeriodicTasks(){
-        // TODO: Hey guess what we should put a physical digitalInput button to zero things.
-        // TODO: Work with fab to get a button/switch wired in that they can push on the field.
         
         // check our encoder values once per tick
         extCurrentRotations = elExtendEncoder.getPosition();
