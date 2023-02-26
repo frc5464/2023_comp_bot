@@ -205,7 +205,7 @@ public class Elevator {
         if(elExtendLimitSwitch.get() == false){
             if(extend_zone_ok){
                 if(elevator_zeroed){
-                elextend.set(0.6);
+                    elextend.set(0.6);
             }
         }
         }
@@ -219,7 +219,7 @@ public class Elevator {
             if(retract_zone_ok){
                 if(elevator_zeroed){
                     elextend.set(-0.6);
-            }
+                }
             }
         }
         else{
@@ -236,40 +236,9 @@ public class Elevator {
         elwinch.set(val);
     }
 
-    public void pidControl(){
-        // ONLY ALLOW THIS TO RUN IF WE HAVE ZEROED OUT THE ENCODERS ON THIS RUN
-        if(elevator_zeroed){
-            if(extend_zone_ok && retract_zone_ok){
-                elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
-            }
-            else if(!extend_zone_ok){
-                elextend.set(-0.2);    //move us backwards a bit
-            }
-            else if(!retract_zone_ok){
-                elextend.set(0.2);  //move us forward a bit
-            }
-
-            if(winch_up_zone_ok && !waiting_for_ext){
-                elWinchPid.setReference(winchTargetRotations, CANSparkMax.ControlType.kPosition);
-            }
-            else if(waiting_for_ext){
-                elwinch.set(0);
-            }
-            else{
-                elwinch.set(-0.3);  // back it off a bit yo
-            }
-
-        }
-    }
-
-    public void nonPidHoming(){
+    public void pidHoming(){
         // This is going to ignore a lot of the fancy stuff we did before
         // Something is not working right, and programming has not had time to deal with it
-        
-        // starting things off slow.....
-        // TODO: Speed up this stuff when we have the chance
-        double nonPidExtHomingSpeed = 0.3;
-        double nonPidWinchHomingSpeed = 0.8;
 
         // ONLY if we're out of the danger zone,
         if(winchCurrentRotations > winchDangerZone){
@@ -298,7 +267,6 @@ public class Elevator {
                 elExtendPid.setReference(extTargetRotations, CANSparkMax.ControlType.kPosition);
             }
             
-
             // by default, do nothing.
             else{
                 elextend.set(0);
@@ -401,15 +369,6 @@ public class Elevator {
                 winchTargetRotations = 83;    
                 System.out.println("Default elevator val");
         }
-    }
-
-    public boolean checkForPidHomed(){
-        // If We are within a few rotations of each, return true!
-        // Otherwise, we need to be returning false. This will be used in autonomous steps.
-        // This is for Eva since she didn't want to do time-based stuff lol.
-        boolean homed = false;
-
-        return homed;
     }
 
     // ============================================= Private Functions

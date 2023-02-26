@@ -495,7 +495,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     /** This function is called periodically during autonomous. */
     @Override
     public void autonomousPeriodic() {
-      elevator.nonPidHoming();
+      elevator.pidHoming();
       
       System.out.println(autoStep);
       
@@ -586,8 +586,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
     else{
       // holds the elevator according to an auto-control scheme that is not as cool as PID
-      elevator.nonPidHoming(); 
-      // elevator.pidControl();
+      elevator.pidHoming();
     }
     // THIS INTAKES A CONE OR SPITS OUT A CUBE
     if(stick2.getRawButton(Rbumper)){
