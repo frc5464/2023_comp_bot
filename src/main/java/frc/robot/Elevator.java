@@ -81,7 +81,7 @@ public class Elevator {
     }
 
     public void PeriodicTasks(){
-        
+
         // check our encoder values once per tick
         extCurrentRotations = elExtendEncoder.getPosition();
         winchCurrentRotations = elWinchEncoder.getPosition();
@@ -327,6 +327,7 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kConePickupHigh:
+                //TODO: extTargetRotations seemed a few too low on Saturday. Fix and retry.
                 winchTargetRotations = 96;
                 extTargetRotations = 30;
                 break;

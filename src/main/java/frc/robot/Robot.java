@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   boolean elManualMode = true;
   boolean zeroed = false;
   Timer autoTimer = new Timer();
+  //TODO: Make a new timer here for the balance routine!
 
   Integer Abutton = 1;
   Integer Bbutton = 2;
@@ -164,26 +165,48 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   // This is step 0 in 'Tokyo Drift' subroutine!
   // Angles the bot so it can score
   public void scorePrep(){
+    
+    // TODO: Verify that these new scoreprep variables work! Everything should be the same as before.
 
+    // What exact X value are we trying to home in on?
+    double targetX = 5;
+
+    // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
+    double divisor = 50;
+
+    // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
+    double window = 3;
+
+    // The value we are fetching from Photonvision
     double xcord = vision.USBcamerax;
 
-    drivetrain.Move(0, 0, (vision.USBcamerax-5)/50); 
+    drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
 
-    if ((xcord < 8) && (xcord > 2)){
+    if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
       autoStep++;
     }
   }
 
   public void EscapePrep(){
-    // double xcord = vision.USBcamerax;
+    // What exact X value are we trying to home in on?
+    // TODO: This was not homing correctly on Saturday! Is x = 23 too far to travel?
 
-    // drivetrain.Move(0, 0, (vision.USBcamerax-23)/50); 
+    double targetX = 23;
 
-    // if ((xcord < 26) && (xcord > 20)){
-    //   autoStep++;
-    // }
-    autoStep++;
-    //JUST IGNORE THIS FOR NOW?
+    // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
+    double divisor = 50;
+
+    // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
+    double window = 3;
+
+    // The value we are fetching from Photonvision
+    double xcord = vision.USBcamerax;
+
+    drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
+
+    if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
+      autoStep++;
+    }
   }
  
   public void sConeEl(){
@@ -208,18 +231,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   }
 
-  public void Score(){
-    // run the intake (after a few seconds) to spit out the cone
+  public void Score(){  
+    // TODO: Saturday night Jake made the 'else' an 'else if'. Verify that this runs the intake right.
+    
+    // after shortly running the intake, then move on.
     if(autoTimer.get() > 4){
       intake.stoprun();
       autoStep++;
     }
     
-    if(autoTimer.get() > 2){
+    // run the intake (a few seconds into auto) to spit out the cone
+    else if(autoTimer.get() > 2){
       intake.outrun();      
     }
-
-
   }
   
   public void TokyoEscape(){
@@ -232,70 +256,57 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  public boolean HitchEscape(){   // This one is different than the rest
-    // flag indicating 
-    boolean ready = false;
-    return ready;
+  public void HitchEscape(){   // This one is different than the rest
+    
  }
 
-  public boolean FadeEscape(){
+  public void FadeEscape(){
     // flag indicating 
-    boolean ready = false;
-    return ready;
+
   }
 
-  public boolean FirstEscape(){
+  public void FirstEscape(){
     // flag indicating 
-    boolean ready = false;
-    return ready;
+
   }
 
-  public boolean SecondEscape(){
+  public void SecondEscape(){
     // flag indicating 
-    boolean ready = false;
-    return ready;
+
   }
 
-  public boolean ThirdEscape(){
+  public void ThirdEscape(){
     // flag indicating 
-    boolean ready = false;
-    return ready;
+
   }
 
-  public boolean Spin180Gyro(){
+  public void Spin180Gyro(){
     //Gyro will preform a 180
-    boolean ready = false;
-    return ready;
+
   }
 
-  public boolean ConeDetect(){
-    boolean ready = false;
-    return ready;
+  public void ConeDetect(){
+
   }
 
-  public boolean IntakeRun(){
-    boolean ready = false;
-    return ready;
+  public void IntakeRun(){
+
   }
 
-  public boolean IntakeDead(){
-    boolean ready = false;
-    return ready;
+  public void IntakeDead(){
+
   }
 
-  public boolean FirstFormation(){
-    boolean ready = false;
-    return ready;
+  public void FirstFormation(){
+
   }
 
-  public boolean SecondFormation(){
-    boolean ready = false;
-    return ready;
+  public void SecondFormation(){
+
   }
 
-  public boolean ThirdFormation(){
-    boolean ready = false;
-    return ready;
+  public void ThirdFormation(){
+
   }
 
   public void TokyoDrift(){
@@ -306,17 +317,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  public boolean HitchDrift(){
-    boolean ready = false;
-    return ready;
+  public void HitchDrift(){
+
   }
   
-  public boolean FadeDrift(){
-    boolean ready = false;
-    return ready;
+  public void FadeDrift(){
+
   }
 
   public void Arrival(){
+    // TODO: This is currently instantly skipped because tag7x/y registers 0,0. Remove?
+
     double x = vision.tag7x;
     double y = vision.tag7y;
 
@@ -335,6 +346,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations > -54){
       autoStep++;
+      // TODO: STOP, RESTART, AND START a new timer here. In that order!
     }
   }
 
@@ -342,7 +354,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //When pitch ~ 0 then stop
     if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
       drivetrain.Move(0,0 ,0 );
-      // if(autoTimer.get() > 2.0){
+      // TODO: Can we start another timer before 'balance', and do the timer reset scheme for this?
+      // if( new timer.get() > 2.0){
       //   autoStep++;
       // }
     }
@@ -357,9 +370,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //Focus on pitch when level value reads around 0
   }
 
-  public boolean Generic_Backup(){
-    boolean ready = false;
-    return ready;
+  public void Generic_Backup(){
+
   }
 
   // This autonomous routine is for a start in front of a cone-scoring post
@@ -402,18 +414,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       default:
         drivetrain.Move(0, 0, 0);
     }
-    // if(ready){
-    //   ready = false;
-    //   autoStep++;
-    // }
   }
 
 
 
   // This autonomous routine starts anywhere in front of a cone scoring location
   // It drives forward, scores, backs out of community
+  // TODO: Make this routine work as well! We need an auto option that doesn't try for the charge station!
   public void AutoDefault(){
-    boolean ready = false;
     switch(autoStep){
       case 0:
         scorePrep();
@@ -425,14 +433,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Score();
 
       case 3:
-        ready = Generic_Backup();
+        Generic_Backup();
 
       case 8:
         break;
-    }
-    if(ready){
-      ready = false;
-      autoStep++;
     }
   }
 
@@ -540,10 +544,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    
+    // TODO: Finish filling in the correct axes variables that Eva defined!
     if(stick.getRawAxis(2) > 0.1){
       drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.USBcamerax/120); 
     }
+    // TODO: If there is time, make a new stick1 left trigger "else if" option that homes to Apriltags.
+    // TODO: This would likely require a new pipeline for the USB cam to be set.
     else if(stick.getRawButton(Rbumper)){
       drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
     }
