@@ -329,8 +329,8 @@ public class Elevator {
                 break;
             case kConePickupHigh:
                 //TODO: HIGH: extTargetRotations seemed a few too low on Saturday. Fix and retry.
-                winchTargetRotations = 100;
-                extTargetRotations = 18;
+                winchTargetRotations = 108;
+                extTargetRotations = 22;
                 break;
             case kConeCubePickupLow:
                 winchTargetRotations = 2;
