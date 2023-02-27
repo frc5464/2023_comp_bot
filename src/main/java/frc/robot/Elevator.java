@@ -48,6 +48,7 @@ public class Elevator {
     private static final String kScoreMidCube = "ScoreMidCube"; 
     private static final String kScoreLowConeCube = "ScoreLowConeCube";
     private static final String KAprilTags = "AprilTagEncoder";
+    private static final String kConePickupLowforHighScore = "ConePickupLowforHighScore";
 
 
     double winchDangerZone = 40;
@@ -328,8 +329,8 @@ public class Elevator {
                 break;
             case kConePickupHigh:
                 //TODO: HIGH: extTargetRotations seemed a few too low on Saturday. Fix and retry.
-                winchTargetRotations = 96;
-                extTargetRotations = 30;
+                winchTargetRotations = 94;
+                extTargetRotations = 23;
                 break;
             case kConeCubePickupLow:
                 winchTargetRotations = 2;
@@ -362,6 +363,10 @@ public class Elevator {
             case KAprilTags:
                 winchTargetRotations = 20;
                 extTargetRotations = 8;
+                break;
+            case kConePickupLowforHighScore:
+                winchTargetRotations = 16;
+                winchTargetRotations = 0; 
                 break;
             default: 
                 extTargetRotations = 8;

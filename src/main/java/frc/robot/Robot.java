@@ -686,6 +686,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
+    if(stick2.getPOV() == 180){
+      elevator.setElevatorPosition("ConePickupLowforHighScore");
+      Leds.PickCone();
+    }
+
     if(stick2.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
