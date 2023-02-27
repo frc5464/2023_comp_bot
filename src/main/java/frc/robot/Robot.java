@@ -473,7 +473,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       break;
 
       case 3:
-        // TODO: HIGH: fill this function in with the same code as tokyo escape
         Generic_Backup();
       break;
 

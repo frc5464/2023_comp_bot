@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+//JAKE IMPORTANT: we can pre-charge pneumatics before each match so we will start false and disabled so not to waste battery
+
 public class Pneumatics {
 
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM); 
@@ -15,12 +17,12 @@ public class Pneumatics {
     DoubleSolenoid pcm3 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
     DoubleSolenoid pcm4 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
 
-    boolean compoffon = true;
+    boolean compoffon = false;
     boolean solbreak = false; 
     
 public void Init(){
 
-    compressor.enableDigital();
+    compressor.disable();
     pcm1.set(Value.kReverse);
     pcm2.set(Value.kReverse);
     pcm3.set(Value.kForward);
