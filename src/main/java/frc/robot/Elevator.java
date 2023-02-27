@@ -349,8 +349,8 @@ public class Elevator {
                 extTargetRotations = 35;
                 break;
             case kScoreHighCube:
-                winchTargetRotations = 99;
-                extTargetRotations = 71;
+                winchTargetRotations = 70;
+                extTargetRotations = 79;
                 break;
             case kScoreMidCube:
                 winchTargetRotations = 88;
