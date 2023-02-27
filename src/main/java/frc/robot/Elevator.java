@@ -337,8 +337,8 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kScoreHighCone:
-                winchTargetRotations = 77;
-                extTargetRotations = 77;
+                winchTargetRotations = 70;
+                extTargetRotations = 84;
                 break;
             case kScoreMidCone:
                 winchTargetRotations = 105;
