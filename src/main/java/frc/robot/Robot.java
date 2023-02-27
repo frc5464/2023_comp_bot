@@ -259,6 +259,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void HitchEscape(){   // This one is different than the rest
+    drivetrain.Move(-0.5, 0, 0);
+    //TODO: find encoder values
+      if(drivetrain.frontleftrotations > 0){
+        autoStep++;
+      }
     
  }
 
@@ -267,32 +272,56 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void FirstEscape(){
-
+    drivetrain.Move(-0.5, 0, 0);
+    if(drivetrain.frontleftrotations < -58.0){
+      TargetYaw = gyro.Yaw;
+      elevator.setElevatorPosition("Drive");
+      autoStep++;
+    }
   }
 
   public void SecondEscape(){
-
+    drivetrain.Move(-0.5, 0, 0);
+    if(drivetrain.frontleftrotations < -58.0){
+      TargetYaw = gyro.Yaw;
+      elevator.setElevatorPosition("Drive");
+      autoStep++;
+    }
   }
 
   public void ThirdEscape(){
-
+    drivetrain.Move(-0.5, 0, 0);
+    if(drivetrain.frontleftrotations < -58.0){
+      TargetYaw = gyro.Yaw;
+      elevator.setElevatorPosition("Drive");
+      autoStep++;
+    }
   }
 
   public void Spin180Gyro(){
     //Gyro will preform a 180
-
+    //TODO: varify degree and roll direction
+  drivetrain.Move(0, 0, 0.5);
+    if(gyro.Yaw > 180){
+      autoStep++;
+    }
   }
 
   public void ConeDetect(){
-
+    //TODO: find distance from a cone
+    if(intake.distcm > 0){ 
+    intake.inrun();
+    elevator.setElevatorPosition("ScoreLowConeCube"); 
+    autoStep++;
+    }
   }
 
   public void IntakeRun(){
-
+    //TODO: make a timer top run this step
   }
 
   public void IntakeDead(){
-
+    intake.stoprun();
   }
 
   public void FirstFormation(){
@@ -316,11 +345,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void HitchDrift(){
-
+    //no drift reqired I'm just a dumb bogus
+    autoStep++;
   }
   
   public void FadeDrift(){
-
+    drivetrain.Move(0, 0.5, (startingYAW-gyro.Yaw)/100);
+    //TODO: find encoder values
+      if(drivetrain.frontleftrotations > 0){ 
+        autoStep++;
+      }
   }
 
   public void Arrival(){
@@ -369,6 +403,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Generic_Backup(){
+    drivetrain.Move(-0.5, 0, 0);
+      if(drivetrain.frontleftrotations < -58.0){
+        TargetYaw = gyro.Yaw;
+        autoStep++;
+      }
 
   }
 
@@ -423,16 +462,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     switch(autoStep){
       case 0:
         scorePrep();
+      break;
 
       case 1:
         sConeEl();
+      break;
 
       case 2:
         Score();
+      break;
 
       case 3:
         // TODO: HIGH: fill this function in with the same code as tokyo escape
         Generic_Backup();
+      break;
 
       case 8:
         break;
