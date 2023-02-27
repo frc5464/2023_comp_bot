@@ -709,6 +709,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(stick.getRawButtonPressed(Rbumper)){ 
       pneumatics.SolBreak();
     }
+
+    if(stick2.getRawButtonPressed(autoStep)){
+
+    }
+
+    if(stick2.getRawButtonPressed(BackButton)){
+      elevator.elevator_zeroed = true;
+    }
   }
 
   /** This function is called once when the robot is disabled. */
