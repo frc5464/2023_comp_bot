@@ -14,8 +14,6 @@ public class Vision {
     // ============================================== Public Variables
     // What we want the rest of the robot to know
 
-    public boolean pipeline = false;
-
     public double USBcamerax;
     public double USBcameray;
     public boolean USBhasTargets;
@@ -103,19 +101,6 @@ public class Vision {
         SmartDashboard.putNumber("AprilTags.tag7x", tag7x);
         SmartDashboard.putNumber("AprilTags.tag7y", tag7y);
 
-    }
-
-    // TODO: low: If time, fill in method here that changes pipelines on USB camera, if we want apriltags on it
-    public void PiplineSelect(int pipelineIndex){
-        if(pipeline == false){
-            pipeline = true;
-            PiplineSelect(0);
-            
-        }
-        else if(pipeline == true){
-            pipeline = false;
-            PiplineSelect(1);
-        }
     }
 
     // ============================================= Private Functions

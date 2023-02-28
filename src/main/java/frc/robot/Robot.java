@@ -612,10 +612,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
 
-    if(stick.getRawButton(0)){ //TODO: find button
-      vision.PiplineSelect();
-    }
-
     if(elManualMode){
       if(stick2.getRawButton(RtriggerAxis)){
         elevator.Extend();
