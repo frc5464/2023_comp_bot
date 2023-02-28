@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // this bot's got EYES
@@ -87,6 +88,10 @@ public class Vision {
             Picamerax = Pitarget.getYaw();
         }
 
+    }
+
+    public void setUsbPipelineIndex(int pipelineIndex){
+        USBcamera.setPipelineIndex(pipelineIndex);
     }
 
     public void DisplayStats(){

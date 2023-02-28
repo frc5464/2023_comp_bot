@@ -592,20 +592,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void teleopPeriodic() {
     // TODO: low: Finish filling in the correct axes variables that Eva defined!
     if(stick.getRawAxis(2) > 0.1){
+      vision.setUsbPipelineIndex(1);  // FOR APRILTAGS / CUBES
       drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.USBcamerax/120); 
     }
-    // TODO: low: If there is time, make a new stick1 left trigger "else if" option that homes to Apriltags.
-    // TODO: low: Possibly make this switch to a different pipeline on left trigger.
     else if(stick.getRawButton(Rbumper)){
       drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
     }
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){
       drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
-    else if(stick.getRawButton(0)){ //TODO: find button
+    else if(stick.getRawButton(0)){ //TODO: find button 
+      vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
     }
-    else if(stick.getRawButton(0)){ //TODO: find button
+    else if(stick.getRawButton(0)){ //TODO: find out if this can work with the Pi camera or not
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
     }
     else{
