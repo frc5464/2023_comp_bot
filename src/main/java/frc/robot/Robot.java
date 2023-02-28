@@ -612,13 +612,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){
       drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
-    else if(stick.getRawButton(0)){ //TODO: find button 
-      vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
-      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
-    }
-    else if(stick.getRawButton(0)){ //TODO: find out if this can work with the Pi camera or not
-      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
-    }
+    // else if(stick.getRawButton(0)){ //TODO: find button 
+    //   vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
+    //   drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
+    // }
+    // else if(stick.getRawButton(0)){ //TODO: find out if this can work with the Pi camera or not
+    //   drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
+    // }
     else{
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
