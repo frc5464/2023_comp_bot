@@ -382,8 +382,8 @@ public class Elevator {
         extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0.5; 
-        extMinOutput = -0.5;
+        extMaxOutput = 0.7; 
+        extMinOutput = -0.7;
 
         // set PID coefficients
         elExtendPid.setP(extP);
