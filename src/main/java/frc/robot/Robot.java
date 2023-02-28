@@ -145,6 +145,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     
     SmartDashboard.putNumber("autoStep", autoStep);
     SmartDashboard.putNumber("autoTimer", autoTimer.get());
+    SmartDashboard.putNumber("intakeTimer", intakeTimer.get());
+    SmartDashboard.putNumber("balanceTimer", balanceTimer.get());
 
     // This button switches between manual winch/extender control and automatic.
     if(stick2.getRawButtonPressed(StartButton)){
@@ -185,6 +187,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
       autoStep++;
+      autoTimer.start();
     }
   }
 
@@ -269,7 +272,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  }
 
   public void FadeEscape(){
-
+    drivetrain.Move(0.5,0 , 0);
+    if(drivetrain.frontleftrotations < -58.0){
+      elevator.setElevatorPosition("AprilTagEncoder");
+      TargetYaw = gyro.Yaw;
+      autoStep++;
+    }
   }
 
   public void FirstEscape(){
@@ -313,16 +321,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(intake.dist > 0){ 
     intake.inrun();
     elevator.setElevatorPosition("ScoreLowConeCube"); 
+    intakeTimer.reset();
+    intakeTimer.start();
     autoStep++;
     }
   }
 
   public void IntakeRun(){
-    //TODO: make a timer top run this step
-  }
-
-  public void IntakeDead(){
-    intake.stoprun();
+    //TODO: varify time
+    if(intakeTimer.get() < 2){
+      IntakeRun();
+    }
+    else if(intakeTimer.get() > 2){
+      intake.stoprun();
+      intakeTimer.stop();
+      autoStep++;
+    }
   }
 
   public void FirstFormation(){
@@ -343,11 +357,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(drivetrain.frontleftrotations < -133){  
       autoStep++;
     }
-  }
-
-  public void HitchDrift(){
-    //no drift reqired I'm just a dumb bogus
-    autoStep++;
   }
   
   public void FadeDrift(){
@@ -378,7 +387,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println(drivetrain.frontleftrotations);
     if(drivetrain.frontleftrotations > -54){
       autoStep++;
-      // TODO: low: STOP, RESTART, AND START a new timer here. In that order!
+      balanceTimer.stop();
+      balanceTimer.reset();
+      balanceTimer.start();
     }
   }
 
@@ -386,20 +397,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //When pitch ~ 0 then stop
     if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
       drivetrain.Move(0,0 ,0 );
-      // TODO: low: use a timer, other than autoClock, to help us count up our time on the charge station
-      // if( new timer.get() > 2.0){
-      //   autoStep++;
-      // }
+      if( balanceTimer.get() > 2.0){
+        autoStep++;
+        balanceTimer.stop();
+       }
     }
     
     if(gyro.Pitch < 0){
       drivetrain.Move(0.2,0 ,0 );
-      // reset timer
+      balanceTimer.reset();
     }
       
     if(gyro.Pitch > 0){
       drivetrain.Move(-0.2,0 ,0 );
-      // reset timer
+      balanceTimer.reset();
     }
   }
 
@@ -735,6 +746,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void disabledInit() {
     elevator.setElevatorToCoast();
     autoTimer.stop();
+    intakeTimer.stop();
+    balanceTimer.stop();
   }
 
   /** This function is called periodically when disabled. */
