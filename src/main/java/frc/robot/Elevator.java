@@ -328,21 +328,20 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kConePickupHigh:
-                //TODO: HIGH: extTargetRotations seemed a few too low on Saturday. Fix and retry.
-                winchTargetRotations = 108;
-                extTargetRotations = 22;
+                winchTargetRotations = 81;
+                extTargetRotations = 52;
                 break;
             case kConeCubePickupLow:
                 winchTargetRotations = 2;
                 extTargetRotations = 8;
                 break;
             case kScoreHighCone:
-                winchTargetRotations = 70;
-                extTargetRotations = 84;
+                winchTargetRotations = 76;
+                extTargetRotations = 78;
                 break;
             case kScoreMidCone:
-                winchTargetRotations = 105;
-                extTargetRotations = 7;
+                winchTargetRotations = 75;
+                extTargetRotations = 35;
                 break;
             case kCubePickupHigh:
                 winchTargetRotations = 100;
@@ -383,8 +382,8 @@ public class Elevator {
         extD = 0.001; 
         extIz = 0; 
         extFF = 0.001; 
-        extMaxOutput = 0.7; 
-        extMinOutput = -0.7;
+        extMaxOutput = 0.5; 
+        extMinOutput = -0.5;
 
         // set PID coefficients
         elExtendPid.setP(extP);

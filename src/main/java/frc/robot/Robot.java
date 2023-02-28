@@ -29,7 +29,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   boolean elManualMode = true;
   boolean zeroed = false;
   Timer autoTimer = new Timer();
-  //TODO: low: Make a new timer here for the balance routine!
+  Timer intakeTimer = new Timer();
+  Timer balanceTimer = new Timer();
 
   Integer Abutton = 1;
   Integer Bbutton = 2;
@@ -517,8 +518,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     autoTimer.stop();
     autoTimer.reset();
-    autoTimer.start();
-    //exampleTimer.start();
+
+    intakeTimer.stop();
+    intakeTimer.reset();
+
+    balanceTimer.stop();
+    balanceTimer.reset();
 
     startingYAW = gyro.Yaw;
   
@@ -680,7 +685,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getPOV(0) == 90){
+    if(stick2.getPOV() == 90){
       elevator.setElevatorPosition("ScoreMidCube");
       Leds.PickCube();
     }
@@ -714,9 +719,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     }
 
-    if(stick2.getRawButtonPressed(BackButton)){
-      elevator.elevator_zeroed = true;
-    }
+    // if(stick2.getRawButtonPressed(BackButton)){
+    //   elevator.elevator_zeroed = true;
+    // }
   }
 
   /** This function is called once when the robot is disabled. */
