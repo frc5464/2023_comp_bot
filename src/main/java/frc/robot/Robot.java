@@ -707,7 +707,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick.getRawAxis(LtriggerAxis) > 0.1){
+    if(stick2.getPOV() == 180){
       elevator.setElevatorPosition("ConePickupLowforHighScore");
       Leds.PickCone();
     }
