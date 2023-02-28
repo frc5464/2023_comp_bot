@@ -310,7 +310,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void ConeDetect(){
     //TODO: find distance from a cone
-    if(intake.distcm > 0){ 
+    if(intake.dist > 0){ 
     intake.inrun();
     elevator.setElevatorPosition("ScoreLowConeCube"); 
     autoStep++;
@@ -602,8 +602,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){
       drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
+    else if(stick.getRawButton(0)){ //TODO: find button
+      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
+    }
+    else if(stick.getRawButton(0)){ //TODO: find button
+      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
+    }
     else{
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
+    }
+
+    if(stick.getRawButton(0)){ //TODO: find button
+      vision.PiplineSelect();
     }
 
     if(elManualMode){
