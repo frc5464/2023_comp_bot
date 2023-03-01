@@ -612,9 +612,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     // Slow down while picking up stuff
     else if(stick2.getRawButton(Rbumper)){         
-      fwdBack = fwdBack * 0.2;
-      leftRight = leftRight * 0.2;
-      rotate = rotate * 0.2; 
+      fwdBack = fwdBack * 0.18;
+      leftRight = leftRight * 0.18;
+      rotate = rotate * 0.18; 
     }
 
     // Turbo mode
