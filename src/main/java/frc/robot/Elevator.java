@@ -419,8 +419,8 @@ public class Elevator {
         winchD = 0.001;
         winchIz = 0; 
         winchFF = 0.001; 
-        winchMaxOutput = 0.8; 
-        winchMinOutput = -0.8;
+        winchMaxOutput = 1; 
+        winchMinOutput = -1;
 
         // set PID coefficients
         elWinchPid.setP(winchP);
