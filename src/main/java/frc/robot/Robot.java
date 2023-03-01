@@ -716,7 +716,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.HybridPickConeCube();
 
     // LOWER THE INTAKE ONTO A CONE
-    if(stick2.getRawButtonPressed(Xbutton)){
+    if(stick.getRawButtonPressed(Xbutton)){
       elevator.winchCurrentRotations = elevator.winchCurrentRotations - 5;
     }
     }
