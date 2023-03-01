@@ -736,6 +736,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     }
 
+    // if(stick2.getRawButtonPressed(autoStep)){
+    //   elevator.winchCurrentRotations-5;
+    //   elevator.winchCurrentRotations-5;
+    // }
+
     // if(stick2.getRawButtonPressed(BackButton)){
     //   elevator.elevator_zeroed = true;
     // }
