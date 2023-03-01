@@ -366,7 +366,7 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kConePickupLowforHighScore:
-                winchTargetRotations = 16;
+                winchTargetRotations = 15;
                 extTargetRotations = 8; 
                 break;
 
