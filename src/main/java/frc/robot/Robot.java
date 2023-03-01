@@ -420,7 +420,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         TargetYaw = gyro.Yaw;
         autoStep++;
       }
-
   }
 
   // This autonomous routine is for a start in front of a cone-scoring post
@@ -598,68 +597,68 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.DriveEncodersZeroed();
   }
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {
-    // TODO: low: Finish filling in the correct axes variables that Eva defined!
-    if(stick.getRawAxis(2) > 0.1){
-      vision.setUsbPipelineIndex(1);  // FOR APRILTAGS / CUBES
-      drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.Picamerax/120); 
-    }
-    else if(stick2.getRawButton(Rbumper)){
-      drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
-    }
-    else if(stick.getRawAxis(RtriggerAxis) > 0.1){
-      drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
-    }
-    else if(stick.getRawButton(Xbutton)){ //TODO: find button 
-        vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
-        drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
-     }
-    else if(stick.getRawButton(Ybutton)){ //TODO: find out if this can work with the Pi camera or not
-        drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
-     }
-    else{
-      drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
+  public void stickControlDrivetrain(){
+    // These are the default values of the drivetrain from the Driver controller
+    double speed     =  0.8;
+    double fwdBack   = -stick.getRawAxis(LStickFwdBackAxis);
+    double leftRight =  stick.getRawAxis(LStickLeftRightAxis);
+    double rotate    =  stick.getRawAxis(RStickLeftRightAxis);
+    
+    // Base rotation value off of Apriltag vision
+    if(stick.getRawAxis(LtriggerAxis) > 0.1){      
+      vision.setUsbPipelineIndex(1);  
+      rotate = vision.Picamerax/120; 
     }
 
-    if(elManualMode){
-      if(stick2.getRawButton(Xbutton)){
-        elevator.Extend();
-      }
-      else if(stick2.getRawButton(Ybutton)){
-        elevator.Retract();
-      }
-      else{
-        elevator.Shutdown();
-      }     
-      if(stick2.getRawButton(Abutton)){
-        elevator.jogWinch(0.7);
-      }
-      else if(stick2.getRawButton(Bbutton)){
-        elevator.jogWinch(-0.7);
-      }
-      else{
-        elevator.jogWinch(0);
-      }   
+    // Slow down while picking up stuff
+    else if(stick2.getRawButton(Rbumper)){         
+      fwdBack = fwdBack * 0.2;
+      leftRight = leftRight * 0.2;
+      rotate = rotate * 0.2; 
+    }
+
+    // Turbo mode
+    else if(stick.getRawAxis(RtriggerAxis) > 0.1){  
+      speed = 1.0;
+    }
+
+    // Base rotation value off of Reflective vision
+    else if(stick.getRawButton(Xbutton)){
+        vision.setUsbPipelineIndex(0); 
+        rotate = vision.USBcamerax*intake.intdist/120; //intdist multiplied? 
+     }
+
+    // Pi-camera lineup (untested)
+    else if(stick.getRawButton(Ybutton)){ 
+        rotate = vision.Picamerax/120; 
+    }
+
+    // use the updated values to move
+    drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
+  }
+
+  public void stickControlManualElevator(){
+    if(stick2.getRawButton(Xbutton)){
+      elevator.Extend();
+    }
+    else if(stick2.getRawButton(Ybutton)){
+      elevator.Retract();
     }
     else{
-      // holds the elevator according to an auto-control scheme that is not as cool as PID
-      elevator.pidHoming();
+      elevator.Shutdown();
+    }     
+    if(stick2.getRawButton(Abutton)){
+      elevator.jogWinch(0.7);
     }
-    // THIS INTAKES A CONE OR SPITS OUT A CUBE
-    if(stick2.getRawButton(Rbumper)){
-      intake.inrun();
-    }
-    // THIS INTAKES A CUBE OR SPITS OUT A CONE
-    else if(stick2.getRawButton(Lbumper)){
-      intake.outrun();
+    else if(stick2.getRawButton(Bbutton)){
+      elevator.jogWinch(-0.7);
     }
     else{
-      intake.stoprun();
+      elevator.jogWinch(0);
     }   
+  }
 
-
+  public void stickControlPidHoming(){
     if(stick2.getRawButtonPressed(BackButton)){
       Leds.PickCone();
     }
@@ -717,6 +716,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.HybridPickConeCube();
     }
 
+    // holds the elevator according to an auto-control scheme that is not as cool as PID
+    elevator.pidHoming();
+  }
+
+  /** This function is called periodically during operator control. */
+  @Override
+  public void teleopPeriodic() {
+    
+    stickControlDrivetrain();
+    
+    if(elManualMode){
+      stickControlManualElevator();
+    }
+    else{
+      stickControlPidHoming();
+    }
+
+    // THIS INTAKES A CONE OR SPITS OUT A CUBE
+    if(stick2.getRawButton(Rbumper)){
+      intake.inrun();
+    }
+    // THIS INTAKES A CUBE OR SPITS OUT A CONE
+    else if(stick2.getRawButton(Lbumper)){
+      intake.outrun();
+    }
+    else{
+      intake.stoprun();
+    }   
+
+    // ENABLE OR DISABLE DA GREEN LIGHT
     if(stick.getRawButtonPressed(BackButton)){
       PDThing.setSwitchableChannel(true);
     }
@@ -724,17 +753,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       PDThing.setSwitchableChannel(false);
     }
 
+    // TURN ON OR OFF THE COMPRESSOR
     if(stick.getRawButtonPressed(LStickClick)){
       pneumatics.CompOnOffOn();
     }
 
+    // ENGAGE BRAKE MODE
     if(stick.getRawButtonPressed(Rbumper)){ 
       pneumatics.SolBreak();
     }
 
-    // if(stick2.getRawButtonPressed(autoStep)){
-    //   elevator.winchCurrentRotations-5;
-    // }
+    // LOWER THE INTAKE ONTO A CONE
+    if(stick2.getRawButtonPressed(Xbutton)){
+      elevator.winchCurrentRotations = elevator.winchCurrentRotations - 5;
+    }
   }
 
   /** This function is called once when the robot is disabled. */

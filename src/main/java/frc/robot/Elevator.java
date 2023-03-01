@@ -51,9 +51,9 @@ public class Elevator {
     private static final String kConePickupLowforHighScore = "ConePickupLowforHighScore";
 
 
-    double winchDangerZone = 40;
-    double extCurrentRotations = 10;
-    double winchCurrentRotations = 10;
+    public double winchDangerZone = 40;
+    public double extCurrentRotations = 10;
+    public double winchCurrentRotations = 10;
 
     boolean extend_zone_ok = false;
     boolean retract_zone_ok = false;
