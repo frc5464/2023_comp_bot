@@ -241,13 +241,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // TODO: HIGH: Verify that this turns on/off intake correctly. Adjust timer if needed.
     
     // after shortly running the intake, then move on.
-    if(autoTimer.get() > 4){
+    if(autoTimer.get() > 2){
       intake.stoprun();
       autoStep++;
     }
     
     // run the intake (a few seconds into auto) to spit out the cone
-    else if(autoTimer.get() > 2){
+    else if(autoTimer.get() > 1){
       intake.outrun();      
     }
   }
@@ -604,39 +604,39 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // TODO: low: Finish filling in the correct axes variables that Eva defined!
     if(stick.getRawAxis(2) > 0.1){
       vision.setUsbPipelineIndex(1);  // FOR APRILTAGS / CUBES
-      drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.USBcamerax/120); 
+      drivetrain.Move(-stick.getRawAxis(1),stick.getRawAxis(0) , vision.Picamerax/120); 
     }
-    else if(stick.getRawButton(Rbumper)){
+    else if(stick2.getRawButton(Rbumper)){
       drivetrain.Move(-stick.getRawAxis(1)*0.2, stick.getRawAxis(0)*0.2, stick.getRawAxis(4)*0.2);
     }
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){
       drivetrain.Turbo(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
-    // else if(stick.getRawButton(0)){ //TODO: find button 
-    //   vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
-    //   drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
-    // }
-    // else if(stick.getRawButton(0)){ //TODO: find out if this can work with the Pi camera or not
-    //   drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
-    // }
+    else if(stick.getRawButton(Xbutton)){ //TODO: find button 
+        vision.setUsbPipelineIndex(0);  // FOR REFLECTIVE / CONES
+        drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.USBcamerax*intake.intdist/120); //intdist multiplied? 
+     }
+    else if(stick.getRawButton(Ybutton)){ //TODO: find out if this can work with the Pi camera or not
+        drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), vision.Picamerax/120); 
+     }
     else{
       drivetrain.Move(-stick.getRawAxis(1), stick.getRawAxis(0), stick.getRawAxis(4));
     }
 
     if(elManualMode){
-      if(stick2.getRawButton(RtriggerAxis)){
+      if(stick2.getRawButton(Xbutton)){
         elevator.Extend();
       }
-      else if(stick2.getRawButton(4)){
+      else if(stick2.getRawButton(Ybutton)){
         elevator.Retract();
       }
       else{
         elevator.Shutdown();
       }     
-      if(stick2.getRawButton(1)){
+      if(stick2.getRawButton(Abutton)){
         elevator.jogWinch(0.7);
       }
-      else if(stick2.getRawButton(2)){
+      else if(stick2.getRawButton(Bbutton)){
         elevator.jogWinch(-0.7);
       }
       else{
@@ -659,13 +659,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       intake.stoprun();
     }   
 
-    if(stick2.getRawAxis(LtriggerAxis) > 0.1){
+
+    if(stick2.getRawButtonPressed(BackButton)){
       Leds.PickCone();
     }
-
-    if(stick2.getRawAxis(RtriggerAxis) > 0.1){
-      Leds.PickCube();
-    }
+      else {
+        Leds.PickCube();
+      }
 
     // Elevator encoding homing
     if(stick2.getRawButtonPressed(LStickClick)){
@@ -692,7 +692,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCone();
     }
 
-    if(stick2.getPOV() == 180){ //TODO: does set to the encoder
+    if(stick2.getPOV() == 180){ //TODO: does set to the encoder probably do to an issue with the POV
       elevator.setElevatorPosition("CubePickupHigh");
       Leds.PickCube();
     }
@@ -707,7 +707,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getPOV() == 270){ //TODO: does set to the encoder
+    if(stick2.getPOV() == 270){ //TODO: does set to the encoder probably do to an issue with the POV
       elevator.setElevatorPosition("ConePickupLowforHighScore");
       Leds.PickCone();
     }
@@ -730,10 +730,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     if(stick.getRawButtonPressed(Rbumper)){ 
       pneumatics.SolBreak();
-    }
-
-    if(stick2.getRawButtonPressed(autoStep)){
-
     }
 
     // if(stick2.getRawButtonPressed(autoStep)){
