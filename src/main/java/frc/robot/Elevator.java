@@ -50,6 +50,8 @@ public class Elevator {
     private static final String KAprilTags = "AprilTagEncoder";
     private static final String kConePickupLowforHighScore = "ConePickupLowforHighScore";
 
+    private static final String kWinchSmol = "Winch-5";
+
 
     public double winchDangerZone = 40;
     public double extCurrentRotations = 10;
@@ -366,6 +368,10 @@ public class Elevator {
             case kConePickupLowforHighScore:
                 winchTargetRotations = 15;
                 extTargetRotations = 8; 
+                break;
+
+            case kWinchSmol:
+                winchTargetRotations = winchTargetRotations-5;
                 break;
             default: 
                 extTargetRotations = 8;

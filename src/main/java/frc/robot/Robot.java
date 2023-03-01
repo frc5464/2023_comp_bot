@@ -717,8 +717,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     // LOWER THE INTAKE ONTO A CONE
     if(stick.getRawButtonPressed(Xbutton)){
-      elevator.winchCurrentRotations = elevator.winchCurrentRotations - 5;
-    }
+      elevator.setElevatorPosition("Winch-5");
+      }
     }
 
     // holds the elevator according to an auto-control scheme that is not as cool as PID
