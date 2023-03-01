@@ -692,7 +692,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCone();
     }
 
-    if(stick2.getPOV() == 270){
+    if(stick2.getPOV() == 180){ //TODO: does set to the encoder
       elevator.setElevatorPosition("CubePickupHigh");
       Leds.PickCube();
     }
@@ -707,7 +707,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getPOV() == 180){
+    if(stick2.getPOV() == 270){ //TODO: does set to the encoder
       elevator.setElevatorPosition("ConePickupLowforHighScore");
       Leds.PickCone();
     }
