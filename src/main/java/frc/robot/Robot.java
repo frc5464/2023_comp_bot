@@ -714,6 +714,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(stick2.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
+
+    // LOWER THE INTAKE ONTO A CONE
+    if(stick2.getRawButtonPressed(Xbutton)){
+      elevator.winchCurrentRotations = elevator.winchCurrentRotations - 5;
+    }
     }
 
     // holds the elevator according to an auto-control scheme that is not as cool as PID
@@ -763,10 +768,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       pneumatics.SolBreak();
     }
 
-    // LOWER THE INTAKE ONTO A CONE
-    if(stick2.getRawButtonPressed(Xbutton)){
-      elevator.winchCurrentRotations = elevator.winchCurrentRotations - 5;
-    }
   }
 
   /** This function is called once when the robot is disabled. */
