@@ -634,7 +634,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
     // use the updated values to move
-    drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
+    drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
   }
 
   public void stickControlManualElevator(){

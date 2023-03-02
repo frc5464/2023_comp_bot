@@ -408,7 +408,6 @@ public class Elevator {
         SmartDashboard.putNumber("ext Max Output", extMaxOutput);
         SmartDashboard.putNumber("ext Min Output", extMinOutput);
         SmartDashboard.putNumber("ext Set Rotations", extTargetRotations);
-          
 
     }  
     
