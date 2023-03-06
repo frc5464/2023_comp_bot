@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -56,8 +57,16 @@ public class Drivetrain {
         // This could be a function that we call when we want to move the robot.
         // We will "pass in" three values from our main Robot Class,
         // And this function will use those values
-        // x = forward, y = strafe, rot = rotate the bot
+        // x = forward, y = strafe, rot = rotate the bot, gyroAngle = 
+        
         drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed);
+
+    }
+
+    public void MoveFieldOriented(double x,double y,double rot, Rotation2d gyroAngle){
+
+        drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed, gyroAngle);
+        
     }
 
     public void DisplayStats(){

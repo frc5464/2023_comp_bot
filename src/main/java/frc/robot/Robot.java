@@ -168,8 +168,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   // This is step 0 in 'Tokyo Drift' subroutine!
   // Angles the bot so it can score
   public void scorePrep(){
-    
-    // TODO: HIGH: Verify that these new scoreprep variables work! Everything should work the same.
 
     // The X value we will be homing to
     double targetX = 5;
@@ -193,8 +191,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void EscapePrep(){
     // What exact X value are we trying to home in on?
-    // TODO: HIGH: This was not homing correctly on Saturday! Is x = 23 too far to travel?
-    // TODO: HIGH: Check the physical camera alignment is correct (x = 0 when aiming directly at post)
 
     // The X value we will be homing to
     double targetX = 23;
@@ -635,6 +631,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     // use the updated values to move
     drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
+
+    //drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
   }
 
   public void stickControlManualElevator(){
@@ -761,6 +759,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // TURN ON OR OFF THE COMPRESSOR
     if(stick.getRawButtonPressed(LStickClick)){
       pneumatics.CompOnOffOn();
+    }
+
+    // RESET GYROSCOPE FOR FIELD-ORIENTED DRIVE
+    if(stick.getRawButtonPressed(Lbumper)){
+      gyro.ResetGyro();
     }
 
     // ENGAGE BRAKE MODE
