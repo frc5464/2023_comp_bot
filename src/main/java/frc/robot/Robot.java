@@ -613,9 +613,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       rotate = rotate * 0.18; 
     }
 
-    // Turbo mode
+    // Charge station climb overrides turning vals to be perfectly lined up
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){  
       speed = 1.0;
+      rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
     }
 
     // Base rotation value off of Reflective vision
