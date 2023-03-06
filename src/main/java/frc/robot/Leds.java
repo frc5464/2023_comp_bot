@@ -10,7 +10,7 @@ public class Leds {
 
     // ============================================== Private Variables
     // What the rest of the robot does not care about
-    AddressableLED ledStrip = new AddressableLED(0);
+    AddressableLED ledStrip = new AddressableLED(1);
     AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(62); 
     
     // maximum brightness value
@@ -20,10 +20,35 @@ public class Leds {
     private void setSolidLedColor(String color){
         
         int[] rgb = colorPicker(color);
+        
+      
 
         int r = rgb[0];
         int g = rgb[1];
         int b = rgb[2];
+
+        System.out.print("red:");
+        System.out.print(r);
+        System.out.print("green:");
+        System.out.print(g);
+        System.out.print("blue:");
+        System.out.println(b); 
+
+        for (var i = 0; i < ledBuffer.getLength(); i++) {
+            ledBuffer.setRGB(i,r,g,b);
+        }
+        ledStrip.setData(ledBuffer);
+    }
+
+    // sets the whole string to the same color
+    private void setSolidLedColorInts(int r, int g, int b){
+
+        System.out.print("red:");
+        System.out.print(r);
+        System.out.print("green:");
+        System.out.print(g);
+        System.out.print("blue:");
+        System.out.println(b); 
 
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i,r,g,b);
@@ -83,30 +108,36 @@ public class Leds {
     }
 
     public void QuestionError(){
-        setSolidLedColor("red");
+        // setSolidLedColor("red");
+        setSolidLedColorInts(200, 0, 0);
     }
 
     public void DefaultLight(){
         setSolidLedColor("blue");
     }
 
-    public void Manualmode(){
-        setSolidLedColor("purple");    
+    public void Pidmode(){
+        // setSolidLedColor("purple"); 
+        setSolidLedColorInts(0, 200, 0);
     }
 
-    public void Pidmode(){
-        setSolidLedColor("light_blue");      
+    public void Manualmode(){
+        // setSolidLedColor("light_blue");  
+        setSolidLedColorInts(80, 80, 150);  
     }
 
     public void PickCone(){
-        setSolidLedColor("orange");
+        // setSolidLedColor("orange");
+        setSolidLedColorInts(200, 80, 0);
     }
 
     public void PickCube(){
-        setSolidLedColor("purple");
+        // setSolidLedColor("purple");
+        setSolidLedColorInts(100, 0, 100);
     }
 
     public void HybridPickConeCube(){
-        setSolidLedColor("green");
+        // setSolidLedColor("green");
+        setSolidLedColorInts(0, 100, 100);
     }
 }

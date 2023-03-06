@@ -50,7 +50,7 @@ public class Elevator {
     private static final String KAprilTags = "AprilTagEncoder";
     private static final String kConePickupLowforHighScore = "ConePickupLowforHighScore";
 
-    private static final String kWinchSmol = "Winch-5";
+    private static final String kWinchSmol = "WinchSmol";
 
 
     public double winchDangerZone = 40;
@@ -62,6 +62,8 @@ public class Elevator {
     boolean winch_up_zone_ok = false;
     boolean waiting_for_ext = false;
 
+    public boolean conepickhigh = false;
+    public boolean conepicklow = false;
 
     // ============================================= Public Functions
     public void Init(){
@@ -76,6 +78,10 @@ public class Elevator {
     public void setElevatorToCoast(){
         //elwinch.setIdleMode(IdleMode.kCoast);
         elextend.setIdleMode(IdleMode.kCoast);
+    }
+
+    public void setWinchToBreak(){
+        elwinch.setIdleMode(IdleMode.kBrake);
     }
 
     public void setElevatorToBrake(){
@@ -203,26 +209,26 @@ public class Elevator {
     }
 
     public void Extend(){
-        if(elExtendLimitSwitch.get() == false){
+        //if(elExtendLimitSwitch.get() == false){
             if(extend_zone_ok){
                 if(elevator_zeroed){
                     elextend.set(0.6);
             }
         }
-        }
+        //}
         else{
             elextend.set(0);
         }
     }
 
     public void Retract(){
-        if(elRetractLimitSwitch.get() == false){
+        //if(elRetractLimitSwitch.get() == false){
             if(retract_zone_ok){
                 if(elevator_zeroed){
                     elextend.set(-0.6);
                 }
             }
-        }
+        //}
         else{
             elextend.set(0);
         }
@@ -244,7 +250,7 @@ public class Elevator {
         // ONLY if we're out of the danger zone,
         if(winchCurrentRotations > winchDangerZone){
             // back off for illegal things!
-            if(extCurrentRotations > 80){
+            if(extCurrentRotations > 85){
                 elextend.set(-0.2);
             }
             else if(extCurrentRotations < 2){
@@ -311,26 +317,37 @@ public class Elevator {
     public boolean zeroRotations(){
       // check our limit switches to make sure that we are actually at the zero point
       // this should prevent the possibility of zeroing during a match
-      if(elRetractLimitSwitch.get()){
+      //if(elRetractLimitSwitch.get()){
         elExtendEncoder.setPosition(0);
         elWinchEncoder.setPosition(130);
         elevator_zeroed = true;
         System.out.println("Elevator zeroed out!");
-      }
-      else{
-        System.out.println("Elevator NOT zeroed out! Check Limit Switches!");
-      }
       return elevator_zeroed;        
     }
 
     public void setElevatorPosition(String str){
+        
+        if(str == kConePickupHigh){
+            conepickhigh = true;
+        }
+        else{
+            conepickhigh = false;
+        }
+        
+        if(str == kConePickupLowforHighScore){
+            conepicklow = true;
+        }
+        else{
+            conepicklow = false;
+        }
+
         switch (str){
             case kDrive:
                 winchTargetRotations = 83;
                 extTargetRotations = 8;
                 break;
             case kConePickupHigh:
-                winchTargetRotations = 81; 
+                winchTargetRotations = 84; 
                 extTargetRotations = 50;
                 break;
             case kConeCubePickupLow:
@@ -369,7 +386,6 @@ public class Elevator {
                 winchTargetRotations = 15;
                 extTargetRotations = 8; 
                 break;
-
             case kWinchSmol:
                 winchTargetRotations = winchTargetRotations-5;
                 break;
@@ -378,6 +394,10 @@ public class Elevator {
                 winchTargetRotations = 83;    
                 System.out.println("Default elevator val");
         }
+    }
+
+    public void DistancePickup(){
+        
     }
 
     // ============================================= Private Functions

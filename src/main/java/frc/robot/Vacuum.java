@@ -15,9 +15,12 @@ public class Vacuum {
     AnalogInput distancesense = new AnalogInput(1);
     double dist = 0;
 
-    AnalogInput intakeDistance = new AnalogInput(0);
+    AnalogInput intakeDistance = new AnalogInput(2);
     double intdist = 0;
     //TODO: install an intake sensor (preferably laser) and find the port
+
+    AnalogInput pickupDistance = new AnalogInput(0);
+    public double pickdist = 0;
 
 public void Init(){
     intakeEncoder = intake.getEncoder();
@@ -30,7 +33,6 @@ public void DisplayStats(){
 public void DistanceCheck(){
     dist = (distancesense.getAverageVoltage())*(1000);
     SmartDashboard.putNumber("Distance", dist);
-    
 }
 
     public void inrun(){
@@ -47,7 +49,12 @@ public void DistanceCheck(){
 
 public void IntakeLength(){
     intdist = (intakeDistance.getAverageVoltage())*(1000); //multplying by 1000 makes more readable bigggg numbers hehe 
-    SmartDashboard.putNumber("IntakeLengthfromCone", intdist);
+    SmartDashboard.putNumber("Intake Length from Cone", intdist);
+}
+
+public void PickupLength(){
+    pickdist = (pickupDistance.getAverageVoltage())*(1000);
+    SmartDashboard.putNumber("Ditance from the requested object", pickdist);
 }
 
 }

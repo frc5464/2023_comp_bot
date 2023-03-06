@@ -12,17 +12,17 @@ public class Pneumatics {
 
     Compressor compressor = new Compressor(0, PneumaticsModuleType.CTREPCM); 
 
-    DoubleSolenoid pcm1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-    DoubleSolenoid pcm2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 2, 3);
-    DoubleSolenoid pcm3 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
-    DoubleSolenoid pcm4 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
+    DoubleSolenoid pcm1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 0);
+    DoubleSolenoid pcm2 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
+    DoubleSolenoid pcm3 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 5, 4);
+    DoubleSolenoid pcm4 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 7, 6);
 
     boolean compoffon = false;
     boolean solbreak = false; 
     
 public void Init(){
 
-    compressor.disable();
+    compressor.enableDigital();
     pcm1.set(Value.kReverse);
     pcm2.set(Value.kReverse);
     pcm3.set(Value.kForward);

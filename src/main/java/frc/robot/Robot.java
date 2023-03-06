@@ -4,12 +4,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private final SendableChooser<String>m_LR = new SendableChooser<>();
 
   boolean elManualMode = true;
   boolean zeroed = false;
@@ -60,7 +64,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    //Charge station autonomous
    private static final String kTokyoDrift = "Tokyo Drift";
    private static final String kHitchRoute = "Hitch Route";
-   private static final String kFadeAway = "Fade Away";
+   private static final String kScoreOnly = "Score Only";
  
    //Scoring autonomous
    private static final String kFirstScore = "First Score";
@@ -72,10 +76,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private static final String kMid = "Mid";
    private static final String kLow = "Low";
 
+   //Presets for right or left autonomous
+   private static final String kLeft = "Left";
+   private static final String kRight = "Right";
+   private static final String kMiddle = "Middle";
+
    private String score_preset_selected;
+   private String autonomous_direction_selected;
    private final SendableChooser<String> score_preset_chooser = new SendableChooser<>();
 
-   private DigitalInput zeroedbutton = new DigitalInput(3);
+   private DigitalInput zeroedbutton = new DigitalInput(4);
    boolean buttonpressed = false;
 
    double startingYAW;
@@ -89,12 +99,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   Vision vision = new Vision();  
   Pneumatics pneumatics = new Pneumatics();
 
+  boolean ConePickupHighenc = false;
+  boolean ConePickupLowenc = false;
+
+  
+
+  private double floorange = 16+intake.pickdist;
+  private double pickuprange = 0+intake.pickdist;
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
+    PortForwarder.add(5800, "photonvision.local", 5800);
+
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
@@ -110,7 +130,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     m_chooser.addOption("Tokyo Drift", kTokyoDrift);
     m_chooser.addOption("Hitch Route", kHitchRoute);
-    m_chooser.addOption("Fade Away", kFadeAway);
+    m_chooser.addOption("Score Only", kScoreOnly);
     m_chooser.addOption("First Score", kFirstScore);
     m_chooser.addOption("Second Score", kSecondScore);
     m_chooser.addOption("Third Score", kThirdScore);
@@ -122,6 +142,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     score_preset_chooser.addOption("Low", kLow);
     SmartDashboard.putData("Score Preset Choices", score_preset_chooser);
     Leds.QuestionError();
+
+    m_LR.setDefaultOption("Left", kLeft);
+    m_LR.setDefaultOption("Right", kRight);
+    m_LR.setDefaultOption("Middle", kMiddle);
+    SmartDashboard.putData("Autonomous Direction", m_LR);  
+    
+    elevator.setWinchToBreak();
+    elevator.setElevatorPosition("Drive");
+    
+    CameraServer.startAutomaticCapture();
+
   }
 
   /**
@@ -152,43 +183,80 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(stick2.getRawButtonPressed(StartButton)){
       if(elManualMode){
         System.out.println("We're in automatic mode!");
-        if(zeroed){Leds.Pidmode();}
-        else{Leds.QuestionError();}
+        if(zeroed){
+          Leds.Pidmode();
+        }
+        else{
+          Leds.QuestionError();
+        }
         elManualMode = false;       
       }
       else{
-        if(zeroed){Leds.Manualmode();}        
+        if(zeroed){
+          Leds.Manualmode();
+        }        
         System.out.println("We're in manual mode!");
         elManualMode = true;
       }
     }
 
+// ConePickupHighenc = elevator.conepickhigh;
+
+// if(ConePickupHighenc == true){
+//   //bigggg range from the floor
+//      if(pickuprange > 0){
+//        elevator.winchCurrentRotations = elevator.winchCurrentRotations-0.5;
+//      }
+//      else if(pickuprange < 0){
+//        elevator.winchCurrentRotations = elevator.winchCurrentRotations+0.5;
+//      }
+//      //teenie tiny range from the cone 
+//      else if((pickuprange > 0) && (pickuprange < 0)){
+//       elevator.winchCurrentRotations = elevator.winchCurrentRotations;
+//      }
+//      }
+
+// ConePickupLowenc = elevator.conepicklow;
+
+// if(ConePickupLowenc == true){
+//   //if the distance range is big then stay
+//     if(floorange > 0){
+//       elevator.winchCurrentRotations = elevator.winchCurrentRotations;
+//     }
+//   //if the distance range is small (detects cone) then lower teh winch entirely 
+//     if(floorange < 0){
+//       elevator.winchCurrentRotations = 0;
+//     }
+//   }
+
   }
 
-  // This is step 0 in 'Tokyo Drift' subroutine!
+
   // Angles the bot so it can score
   public void scorePrep(){
     
-    // TODO: HIGH: Verify that these new scoreprep variables work! Everything should work the same.
+    // // TODO: HIGH: Verify that these new scoreprep variables work! Everything should work the same.
 
-    // The X value we will be homing to
-    double targetX = 5;
+    // // The X value we will be homing to
+    // double targetX = 5;
 
-    // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
-    double divisor = 50;
+    // // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
+    // double divisor = 50;
 
-    // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
-    double window = 3;
+    // // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
+    // double window = 3;
 
-    // The value we are fetching from Photonvision
-    double xcord = vision.USBcamerax;
+    // // The value we are fetching from Photonvision
+    // double xcord = vision.USBcamerax;
 
-    drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
+    // drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
 
-    if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
-      autoStep++;
-      autoTimer.start();
-    }
+    // if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
+    //   autoStep++;
+    //   autoTimer.start();
+    // }
+    autoStep++;
+    autoTimer.start();
   }
 
   public void EscapePrep(){
@@ -197,22 +265,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // TODO: HIGH: Check the physical camera alignment is correct (x = 0 when aiming directly at post)
 
     // The X value we will be homing to
-    double targetX = 23;
+    // double targetX = 23;
 
-    // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
-    double divisor = 50;
+    // // INCREASE this value to make us home faster, but possibly less stable. Decrease if overshooting.
+    // double divisor = 50;
 
-    // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
-    double window = 3;
+    // // How wide of a range are we going to be looking for when homing? DECREASE to look for smaller window.
+    // double window = 3;
 
-    // The value we are fetching from Photonvision
-    double xcord = vision.USBcamerax;
+    // // The value we are fetching from Photonvision
+    // double xcord = vision.USBcamerax;
 
-    drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
+    // drivetrain.Move(0, 0, (vision.USBcamerax-targetX)/divisor); 
 
-    if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
+    // if ((xcord < (targetX + window)) && (xcord > (targetX - window))){
       autoStep++;
-    }
+    // }
   }
  
   public void sConeEl(){
@@ -241,21 +309,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // TODO: HIGH: Verify that this turns on/off intake correctly. Adjust timer if needed.
     
     // after shortly running the intake, then move on.
-    if(autoTimer.get() > 2){
+    if(autoTimer.get() > 4){
       intake.stoprun();
+      elevator.setElevatorPosition("Drive");
       autoStep++;
     }
     
     // run the intake (a few seconds into auto) to spit out the cone
-    else if(autoTimer.get() > 1){
+    else if(autoTimer.get() > 3){
       intake.outrun();      
     }
   }
   
   public void TokyoEscape(){
-    drivetrain.Move(-0.5,0 , 0);
+    drivetrain.Move(-0.3,0 , 0);
     System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations < -58.0){
+    if(drivetrain.frontleftrotations < -68.0){
       elevator.setElevatorPosition("AprilTagEncoder");
       TargetYaw = gyro.Yaw;
       autoStep++;
@@ -263,22 +332,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void HitchEscape(){   // This one is different than the rest
-    drivetrain.Move(-0.5, 0, 0);
-    //TODO: find encoder values
-      if(drivetrain.frontleftrotations > 0){
-        autoStep++;
-      }
-    
- }
-
-  public void FadeEscape(){
-    drivetrain.Move(0.5,0 , 0);
-    if(drivetrain.frontleftrotations < -58.0){
-      elevator.setElevatorPosition("AprilTagEncoder");
-      TargetYaw = gyro.Yaw;
+    drivetrain.Move(-0.35, 0, 0);
+    if(gyro.Pitch < 14){
+      drivetrain.Move(-0.2, 0, 0);
       autoStep++;
     }
+ }
+
+ public void HitchSlow(){
+  drivetrain.Move(-0.2, 0, 0);
+  if(drivetrain.frontleftrotations < -68){
+    autoStep++;
   }
+ }
 
   public void FirstEscape(){
     drivetrain.Move(-0.5, 0, 0);
@@ -352,21 +418,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void TokyoDrift(){
-    drivetrain.Move(0, -0.5, (startingYAW-gyro.Yaw)/100);
-    System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations < -133){  
-      autoStep++;
-    }
-  }
-  
-  public void FadeDrift(){
-    drivetrain.Move(0, 0.5, (startingYAW-gyro.Yaw)/100);
-    //TODO: find encoder values
-      if(drivetrain.frontleftrotations > 0){ 
-        autoStep++;
-      }
-  }
 
+      switch(autonomous_direction_selected){
+        case kLeft:
+          drivetrain.Move(0,0.5,(startingYAW-gyro.Yaw)/120);
+          if(drivetrain.frontleftrotations > 7){
+            autoStep++;
+          }
+          break;
+        case kRight:
+          drivetrain.Move(0, -0.5, (startingYAW-gyro.Yaw)/120);
+          System.out.println(drivetrain.frontleftrotations);
+          if(drivetrain.frontleftrotations < -143){  
+          autoStep++;
+        }
+          break;
+      }
+    }
+  
   public void Arrival(){
     // This is currently instantly skipped because tag7x/y registers 0,0.
     // TODO: low: Get tag 7 to actually read out with the vision system, or switch this to Gyro lineup.
@@ -378,18 +447,39 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       elevator.setElevatorPosition("Drive");
       autoStep++;
     }
-
-    
   }
 
   public void Gunit(){
-    drivetrain.Move(0.7, 0 , 0);
-    System.out.println(drivetrain.frontleftrotations);
-    if(drivetrain.frontleftrotations > -54){
-      autoStep++;
-      balanceTimer.stop();
-      balanceTimer.reset();
-      balanceTimer.start();
+
+    switch(autonomous_direction_selected){
+      case kLeft:
+        drivetrain.Move(0.7, 0 , 0);
+        System.out.println(drivetrain.frontleftrotations);
+        if(drivetrain.frontleftrotations > -54){
+        autoStep++;
+        balanceTimer.stop();
+        balanceTimer.reset();
+        balanceTimer.start();
+        }
+        break;
+      case kRight:
+        drivetrain.Move(0.7, 0 , 0);
+        System.out.println(drivetrain.frontleftrotations);
+        if(drivetrain.frontleftrotations > 96){
+        autoStep++;
+        balanceTimer.stop();
+        balanceTimer.reset();
+        balanceTimer.start();
+        }
+        break;
+      case kMiddle:
+        drivetrain.Move(0.7, 0, 0);
+        if(drivetrain.frontleftrotations > -18){
+        autoStep++;
+        balanceTimer.stop();
+        balanceTimer.reset();
+        balanceTimer.start();
+        }
     }
   }
 
@@ -415,8 +505,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Generic_Backup(){
-    drivetrain.Move(-0.5, 0, 0);
-      if(drivetrain.frontleftrotations < -58.0){
+    drivetrain.Move(-0.3, 0, 0);
+      if(drivetrain.frontleftrotations < -68.0){
         TargetYaw = gyro.Yaw;
         autoStep++;
       }
@@ -464,29 +554,70 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-
-
   // This autonomous routine starts anywhere in front of a cone scoring location
   // It drives forward, scores, backs out of community
   // TODO: HIGH: Finish Default auto steps. Once this works, Tokyo Drift will have a more solid start.
   public void AutoDefault(){
     switch(autoStep){
       case 0:
-        scorePrep();
-      break;
-
-      case 1:
         sConeEl();
       break;
-
+      case 1:
+        scorePrep();
+      break;
       case 2:
         Score();
       break;
-
       case 3:
         Generic_Backup();
       break;
+      case 4:
+        break;
+    }
+  }
 
+  public void AutoScoreOnly(){
+    switch(autoStep){
+      case 0:
+        sConeEl();
+        break;
+      case 1:
+        scorePrep();
+        break;
+      case 2:
+        Score();
+        break;
+      case 4:
+        break;
+    }
+  }
+
+  public void AutoHitchRoute(){
+    switch(autoStep){
+      case 0:
+        sConeEl();
+        break;
+      case 1:
+        scorePrep();
+        break;
+      case 2:
+        Score();
+        break;
+      case 3:
+        HitchEscape();
+        break;
+      case 4: 
+        HitchSlow();
+        break;
+      case 5: 
+        Arrival();
+        break;
+      case 6:
+        Gunit();
+        break;
+      case 7:
+        Balance();
+        break;
       case 8:
         break;
     }
@@ -521,10 +652,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println("Auto selected: " + m_autoSelected);
     m_autoSelected = m_chooser.getSelected();
     score_preset_selected = score_preset_chooser.getSelected(); 
+    autonomous_direction_selected = m_LR.getSelected();
 
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
     System.out.println("Preset selected: " + score_preset_selected);
+    System.out.println("Direction selected:" +autonomous_direction_selected);
 
     autoTimer.stop();
     autoTimer.reset();
@@ -552,17 +685,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       switch (m_autoSelected) {
         
         case kTokyoDrift:
-          // If we select 'Tokyo Drift' on Drivers' station, it will run this function!
           AutoTokyoDrift();     
           break;
   
-        // case kHitchRoute:
-        //   AutoHitchRoute();
-        //   break;
-  
-        // case kFadeAway:
-        //   AutoFadeAway();
-        //   break;
+        case kHitchRoute:
+          AutoHitchRoute();
+          break;
   
         // case kFirstScore:
         //   AutoFirstScore();
@@ -579,6 +707,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         // case kDefaultAuto:
         //   AutoDefault();
         //   break;
+
+          case kScoreOnly:
+            AutoScoreOnly();
+            break;
           
         default:
           AutoDefault();
@@ -622,7 +754,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       speed = 1.0;
     }
 
-    // Base rotation value off of Reflective vision
+    //Base rotation value off of Reflective vision
     else if(stick.getRawButton(Xbutton)){
         vision.setUsbPipelineIndex(0); 
         rotate = vision.USBcamerax*intake.intdist/120; //intdist multiplied? 
@@ -659,26 +791,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void stickControlPidHoming(){
-    if(stick2.getRawButtonPressed(BackButton)){
-      Leds.PickCone();
-    }
-      else {
-        Leds.PickCube();
-      }
+
 
     // Elevator encoding homing
-    if(stick2.getRawButtonPressed(LStickClick)){
+    if(stick.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("Drive");
     }
 
-    if(stick2.getRawButtonPressed(RtriggerAxis)){
+    if(stick2.getRawButtonPressed(Xbutton)){
       elevator.setElevatorPosition("ConePickupHigh");
       Leds.PickCone();
     }
 
     if(stick2.getRawButtonPressed(Abutton)){
       elevator.setElevatorPosition("ConeCubePickupLow");
-      Leds.PickCone();
+      Leds.PickCube();
     }
     
     if(stick2.getRawButtonPressed(Ybutton)){
@@ -691,7 +818,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCone();
     }
 
-    if(stick2.getPOV() == 180){ //TODO: does set to the encoder probably do to an issue with the POV
+    if(stick2.getPOV() == 180){ 
       elevator.setElevatorPosition("CubePickupHigh");
       Leds.PickCube();
     }
@@ -706,7 +833,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       Leds.PickCube();
     }
 
-    if(stick2.getPOV() == 270){ //TODO: does set to the encoder probably do to an issue with the POV
+    if(stick2.getPOV() == 270){ 
       elevator.setElevatorPosition("ConePickupLowforHighScore");
       Leds.PickCone();
     }
@@ -714,11 +841,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(stick2.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
+    }
 
     // LOWER THE INTAKE ONTO A CONE
-    if(stick.getRawButtonPressed(Xbutton)){
-      elevator.setElevatorPosition("Winch-5");
-      }
+    if(stick2.getRawButtonPressed(LStickClick)){
+      elevator.setElevatorPosition("WinchSmol");
     }
 
     // holds the elevator according to an auto-control scheme that is not as cool as PID
@@ -774,6 +901,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   @Override
   public void disabledInit() {
     elevator.setElevatorToCoast();
+    elevator.setWinchToBreak();
     autoTimer.stop();
     intakeTimer.stop();
     balanceTimer.stop();
@@ -783,7 +911,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   @Override
   public void disabledPeriodic(){
     
-    if(zeroedbutton.get()){
+    if(!zeroedbutton.get() || stick.getRawButton(BackButton)){
       zeroed = elevator.zeroRotations();
 
       if(elManualMode){
