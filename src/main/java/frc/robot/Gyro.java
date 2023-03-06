@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 // The Gyro subsystem is NOT to be EATEN
@@ -19,6 +20,7 @@ public class Gyro {
     
     public double Yaw;
     public double Pitch;
+    public Rotation2d Angle;
 
     // ============================================= Public Functions
     public void Init(){
@@ -29,6 +31,12 @@ public class Gyro {
     public void UpdateGyro(){
         Yaw = navx.getYaw();
         Pitch = navx.getPitch();
+        Angle = navx.getRotation2d();
+    }
+
+    // Corrects slow drift of the gyro. Shoudn't be necessary during matches
+    public void ResetGyro(){
+        navx.reset();
     }
 
     public void DisplayStats(){
