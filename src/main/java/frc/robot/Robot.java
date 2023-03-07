@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -180,6 +179,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     SmartDashboard.putNumber("autoTimer", autoTimer.get());
     SmartDashboard.putNumber("intakeTimer", intakeTimer.get());
     SmartDashboard.putNumber("balanceTimer", balanceTimer.get());
+    SmartDashboard.putBoolean("fieldOriented", Fieldoriented);
 
     // This button switches between manual winch/extender control and automatic.
     if(stick2.getRawButtonPressed(StartButton)){
@@ -393,7 +393,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void IntakeRun(){
-    //TODO: varify time
+    //TODO: verify time
     if(intakeTimer.get() < 2){
       IntakeRun();
     }
@@ -622,6 +622,49 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
+  public void AutoFirstScore(){
+    switch(autoStep){
+      case 0:
+        sConeEl();
+        break;
+      case 1:
+        scorePrep();
+        break;
+      case 2:
+        Score();
+        break;
+      case 3:
+        FirstEscape();
+        break;
+      case 4: 
+        Spin180Gyro();
+        break;
+      case 5: 
+        ConeDetect();
+        break;
+      case 6:
+        IntakeRun();
+        break;
+      case 7:
+        Spin180Gyro();
+        break;
+      case 8: 
+        FirstFormation();
+        break;
+      case 9:
+        scorePrep();
+        break;
+      case 10:
+        sConeEl();
+        break;
+      case 11:
+        Score();
+        break;
+      case 12:
+        break;
+    }
+  }
+
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
    * autonomous modes using the dashboard. The sendable chooser code works with the Java
@@ -693,9 +736,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           AutoHitchRoute();
           break;
   
-        // case kFirstScore:
-        //   AutoFirstScore();
-        // break;
+        case kFirstScore:
+          AutoFirstScore();
+        break;
   
         // case kSecondScore:
         //   AutoSecondScore();
@@ -767,14 +810,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         rotate = vision.Picamerax/120; 
     }
 
-    //if(Fieldoriented == false){
+    if(Fieldoriented == false){
     // use the updated values to move
       drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
-    //}
+    }
 
-    // if(Fieldoriented == true){
-    //   drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
-    // }
+    if(Fieldoriented == true){
+      drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+    }
   }
 
   public void stickControlManualElevator(){

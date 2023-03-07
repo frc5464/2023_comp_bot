@@ -11,6 +11,11 @@ public class Auto{
     Pneumatics pneumatics = new Pneumatics();
     Robot robot = new Robot();
 
+    // This actually works! We can grab our 'gyro' instance from our main robot program!
+    // That means all of the autonomous code could actually go into here!
+    // TODO: refactor all of our autonomous code into this file, or separate ones!
+    Gyro ourGyro = robot.gyro;
+
     public int autoStep = 0;
     String score_preset_selected = "";
    //Presets for cone scoring
@@ -181,7 +186,7 @@ public class Auto{
   }
 
   public void IntakeRun(){
-    //TODO: varify time
+    //TODO: verify time
     if(robot.intakeTimer.get() < 2){
       IntakeRun();
     }
@@ -356,51 +361,7 @@ public class Auto{
 
     // This class may end up containing our autonomous code. For now, non-implemented things go here.
     // This should help clean up the code until the team makes one good routine.
-    public void AutoFirstScore(){
-        switch(autoStep){
-          case 0:
-            sConeEl();
-            break;
-          case 1:
-            scorePrep();
-            break;
-          case 2:
-            Score();
-            break;
-          case 3:
-            FirstEscape();
-            break;
-          case 4: 
-            Spin180Gyro();
-            break;
-          case 5: 
-            ConeDetect();
-            break;
-          case 6:
-            IntakeRun();
-            break;
-          case 7: 
-            IntakeDead();
-            break;
-          case 8:
-            Spin180Gyro();
-            break;
-          case 9: 
-            FirstFormation();
-            break;
-          case 10:
-            scorePrep();
-            break;
-          case 11:
-            sConeEl();
-            break;
-          case 12:
-            Score();
-            break;
-          case 13:
-            break;
-        }
-      }
+ 
     
       public void AutoSecondScore(){
         switch(autoStep){
