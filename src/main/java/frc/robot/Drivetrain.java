@@ -32,7 +32,7 @@ public class Drivetrain {
     // Angle-snap PID
     double kP = 0.03;
     double kI = 0;
-    double kD = 0;
+    double kD = 0.01;
     PIDController angleSnapPidController = new PIDController(kP, kI, kD);
 
     RelativeEncoder frontleftEncoder;
@@ -44,7 +44,7 @@ public class Drivetrain {
 
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
-    double rampRate = 0.5;
+    double rampRate = 0.4;
 
     public void Init(){
         // put one-time setup steps here

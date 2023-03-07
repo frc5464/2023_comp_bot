@@ -125,7 +125,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     pneumatics.Init();
     vision.Init();
     intake.Init();
-
+    gyro.ResetGyro();
+    
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
 
     m_chooser.addOption("Tokyo Drift", kTokyoDrift);
@@ -656,6 +657,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     System.out.println("Auto selected: " + m_autoSelected);
     System.out.println("Preset selected: " + score_preset_selected);
     System.out.println("Direction selected:" +autonomous_direction_selected);
+
+    gyro.ResetGyro();
 
     autoTimer.stop();
     autoTimer.reset();
