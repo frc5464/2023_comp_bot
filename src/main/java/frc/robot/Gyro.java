@@ -48,7 +48,7 @@ public class Gyro {
         SmartDashboard.putNumber("RawZ", navx.getRawGyroZ());
         SmartDashboard.putNumber("dispX", navx.getDisplacementX());
         SmartDashboard.putNumber("dispY", navx.getDisplacementY());
-        SmartDashboard.putNumber("dispZ", navx.getDisplacementZ());       
+        SmartDashboard.putNumber("dispZ", navx.getDisplacementZ());    
 
     }
     // ============================================= Private Functions

@@ -1,9 +1,12 @@
 package frc.robot;
 
+import javax.swing.text.AbstractDocument.BranchElement;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vacuum {
@@ -13,17 +16,23 @@ public class Vacuum {
     public double intakeRotations;
 
     AnalogInput distancesense = new AnalogInput(1);
-    double dist = 0;
+    public double dist = 0;
 
     AnalogInput intakeDistance = new AnalogInput(2);
     double intdist = 0;
-    //TODO: install an intake sensor (preferably laser) and find the port
 
     AnalogInput pickupDistance = new AnalogInput(0);
     public double pickdist = 0;
 
+    public DigitalInput BreakBeamIntake = new DigitalInput(6);   
+    public boolean bbintake;
+
 public void Init(){
     intakeEncoder = intake.getEncoder();
+}
+
+public void BreakBeam(){
+    SmartDashboard.putBoolean("Break Beam Cone", bbintake);
 }
 
 public void DisplayStats(){

@@ -102,7 +102,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   boolean ConePickupHighenc = false;
   boolean ConePickupLowenc = false;
 
-  
+  boolean Fieldoriented = false;
 
   private double floorange = 16+intake.pickdist;
   private double pickuprange = 0+intake.pickdist;
@@ -173,6 +173,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     pneumatics.DisplayPressure();
     vision.ReturnBestTargetXY();
     intake.DistanceCheck();
+    drivetrain.PIDgyro();
     
     SmartDashboard.putNumber("autoStep", autoStep);
     SmartDashboard.putNumber("autoTimer", autoTimer.get());
@@ -198,6 +199,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         System.out.println("We're in manual mode!");
         elManualMode = true;
       }
+
     }
 
 // ConePickupHighenc = elevator.conepickhigh;
@@ -754,7 +756,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //Base rotation value off of Reflective vision
     else if(stick.getRawButton(Xbutton)){
         vision.setUsbPipelineIndex(0); 
-        rotate = vision.USBcamerax*intake.intdist/120; //intdist multiplied? 
+        rotate = vision.USBcamerax/120; 
      }
 
     // Pi-camera lineup (untested)
@@ -762,10 +764,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         rotate = vision.Picamerax/120; 
     }
 
+    //if(Fieldoriented == false){
     // use the updated values to move
-    drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
+      drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
+    //}
 
-    //drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+    // if(Fieldoriented == true){
+    //   drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+    // }
   }
 
   public void stickControlManualElevator(){
@@ -925,7 +931,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Leds.Pidmode();
       }
     }
+
+    if(stick.getRawButtonPressed(Bbutton)){
+      gyro.navx.reset();
+    }
+
+    if(stick.getRawButtonPressed(Abutton)){
+      // toggle something
+      if(Fieldoriented == false){
+        Fieldoriented = true;
+      }
+      else if(Fieldoriented == true){
+        Fieldoriented = false;
+      }
+    }
   } 
+
+
 
   /** This function is called once when test mode is enabled. */
   @Override

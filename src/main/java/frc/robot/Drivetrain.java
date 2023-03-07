@@ -30,7 +30,7 @@ public class Drivetrain {
     MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
 
     // Angle-snap PID
-    double kP = 1;
+    double kP = 0.03;
     double kI = 0;
     double kD = 0;
     PIDController angleSnapPidController = new PIDController(kP, kI, kD);
@@ -57,6 +57,18 @@ public class Drivetrain {
         frontrightEncoder = frontright.getEncoder();
         backleftEncoder = backleft.getEncoder();
         backrightEncoder = backright.getEncoder();
+        SmartDashboard.putNumber("gyro P Gain", kP);
+        SmartDashboard.putNumber("gyro I Gain", kI);
+        SmartDashboard.putNumber("gyro D Gain", kD);
+    }
+
+    public void PIDgyro(){
+        double p = SmartDashboard.getNumber("gyro P Gain", 0);
+        double i = SmartDashboard.getNumber("gyro I Gain", 0);
+        double d = SmartDashboard.getNumber("gyro D Gain", 0);
+        if((p != kP)) { angleSnapPidController.setP(p); kP = p; }
+        if((i != kI)) { angleSnapPidController.setI(i); kI = i; }
+        if((d != kD)) { angleSnapPidController.setD(d); kD = d; } 
     }
 
     // ============================================= Public Functions
