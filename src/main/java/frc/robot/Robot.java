@@ -366,9 +366,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Spin180Gyro(){
-    double rotate = drivetrain.SnapToAngle(Math.abs(gyro.Yaw), 180);
+    double yawWeDoBeUsing;
+
+    if(gyro.Yaw > 0){
+      yawWeDoBeUsing = gyro.Yaw;
+    }
+    else{
+      yawWeDoBeUsing = gyro.Yaw + 360;
+    }
+
+    double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     if(autoTimer.get() < 3){
       drivetrain.Move(0, rotate, 0);
+      elevator.setElevatorPosition("Climb");
     }
     else if(autoTimer.get() > 3){
       drivetrain.Move(0, 0, 0);
@@ -379,16 +389,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void HitchEscape(){   // This one is different than the rest
-    drivetrain.Move(-0.35, 0, 0);
-    if(gyro.Pitch < 14){
-      drivetrain.Move(-0.2, 0, 0);
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
+    drivetrain.Move(0.5, rotate, 0);
+    if(gyro.Pitch < -12){
+      drivetrain.Move(0.2, rotate, 0);
       autoStep++;
     }
  }
 
  public void HitchSlow(){
-  drivetrain.Move(-0.2, 0, 0);
-  if(drivetrain.frontleftrotations < -68){
+  double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
+  drivetrain.Move(0.2, rotate, 0);
+  if(drivetrain.frontleftrotations > 120){
     autoStep++;
   }
  }
@@ -473,7 +485,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void ZeroGyro(){
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
   if(autoTimer.get() < 3){
-    drivetrain.Move(0, 0, rotate);
+    drivetrain.Move(0, rotate, 0);
     }
   else if(autoTimer.get() > 3){
     drivetrain.Move(0, 0, 0);

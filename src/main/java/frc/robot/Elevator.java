@@ -52,6 +52,8 @@ public class Elevator {
 
     private static final String kWinchSmol = "WinchSmol";
 
+    private static final String kClimb = "Climb";
+
 
     public double winchDangerZone = 40;
     public double extCurrentRotations = 10;
@@ -388,6 +390,10 @@ public class Elevator {
                 break;
             case kWinchSmol:
                 winchTargetRotations = winchTargetRotations-5;
+                break;
+            case kClimb:
+                winchTargetRotations = 30;
+                extTargetRotations = 8;
                 break;
             default: 
                 extTargetRotations = 8;
