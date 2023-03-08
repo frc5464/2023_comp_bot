@@ -13,7 +13,7 @@ public class Vacuum {
 
     public double intakeRotations;
 
-    AnalogInput distancesense = new AnalogInput(1);
+    AnalogInput distancefrontsense = new AnalogInput(1);
     public double dist = 0;
 
     AnalogInput intakeDistance = new AnalogInput(2);
@@ -38,7 +38,7 @@ public void DisplayStats(){
 }
 
 public void DistanceCheck(){
-    dist = (distancesense.getAverageVoltage())*(1000);
+    dist = (distancefrontsense.getAverageVoltage())*(1000);
     SmartDashboard.putNumber("Distance", dist);
 }
 

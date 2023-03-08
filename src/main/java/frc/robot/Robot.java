@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   Timer autoTimer = new Timer();
   Timer intakeTimer = new Timer();
   Timer balanceTimer = new Timer();
+  Timer wait = new Timer(); 
 
   Integer Abutton = 1;
   Integer Bbutton = 2;
@@ -180,6 +181,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     SmartDashboard.putNumber("intakeTimer", intakeTimer.get());
     SmartDashboard.putNumber("balanceTimer", balanceTimer.get());
     SmartDashboard.putBoolean("fieldOriented", Fieldoriented);
+    SmartDashboard.putNumber("PauseTime", wait.get());
 
     // This button switches between manual winch/extender control and automatic.
     if(stick2.getRawButtonPressed(StartButton)){
@@ -311,6 +313,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(autoTimer.get() > 4){
       intake.stoprun();
       elevator.setElevatorPosition("Drive");
+      autoTimer.stop();
+      autoTimer.reset();
       autoStep++;
     }
     
@@ -326,6 +330,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(drivetrain.frontleftrotations < -68.0){
       elevator.setElevatorPosition("AprilTagEncoder");
       TargetYaw = gyro.Yaw;
+      autoStep++;
+    }
+  }
+
+  public void StartautoTimer(){
+    autoTimer.reset();
+    autoTimer.start();
+    autoStep++;
+  }
+
+  public void Spin180Gyro(){
+    double rotate = drivetrain.SnapToAngle(Math.abs(gyro.Yaw), 180);
+    if(autoTimer.get() < 3){
+      drivetrain.Move(0, rotate, 0);
+    }
+    else if(autoTimer.get() > 3){
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
       autoStep++;
     }
   }
@@ -346,10 +369,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  }
 
   public void FirstEscape(){
-    drivetrain.Move(-0.5, 0, 0);
-    if(drivetrain.frontleftrotations < -58.0){
+    drivetrain.Move(-0.3, 0, 0);
+    if(drivetrain.frontleftrotations < -68.0){
       TargetYaw = gyro.Yaw;
-      elevator.setElevatorPosition("Drive");
+      elevator.setElevatorPosition("ConePickupLowforHighScore"); 
+      autoTimer.start();
+      wait.start();
       autoStep++;
     }
   }
@@ -359,6 +384,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(drivetrain.frontleftrotations < -58.0){
       TargetYaw = gyro.Yaw;
       elevator.setElevatorPosition("Drive");
+      autoTimer.start();
+      wait.start();
       autoStep++;
     }
   }
@@ -368,24 +395,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     if(drivetrain.frontleftrotations < -58.0){
       TargetYaw = gyro.Yaw;
       elevator.setElevatorPosition("Drive");
+      autoTimer.start();
+      wait.start();
       autoStep++;
     }
   }
 
-  public void Spin180Gyro(){
-    //Gyro will preform a 180
-    //TODO: varify degree and roll direction
-  drivetrain.Move(0, 0, 0.5);
-    if(gyro.Yaw > 180){
+  public void Wait(){
+    if(wait.get() < 1){
+      drivetrain.Move(0, 0, 0);
+    }
+    else if(wait.get() > 1){
+      wait.stop();
+      autoStep++;
+    }
+  }
+
+  public void spinGyrototheCone(){
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
+    if(autoTimer.get() < 3){
+      drivetrain.Move(0, rotate, 0);
+    }
+    else if(autoTimer.get() > 3){
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
       autoStep++;
     }
   }
 
   public void ConeDetect(){
-    //TODO: find distance from a cone
+    //TODO: find distance from a cone forward and downwards 
     if(intake.dist > 0){ 
-    intake.inrun();
-    elevator.setElevatorPosition("ScoreLowConeCube"); 
     intakeTimer.reset();
     intakeTimer.start();
     autoStep++;
@@ -393,15 +434,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void IntakeRun(){
-    //TODO: verify time
     if(intakeTimer.get() < 2){
-      IntakeRun();
+      intake.inrun();
     }
     else if(intakeTimer.get() > 2){
       intake.stoprun();
       intakeTimer.stop();
+      autoTimer.start();
       autoStep++;
     }
+  }
+
+  public void ZeroGyro(){
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
+  if(autoTimer.get() < 3){
+    drivetrain.Move(0, 0, rotate);
+    }
+  else if(autoTimer.get() > 3){
+    drivetrain.Move(0, 0, 0);
+    autoTimer.stop();
+    autoTimer.reset();
+    autoStep++;
+  }
   }
 
   public void FirstFormation(){
@@ -444,6 +498,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     if((x < 2) && (x > -2) && (y < 2) && (y > -2)){
       elevator.setElevatorPosition("Drive");
+      autoTimer.start();
       autoStep++;
     }
   }
@@ -603,21 +658,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Score();
         break;
       case 3:
+        StartautoTimer();
+        break;
+      case 4:
+        Spin180Gyro();
+        break;
+      case 5:
         HitchEscape();
         break;
-      case 4: 
+      case 6: 
         HitchSlow();
         break;
-      case 5: 
+      case 7: 
         Arrival();
         break;
-      case 6:
+      case 8:
+        StartautoTimer();
+        break;
+      case 9:
+        ZeroGyro();
+        break;
+      case 10:
         Gunit();
         break;
-      case 7:
+      case 11:
         Balance();
         break;
-      case 8:
+      case 12:
         break;
     }
   }
@@ -636,31 +703,34 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       case 3:
         FirstEscape();
         break;
-      case 4: 
-        Spin180Gyro();
+      case 4:
+        Wait();
         break;
       case 5: 
+        spinGyrototheCone();
+        break;
+      case 6: 
         ConeDetect();
         break;
-      case 6:
+      case 7:
         IntakeRun();
         break;
-      case 7:
-        Spin180Gyro();
+      case 8:
+        ZeroGyro();
         break;
-      case 8: 
+      case 9: 
         FirstFormation();
-        break;
-      case 9:
-        scorePrep();
         break;
       case 10:
         sConeEl();
         break;
       case 11:
-        Score();
+        scorePrep();
         break;
       case 12:
+        Score();
+        break;
+      case 13:
         break;
     }
   }
@@ -711,6 +781,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     balanceTimer.stop();
     balanceTimer.reset();
+
+    wait.stop();
+    wait.reset();
 
     startingYAW = gyro.Yaw;
   
@@ -775,7 +848,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void stickControlDrivetrain(){
     // These are the default values of the drivetrain from the Driver controller
-    double speed     =  0.8;
+    double speed     =  1;
     double fwdBack   = -stick.getRawAxis(LStickFwdBackAxis);
     double leftRight =  stick.getRawAxis(LStickLeftRightAxis);
     double rotate    =  stick.getRawAxis(RStickLeftRightAxis);
@@ -816,7 +889,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
     if(Fieldoriented == true){
-      drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+      //drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+      drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
     }
   }
 
@@ -961,6 +1035,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     autoTimer.stop();
     intakeTimer.stop();
     balanceTimer.stop();
+    wait.stop();
   }
 
   /** This function is called periodically when disabled. */

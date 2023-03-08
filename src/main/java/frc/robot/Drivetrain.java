@@ -30,9 +30,9 @@ public class Drivetrain {
     MecanumDrive drivetrain = new MecanumDrive(frontleft, backright, frontright, backleft);
 
     // Angle-snap PID
-    double kP = 0.03;
+    double kP = 0.01;
     double kI = 0;
-    double kD = 0.01;
+    double kD = 0.001;
     PIDController angleSnapPidController = new PIDController(kP, kI, kD);
 
     RelativeEncoder frontleftEncoder;
