@@ -72,9 +72,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private static final String kThirdScore = "Third Score"; 
 
    //Presets for cone scoring
-   private static final String kHigh = "High";
-   private static final String kMid = "Mid";
-   private static final String kLow = "Low";
+   private static final String kHighCone = "HighCone";
+   private static final String kMidCone = "MidCone";
+   private static final String kLowCone = "LowCone";
+
+   //Presets for cube scoring
+   private static final String kHighCube = "HighCube";
+   private static final String kMidCube = "MidCube";
+   private static final String kLowCube = "LowCube";
 
    //Presets for right or left autonomous
    private static final String kLeft = "Left";
@@ -138,9 +143,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    score_preset_chooser.setDefaultOption("High", kHigh);
-    score_preset_chooser.addOption("Mid", kMid);
-    score_preset_chooser.addOption("Low", kLow);
+    score_preset_chooser.setDefaultOption("High Cone", kHighCone);
+    score_preset_chooser.addOption("Mid Cone", kMidCone);
+    score_preset_chooser.addOption("Low Cone", kLowCone);
+
+    score_preset_chooser.addOption("High Cube", kHighCube);
+    score_preset_chooser.addOption("Mid Cube", kMidCube);
+    score_preset_chooser.addOption("Low Cube", kLowCube);
     SmartDashboard.putData("Score Preset Choices", score_preset_chooser);
     Leds.QuestionError();
 
@@ -288,24 +297,40 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     switch (score_preset_selected) {
       
-      case kHigh:
+      case kHighCone:
         elevator.setElevatorPosition("ScoreHighCone");
         autoStep++;
         break;
 
-      case kMid:
+      case kMidCone:
         elevator.setElevatorPosition("ScoreHScoreMidCone");
         autoStep++;
         break;
 
-      case kLow:
+      case kLowCone:
         elevator.setElevatorPosition("ScoreLowCone");
+         autoStep++;
+        break;
+      
+      case kHighCube:
+        elevator.setElevatorPosition("ScoreHighCube");
+        autoStep++;
+        break;
+
+      case kMidCube:
+        elevator.setElevatorPosition("ScoreHScoreMidCube");
+        autoStep++;
+        break;
+
+      case kLowCube:
+        elevator.setElevatorPosition("ScoreLowCube");
          autoStep++;
         break;
     }    
 
   }
 
+  
   public void Score(){  
     // TODO: HIGH: Verify that this turns on/off intake correctly. Adjust timer if needed.
     
