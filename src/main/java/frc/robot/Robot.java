@@ -67,9 +67,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
    private static final String kScoreOnly = "Score Only";
  
    //Scoring autonomous
-   private static final String kFirstScore = "First Score";
-   private static final String kSecondScore = "Second Score";
-   private static final String kThirdScore = "Third Score"; 
+   private static final String kSideScore = "Side Score";
+   private static final String kMiddleScore = "Middle Score";
 
    //Presets for cone scoring
    private static final String kHighCone = "HighCone";
@@ -137,9 +136,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     m_chooser.addOption("Tokyo Drift", kTokyoDrift);
     m_chooser.addOption("Hitch Route", kHitchRoute);
     m_chooser.addOption("Score Only", kScoreOnly);
-    m_chooser.addOption("First Score", kFirstScore);
-    m_chooser.addOption("Second Score", kSecondScore);
-    m_chooser.addOption("Third Score", kThirdScore);
+    m_chooser.addOption("Side Score", kSideScore);
+    m_chooser.addOption("Middle Score", kMiddleScore);
 
     SmartDashboard.putData("Auto choices", m_chooser);
 
@@ -331,10 +329,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   
-  public void Score(){  
-    // TODO: HIGH: Verify that this turns on/off intake correctly. Adjust timer if needed.
-    
-    // after shortly running the intake, then move on.
+  public void Score(){      
     if(autoTimer.get() > 4){
       intake.stoprun();
       elevator.setElevatorPosition("Drive");
@@ -342,8 +337,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       autoTimer.reset();
       autoStep++;
     }
-    
-    // run the intake (a few seconds into auto) to spit out the cone
     else if(autoTimer.get() > 3){
       intake.outrun();      
     }
@@ -401,11 +394,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
   drivetrain.Move(0.2, rotate, 0);
   if(drivetrain.frontleftrotations > 120){
+    //TODO: instead of encoders why not try an april tage from further away to home?
     autoStep++;
   }
  }
 
-  public void FirstEscape(){
+  public void SideEscape(){
     drivetrain.Move(-0.3, 0, 0);
     if(drivetrain.frontleftrotations < -68.0){
       TargetYaw = gyro.Yaw;
@@ -416,18 +410,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  public void SecondEscape(){
-    drivetrain.Move(-0.5, 0, 0);
-    if(drivetrain.frontleftrotations < -58.0){
-      TargetYaw = gyro.Yaw;
-      elevator.setElevatorPosition("Drive");
-      autoTimer.start();
-      wait.start();
-      autoStep++;
-    }
-  }
-
-  public void ThirdEscape(){
+  public void MiddleEscape(){
     drivetrain.Move(-0.5, 0, 0);
     if(drivetrain.frontleftrotations < -58.0){
       TargetYaw = gyro.Yaw;
@@ -449,15 +432,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void spinGyrototheCone(){
-    double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
-    if(autoTimer.get() < 3){
+    switch(autonomous_direction_selected){
+    case kLeft:
+      double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
+      if(autoTimer.get() < 3){
       drivetrain.Move(0, rotate, 0);
+      }
+      else if(autoTimer.get() > 3){
+        drivetrain.Move(0, 0, 0);
+        autoTimer.stop();
+        autoTimer.reset();
+        autoStep++;
+      }
+      break;
+    case kRight:
+    double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
+    if(autoTimer.get() < 3){
+    drivetrain.Move(0, roll, 0);
     }
     else if(autoTimer.get() > 3){
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
       autoStep++;
+    }
     }
   }
 
@@ -495,15 +493,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
   }
 
-  public void FirstFormation(){
+  public void MiddleFormation(){
 
   }
 
-  public void SecondFormation(){
-
-  }
-
-  public void ThirdFormation(){
+  public void SideFormation(){
 
   }
 
@@ -647,7 +641,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   // This autonomous routine starts anywhere in front of a cone scoring location
   // It drives forward, scores, backs out of community
-  // TODO: HIGH: Finish Default auto steps. Once this works, Tokyo Drift will have a more solid start.
   public void AutoDefault(){
     switch(autoStep){
       case 0:
@@ -726,7 +719,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  public void AutoFirstScore(){
+  public void AutoSideScore(){
     switch(autoStep){
       case 0:
         sConeEl();
@@ -738,7 +731,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Score();
         break;
       case 3:
-        FirstEscape();
+        SideEscape();
         break;
       case 4:
         Wait();
@@ -756,7 +749,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         ZeroGyro();
         break;
       case 9: 
-        FirstFormation();
+        SideFormation();
         break;
       case 10:
         sConeEl();
@@ -770,6 +763,52 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       case 13:
         break;
     }
+  }
+
+    public void AutoMiddleScore(){
+      switch(autoStep){
+        case 0:
+          sConeEl();
+          break;
+        case 1:
+          scorePrep();
+          break;
+        case 2:
+          Score();
+          break;
+        case 3:
+          MiddleEscape();
+          break;
+        case 4:
+          Wait();
+          break;
+        case 5: 
+          spinGyrototheCone();
+          break;
+        case 6: 
+          ConeDetect();
+          break;
+        case 7:
+          IntakeRun();
+          break;
+        case 8:
+          ZeroGyro();
+          break;
+        case 9: 
+          MiddleFormation();
+          break;
+        case 10:
+          sConeEl();
+          break;
+        case 11:
+          scorePrep();
+          break;
+        case 12:
+          Score();
+          break;
+        case 13:
+          break;
+      }
   }
 
   /**
@@ -846,17 +885,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           AutoHitchRoute();
           break;
   
-        case kFirstScore:
-          AutoFirstScore();
+        case kSideScore:
+          AutoSideScore();
         break;
   
-        // case kSecondScore:
-        //   AutoSecondScore();
-        // break;
-  
-        // case kThirdScore:
-        //   AutoThirdScore();
-        // break;
+         case kMiddleScore:
+           AutoMiddleScore();
+           break;
   
         // case kDefaultAuto:
         //   AutoDefault();
