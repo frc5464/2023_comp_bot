@@ -447,7 +447,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       break;
     case kRight:
     double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
-    if(autoTimer.get() < 3){
+  if(autoTimer.get() < 3){
     drivetrain.Move(0, roll, 0);
     }
     else if(autoTimer.get() > 3){
