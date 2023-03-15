@@ -1106,8 +1106,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void stickControlPidHoming(){
 
-    double servoanglelow = 0;
-    double servoanglehigh = 75;
+    double servoanglelow = 60;
+    double servoanglehigh = 90;
 
     // Elevator encoding homing
     if(stick.getRawButtonPressed(RStickClick)){
