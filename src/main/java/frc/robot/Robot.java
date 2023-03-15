@@ -1049,7 +1049,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     // Snap to 180 degrees for charge station climb, on far side of station
     else if(stick.getRawAxis(LtriggerAxis) > 0.1){  
       speed = 1.0;
-      rotate = drivetrain.SnapToAngle(gyro.Yaw+360, 180);
+      rotate = -drivetrain.SnapToAngle(gyro.Yaw+360, 180);
     }    
 
     //Base rotation value off of Reflective vision
