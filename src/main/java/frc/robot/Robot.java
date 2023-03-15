@@ -9,6 +9,7 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
@@ -58,6 +59,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   //Joystick
   Joystick stick = new Joystick(0);
   Joystick stick2 = new Joystick(1);
+
+  Servo cameramount = new Servo(0);
 
   PowerDistribution PDThing = new PowerDistribution(1,ModuleType.kCTRE);
 
@@ -1040,6 +1043,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       rotate = rotate * 0.18; 
     }
 
+    if(stick2.getRawButton(Lbumper)){
+      fwdBack = fwdBack * 0.4;
+      leftRight = leftRight * 0.4;
+      rotate = rotate * 0.4;
+    }
+
     // Snap to 0 degrees for charge station climb, between station and scoring grid
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){  
       speed = 1.0;
@@ -1097,54 +1106,67 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void stickControlPidHoming(){
 
+    double servoanglelow = 0;
+    double servoanglehigh = 75;
+
     // Elevator encoding homing
     if(stick.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("Drive");
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getRawButtonPressed(Xbutton)){
       elevator.setElevatorPosition("ConePickupHigh");
       Leds.PickCone();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getRawButtonPressed(Abutton)){
       elevator.setElevatorPosition("ConeCubePickupLow");
       Leds.PickCube();
+      cameramount.setAngle(servoanglelow);
     }
     
     if(stick2.getRawButtonPressed(Ybutton)){
       elevator.setElevatorPosition("ScoreHighCone");
       Leds.PickCone();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getRawButtonPressed(Bbutton)){
       elevator.setElevatorPosition("ScoreMidCone");
       Leds.PickCone();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getPOV() == 180){ 
       elevator.setElevatorPosition("CubePickupHigh");
       Leds.PickCube();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getPOV() == 0){
       elevator.setElevatorPosition("ScoreHighCube");
       Leds.PickCube();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getPOV() == 90){
       elevator.setElevatorPosition("ScoreMidCube");
       Leds.PickCube();
+      cameramount.setAngle(servoanglehigh);
     }
 
     if(stick2.getPOV() == 270){ 
       elevator.setElevatorPosition("ConePickupLowforHighScore");
       Leds.PickCone();
+      cameramount.setAngle(servoanglelow);
     }
 
     if(stick2.getRawButtonPressed(RStickClick)){
       elevator.setElevatorPosition("ScoreLowCone/Cube");
       Leds.HybridPickConeCube();
+      cameramount.setAngle(servoanglelow);
     }
 
     // LOWER THE INTAKE ONTO A CONE
