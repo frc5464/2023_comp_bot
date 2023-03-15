@@ -442,7 +442,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       case kLeft:
         double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
           if(autoTimer.get() < 3){
-          drivetrain.Move(0, rotate*0.3, 0);
+          drivetrain.Move(0, 0, rotate*0.3);
           }
           else if(autoTimer.get() > 3){
             drivetrain.Move(0, 0, 0);
