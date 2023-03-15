@@ -373,7 +373,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     if(autoTimer.get() < 3){
-      drivetrain.Move(0, rotate, 0);
+      drivetrain.Move(0, 0, rotate);
       elevator.setElevatorPosition("Climb");
     }
     else if(autoTimer.get() > 3){
@@ -386,16 +386,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void HitchEscape(){   // This one is different than the rest
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
-    drivetrain.Move(0.5, rotate, 0);
+    drivetrain.Move(0.5, 0, rotate);
     if(gyro.Pitch < -12){
-      drivetrain.Move(0.2, rotate, 0);
+      drivetrain.Move(0.2, 0, rotate);
       autoStep++;
     }
  }
 
  public void HitchSlow(){
   double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
-  drivetrain.Move(0.2, rotate, 0);
+  drivetrain.Move(0.2, 0, rotate);
   if(drivetrain.frontleftrotations > 120){
     //TODO: instead of encoders why not try an april tage from further away to home?
     autoStep++;
@@ -436,30 +436,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void spinGyrototheCone(){
     switch(autonomous_direction_selected){
-    case kLeft:
-      double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
-      if(autoTimer.get() < 3){
-      drivetrain.Move(0, rotate*0.3, 0);
-      }
-      else if(autoTimer.get() > 3){
-        drivetrain.Move(0, 0, 0);
-        autoTimer.stop();
-        autoTimer.reset();
-        autoStep++;
-      }
-      break;
-    case kRight:
-    double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
-  if(autoTimer.get() < 3){
-    drivetrain.Move(0, roll*0.3, 0);
-    }
-    else if(autoTimer.get() > 3){
-      drivetrain.Move(0, 0, 0);
-      autoTimer.stop();
-      autoTimer.reset();
-      autoTimer.start();
-      autoStep++;
-    }
+      case kLeft:
+        double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
+          if(autoTimer.get() < 3){
+          drivetrain.Move(0, rotate*0.3, 0);
+          }
+          else if(autoTimer.get() > 3){
+            drivetrain.Move(0, 0, 0);
+            autoTimer.stop();
+            autoTimer.reset();
+            autoStep++;
+          }
+        break;
+      case kRight:
+        double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
+        if(autoTimer.get() < 3){
+          drivetrain.Move(0, 0, roll*0.3);
+          }
+        else if(autoTimer.get() > 3){
+          drivetrain.Move(0, 0, 0);
+          autoTimer.stop();
+          autoTimer.reset();
+          autoTimer.start();
+          autoStep++;
+        }
     }
   }
 
@@ -506,15 +506,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void ZeroGyro(){
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
-  if(autoTimer.get() < 3){
-    drivetrain.Move(0, rotate, 0);
+    if(autoTimer.get() < 3){
+      drivetrain.Move(0, 0, rotate);
+      }
+    else if(autoTimer.get() > 3){
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
+      autoStep++;
     }
-  else if(autoTimer.get() > 3){
-    drivetrain.Move(0, 0, 0);
-    autoTimer.stop();
-    autoTimer.reset();
-    autoStep++;
-  }
   }
 
   public void MiddleFormation(){
@@ -526,15 +526,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void TokyoDrift(){
-      switch(autonomous_direction_selected){
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);  
+    
+    switch(autonomous_direction_selected){
         case kLeft:
-          drivetrain.Move(0,(startingYAW-gyro.Yaw)/120, 0.5);
+          drivetrain.Move(0,0.4, rotate);
           if(drivetrain.frontleftrotations > 7){
             autoStep++;
           }
           break;
         case kRight:
-          drivetrain.Move(0, (startingYAW-gyro.Yaw)/120, -0.5);
+          drivetrain.Move(0,-0.4, rotate);
           System.out.println(drivetrain.frontleftrotations);
           if(drivetrain.frontleftrotations < -143){  
           autoStep++;
@@ -623,14 +625,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void SweeptheHouse(){
     switch(autonomous_direction_selected){
       case kLeft:  
-      drivetrain.Move(0, -0.15, 0);
+      drivetrain.Move(0, 0, -0.15);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
           SweepAngle = gyro.Yaw;
         }
         break;
       case kRight:
-        drivetrain.Move(0, 0.15, 0);
+        drivetrain.Move(0, 0, 0.15);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
           SweepAngle = gyro.Yaw;
@@ -649,10 +651,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void SweepBack(){
     switch(autonomous_direction_selected){
       case kLeft:
-        drivetrain.Move(0, 0.15, 0);
+        drivetrain.Move(0, 0, 0.15);
         break;
       case kRight:
-        drivetrain.Move(0, -0.15, 0);
+        drivetrain.Move(0, 0, -0.15);
         break; 
     }
     if(autoTimer.get()>1.5){
@@ -667,7 +669,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     public void SweepSnap(){
       double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle);
       if(autoTimer.get()<2){
-        drivetrain.Move(0, SnapSweepAngle*0.5, 0);
+        drivetrain.Move(0, 0, SnapSweepAngle*0.5);
     }
       else {
         drivetrain.Move(0, 0, 0);
@@ -1025,24 +1027,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     double leftRight =  stick.getRawAxis(LStickLeftRightAxis);
     double rotate    =  stick.getRawAxis(RStickLeftRightAxis);
     
-    // Base rotation value off of Apriltag vision
-    if(stick.getRawAxis(LtriggerAxis) > 0.1){      
-      vision.setUsbPipelineIndex(1);  
-      rotate = vision.Picamerax/120; 
-    }
+    // Base rotation value off of Apriltag vision (NOT USED CURRENTLY)
+    // if(stick.getRawAxis(LtriggerAxis) > 0.1){      
+    //   vision.setUsbPipelineIndex(1);  
+    //   rotate = vision.Picamerax/120; 
+    // }
 
     // Slow down while picking up stuff
-    else if(stick2.getRawButton(Rbumper)){         
+    if(stick2.getRawButton(Rbumper)){         
       fwdBack = fwdBack * 0.18;
       leftRight = leftRight * 0.18;
       rotate = rotate * 0.18; 
     }
 
-    // Charge station climb overrides turning vals to be perfectly lined up
+    // Snap to 0 degrees for charge station climb, between station and scoring grid
     else if(stick.getRawAxis(RtriggerAxis) > 0.1){  
       speed = 1.0;
       rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
     }
+
+    // Snap to 180 degrees for charge station climb, on far side of station
+    else if(stick.getRawAxis(LtriggerAxis) > 0.1){  
+      speed = 1.0;
+      rotate = drivetrain.SnapToAngle(gyro.Yaw+360, 180);
+    }    
 
     //Base rotation value off of Reflective vision
     else if(stick.getRawButton(Xbutton)){
@@ -1057,12 +1065,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     if(Fieldoriented == false){
     // use the updated values to move
-      drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
+      drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
     }
 
     if(Fieldoriented == true){
-      //drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
-      drivetrain.Move(fwdBack * speed, rotate, leftRight * speed);
+      drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+      //drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
     }
   }
 
@@ -1088,7 +1096,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void stickControlPidHoming(){
-
 
     // Elevator encoding homing
     if(stick.getRawButtonPressed(RStickClick)){

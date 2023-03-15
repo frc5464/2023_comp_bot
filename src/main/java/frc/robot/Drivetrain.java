@@ -78,13 +78,13 @@ public class Drivetrain {
         // And this function will use those values
         // x = forward, y = strafe, rot = rotate the bot, gyroAngle = 
         
-        drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed);
+        drivetrain.driveCartesian(x*maxspeed, rot*maxspeed, y*maxspeed);
 
     }
 
     public void MoveFieldOriented(double x,double y,double rot, Rotation2d gyroAngle){
 
-        drivetrain.driveCartesian(x*maxspeed, y*maxspeed, rot*maxspeed, gyroAngle);
+        drivetrain.driveCartesian(x*maxspeed,rot*maxspeed ,y*maxspeed , gyroAngle);
         
     }
 
