@@ -110,6 +110,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   private double floorange = 16+intake.pickdist;
   private double pickuprange = 0+intake.pickdist;
+
+  private double SweepAngle;
+  private double SweepDistance = 100;
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -403,7 +406,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     drivetrain.Move(-0.3, 0, 0);
     if(drivetrain.frontleftrotations < -68.0){
       TargetYaw = gyro.Yaw;
-      elevator.setElevatorPosition("ConePickupLowforHighScore"); 
+      elevator.setElevatorPosition("Drive"); 
       autoTimer.start();
       wait.start();
       autoStep++;
@@ -436,7 +439,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     case kLeft:
       double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
       if(autoTimer.get() < 3){
-      drivetrain.Move(0, rotate, 0);
+      drivetrain.Move(0, rotate*0.3, 0);
       }
       else if(autoTimer.get() > 3){
         drivetrain.Move(0, 0, 0);
@@ -448,33 +451,54 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     case kRight:
     double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
   if(autoTimer.get() < 3){
-    drivetrain.Move(0, roll, 0);
+    drivetrain.Move(0, roll*0.3, 0);
     }
     else if(autoTimer.get() > 3){
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
+      autoTimer.start();
       autoStep++;
     }
     }
   }
 
-  public void ConeDetect(){
-    //TODO: find distance from a cone forward and downwards 
-    if(intake.dist > 0){ 
-    intakeTimer.reset();
-    intakeTimer.start();
-    autoStep++;
+  public void CubeDetect(){
+    if(autoTimer.get() < 2){
+      if(intake.distfront > 0.4){
+        drivetrain.Move(0.15, 0, 0);
+      }
+      if(intake.distfront < 0.4){
+        drivetrain.Move(-0.15, 0, 0);
+      }
+    }
+      else{
+        autoTimer.stop();
+        autoTimer.reset();
+        autoTimer.start();
+        autoStep++;
+    }
+  }
+
+  public void AutoSetCube(){
+    if(autoTimer.get() < 1){
+      elevator.setElevatorPosition("ConeCubePickupLow");
+    }
+    else if(autoTimer.get() > 1){
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
     }
   }
 
   public void IntakeRun(){
-    if(intakeTimer.get() < 2){
+    if(autoTimer.get() < 1){
       intake.inrun();
     }
-    else if(intakeTimer.get() > 2){
+    else if(autoTimer.get() > 1){
       intake.stoprun();
-      intakeTimer.stop();
+      autoTimer.reset();
       autoTimer.start();
       autoStep++;
     }
@@ -502,16 +526,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void TokyoDrift(){
-
       switch(autonomous_direction_selected){
         case kLeft:
-          drivetrain.Move(0,0.5,(startingYAW-gyro.Yaw)/120);
+          drivetrain.Move(0,(startingYAW-gyro.Yaw)/120, 0.5);
           if(drivetrain.frontleftrotations > 7){
             autoStep++;
           }
           break;
         case kRight:
-          drivetrain.Move(0, -0.5, (startingYAW-gyro.Yaw)/120);
+          drivetrain.Move(0, (startingYAW-gyro.Yaw)/120, -0.5);
           System.out.println(drivetrain.frontleftrotations);
           if(drivetrain.frontleftrotations < -143){  
           autoStep++;
@@ -597,6 +620,63 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       }
   }
 
+  public void SweeptheHouse(){
+    switch(autonomous_direction_selected){
+      case kLeft:  
+      drivetrain.Move(0, -0.15, 0);
+        if(intake.distfront<SweepDistance){
+          SweepDistance = intake.distfront;
+          SweepAngle = gyro.Yaw;
+        }
+        break;
+      case kRight:
+        drivetrain.Move(0, 0.15, 0);
+        if(intake.distfront<SweepDistance){
+          SweepDistance = intake.distfront;
+          SweepAngle = gyro.Yaw;
+        }
+        break;
+    }
+    if(autoTimer.get()>1.5){
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+  }
+
+  public void SweepBack(){
+    switch(autonomous_direction_selected){
+      case kLeft:
+        drivetrain.Move(0, 0.15, 0);
+        break;
+      case kRight:
+        drivetrain.Move(0, -0.15, 0);
+        break; 
+    }
+    if(autoTimer.get()>1.5){
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+  }
+
+    public void SweepSnap(){
+      double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle);
+      if(autoTimer.get()<2){
+        drivetrain.Move(0, SnapSweepAngle*0.5, 0);
+    }
+      else {
+        drivetrain.Move(0, 0, 0);
+        autoTimer.stop();
+        autoTimer.reset();
+        autoTimer.start();
+        autoStep++;
+      }
+    }
   // This autonomous routine is for a start in front of a cone-scoring post
   // It scores a cone, then zooms around the charging station
   // It then drives us onto the charging station, keeping us there with a gyro/brake
@@ -736,31 +816,49 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       case 4:
         Wait();
         break;
-      case 5: 
-        spinGyrototheCone();
+      case 5:
+        StartautoTimer();
         break;
       case 6: 
-        ConeDetect();
+        spinGyrototheCone();
         break;
       case 7:
-        IntakeRun();
+        StartautoTimer();
         break;
       case 8:
-        ZeroGyro();
+        SweeptheHouse();
         break;
-      case 9: 
-        SideFormation();
+      case 9:
+        SweepBack();
         break;
       case 10:
-        sConeEl();
+        SweepSnap();
         break;
-      case 11:
-        scorePrep();
+      case 11: 
+        CubeDetect();
         break;
       case 12:
-        Score();
+        AutoSetCube();
         break;
       case 13:
+        IntakeRun();
+        break;
+      case 14:
+        ZeroGyro();
+        break;
+      case 15: 
+        SideFormation();
+        break;
+      case 16:
+        sConeEl();
+        break;
+      case 17:
+        scorePrep();
+        break;
+      case 18:
+        Score();
+        break;
+      case 19:
         break;
     }
   }
@@ -786,27 +884,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           spinGyrototheCone();
           break;
         case 6: 
-          ConeDetect();
+          CubeDetect();
           break;
         case 7:
+          AutoSetCube();
+        case 8:
           IntakeRun();
           break;
-        case 8:
+        case 9:
           ZeroGyro();
           break;
-        case 9: 
+        case 10: 
           MiddleFormation();
           break;
-        case 10:
+        case 11:
           sConeEl();
           break;
-        case 11:
+        case 12:
           scorePrep();
           break;
-        case 12:
+        case 13:
           Score();
           break;
-        case 13:
+        case 14:
           break;
       }
   }

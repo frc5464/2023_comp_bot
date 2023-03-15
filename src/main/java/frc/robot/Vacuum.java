@@ -14,7 +14,7 @@ public class Vacuum {
     public double intakeRotations;
 
     AnalogInput distancefrontsense = new AnalogInput(1);
-    public double dist = 0;
+    public double distfront = 0;
 
     AnalogInput intakeDistance = new AnalogInput(2);
     double intdist = 0;
@@ -27,6 +27,7 @@ public class Vacuum {
 
 public void Init(){
     intakeEncoder = intake.getEncoder();
+    distancefrontsense.setAverageBits(12);
 }
 
 public void BreakBeam(){
@@ -38,21 +39,21 @@ public void DisplayStats(){
 }
 
 public void DistanceCheck(){
-    dist = (distancefrontsense.getAverageVoltage())*(1000);
-    SmartDashboard.putNumber("Distance", dist);
+    distfront = (distancefrontsense.getAverageVoltage());
+    SmartDashboard.putNumber("FrontDistance", distfront);
 }
 
-    public void inrun(){
+public void inrun(){
         intake.set(1);
-    }
+}
     
-    public void outrun(){
+public void outrun(){
         intake.set(-1);
-    }
+}
 
-    public void stoprun(){
+public void stoprun(){
         intake.set(0);
-    }
+}
 
 public void IntakeLength(){
     intdist = (intakeDistance.getAverageVoltage())*(1000); //multplying by 1000 makes more readable bigggg numbers hehe 

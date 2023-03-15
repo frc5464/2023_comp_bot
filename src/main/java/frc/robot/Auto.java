@@ -176,7 +176,7 @@ public class Auto{
 
   public void ConeDetect(){
     //TODO: find distance from a cone
-    if(intake.dist > 0){ 
+    if(intake.distfront > 0){ 
     intake.inrun();
     elevator.setElevatorPosition("ScoreLowConeCube"); 
     robot.intakeTimer.reset();
