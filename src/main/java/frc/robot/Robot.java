@@ -1069,8 +1069,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
 
     if(Fieldoriented == true){
-      drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
-      //drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
+      //drivetrain.MoveFieldOriented(fwdBack * speed, rotate, leftRight * speed, gyro.Angle);
+      drivetrain.Move(fwdBack * speed, leftRight * speed, rotate);
     }
   }
 
@@ -1194,13 +1194,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       pneumatics.CompOnOffOn();
     }
 
-    // RESET GYROSCOPE FOR FIELD-ORIENTED DRIVE
-    if(stick.getRawButtonPressed(Lbumper)){
-      gyro.ResetGyro();
-    }
+    // // RESET GYROSCOPE FOR FIELD-ORIENTED DRIVE
+    // if(stick.getRawButtonPressed(Rbumper)){
+    //   gyro.ResetGyro();
+    // }
 
     // ENGAGE BRAKE MODE
-    if(stick.getRawButtonPressed(Rbumper)){ 
+    if(stick.getRawButtonPressed(Lbumper)){ 
       pneumatics.SolBreak();
     }
 
