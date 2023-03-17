@@ -21,6 +21,7 @@ public class Gyro {
     public double Yaw;
     public double Pitch;
     public Rotation2d Angle;
+    public double RawX;
 
     // ============================================= Public Functions
     public void Init(){
@@ -32,6 +33,7 @@ public class Gyro {
         Yaw = navx.getYaw();
         Pitch = navx.getPitch();
         Angle = navx.getRotation2d();
+        RawX = navx.getRawGyroX();
     }
 
     // Corrects slow drift of the gyro. Shoudn't be necessary during matches

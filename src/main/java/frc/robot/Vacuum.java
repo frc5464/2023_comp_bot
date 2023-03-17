@@ -51,6 +51,10 @@ public void outrun(){
         intake.set(-0.6);
 }
 
+public void AutoOutconeIncubeintakerun100(){
+    intake.set(-1.0);
+}
+
 public void stoprun(){
         intake.set(0);
 }

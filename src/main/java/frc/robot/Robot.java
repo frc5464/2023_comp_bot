@@ -376,8 +376,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     if(autoTimer.get() < 3){
-      drivetrain.Move(0, 0, rotate);
-      elevator.setElevatorPosition("Climb");
+      drivetrain.Move(0, 0, rotate*0.5);
+      elevator.setElevatorPosition("Drive");
     }
     else if(autoTimer.get() > 3){
       drivetrain.Move(0, 0, 0);
@@ -387,19 +387,50 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
+  public void HitchBackupSlightly(){
+    drivetrain.Move(-0.2, 0, 0);
+      if(drivetrain.frontleftrotations < -1){
+        drivetrain.Move(0, 0, 0);
+        autoStep++;
+      }
+  }
+
   public void HitchEscape(){   // This one is different than the rest
-    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
+    double yawWeDoBeUsing;
+
+    if(gyro.Yaw > 0){
+      yawWeDoBeUsing = gyro.Yaw;
+    }
+    else{
+      yawWeDoBeUsing = gyro.Yaw + 360;
+    }
+
+    double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     drivetrain.Move(0.5, 0, rotate);
-    if(gyro.Pitch < -12){
+    if(gyro.Pitch < -14){
       drivetrain.Move(0.2, 0, rotate);
+      balanceTimer.stop();
+      balanceTimer.reset();
+      balanceTimer.start();
+      elevator.setElevatorPosition("ConeCubePickupLow");
       autoStep++;
     }
  }
 
  public void HitchSlow(){
-  double rotate = drivetrain.SnapToAngle(gyro.Yaw, 180);
+    double yawWeDoBeUsing;
+
+    if(gyro.Yaw > 0){
+      yawWeDoBeUsing = gyro.Yaw;
+    }
+    else{
+      yawWeDoBeUsing = gyro.Yaw + 360;
+    }
+    
+  double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);  
   drivetrain.Move(0.2, 0, rotate);
-  if(drivetrain.frontleftrotations > 120){
+
+  if(drivetrain.frontleftrotations > 70){
     //TODO: instead of encoders why not try an april tage from further away to home?
     autoStep++;
   }
@@ -467,20 +498,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void CubeDetect(){
-    if(autoTimer.get() < 2){
-      if(intake.distfront > 0.4){
-        drivetrain.Move(0.15, 0, 0);
-      }
-      if(intake.distfront < 0.4){
-        drivetrain.Move(-0.15, 0, 0);
-      }
-    }
-      else{
-        autoTimer.stop();
-        autoTimer.reset();
-        autoTimer.start();
-        autoStep++;
-    }
+    // if(autoTimer.get() < 2){
+    //   if(intake.distfront > 0.4){
+    //     drivetrain.Move(0.15, 0, 0);
+    //   }
+    //   if(intake.distfront < 0.4){
+    //     drivetrain.Move(-0.15, 0, 0);
+    //   }
+    // }
+    //   else{
+    //     autoTimer.stop();
+    //     autoTimer.reset();
+    //     autoTimer.start();
+    //     autoStep++;
+    // }
+    autoStep++;
   }
 
   public void AutoSetCube(){
@@ -497,7 +529,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void IntakeRun(){
     if(autoTimer.get() < 1){
-      intake.inrun();
+      drivetrain.Move(0.3, 0, 0);
+      intake.AutoOutconeIncubeintakerun100();
     }
     else if(autoTimer.get() > 1){
       intake.stoprun();
@@ -507,7 +540,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
-  public void ZeroGyro(){
+  public void OneSecDelay(){
+    if(autoTimer.get() < 1){
+      drivetrain.Move(0, 0, 0);
+    }
+    else if(autoTimer.get() > 1){
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+  }
+  
+  public void Spin0Gyro(){
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
     if(autoTimer.get() < 3){
       drivetrain.Move(0, 0, rotate);
@@ -525,7 +570,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideFormation(){
-
+    // drivetrain.Move(1.0, 0, 0);
+    //   if(drivetrain.frontleftrotations > 50){
+    //     autoStep++;
+    //   }
   }
 
   public void TokyoDrift(){
@@ -597,24 +645,59 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Balance(){
+    double yawWeDoBeUsing;
+
+    if(gyro.Yaw > 0){
+      yawWeDoBeUsing = gyro.Yaw;
+    }
+    else{
+      yawWeDoBeUsing = gyro.Yaw + 360;
+    }
+
+    double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     //When pitch ~ 0 then stop
     if((gyro.Pitch < 1)&&(gyro.Pitch > -1)){
-      drivetrain.Move(0,0 ,0 );
-      if( balanceTimer.get() > 2.0){
-        autoStep++;
-        balanceTimer.stop();
-       }
+      drivetrain.Move(0,0 ,0);
+      // if( balanceTimer.get() > 2.0){
+      //   autoStep++;
+      //   balanceTimer.stop();
+      //  }
+      autoStep++;
     }
     
-    if(gyro.Pitch < 0){
-      drivetrain.Move(0.2,0 ,0 );
+    if((gyro.Pitch < 0) && (gyro.RawX > 50)){
+      drivetrain.Move(-0.3, 0, rotate);
+    }
+
+    else if(gyro.Pitch < 8){
+      drivetrain.Move(0.15,0, rotate);
       balanceTimer.reset();
     }
-      
-    if(gyro.Pitch > 0){
-      drivetrain.Move(-0.2,0 ,0 );
+
+    else if(gyro.Pitch < 0){
+      drivetrain.Move(0.11,0, rotate);
       balanceTimer.reset();
     }
+    
+    if((gyro.Pitch > 0) && (gyro.RawX < -50)){
+      drivetrain.Move(0.3, 0, rotate);
+    }
+
+    else if(gyro.Pitch > 8){
+      drivetrain.Move(-0.15,0, rotate);
+      balanceTimer.reset();
+    }
+
+    else if(gyro.Pitch > 0){
+      drivetrain.Move(-0.11,0, rotate);
+      balanceTimer.reset();
+    }
+  }
+
+  public void HitchEnableBreaks(){
+    pneumatics.SolBreak();
+    elevator.setElevatorPosition("Drive");
+    autoStep++;
   }
 
   public void Generic_Backup(){
@@ -670,18 +753,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
     public void SweepSnap(){
-      double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle);
-      if(autoTimer.get()<2){
+    switch(autonomous_direction_selected){
+      case kLeft:
+        double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle-5);
+        if(autoTimer.get()<2){
         drivetrain.Move(0, 0, SnapSweepAngle*0.5);
-    }
-      else {
-        drivetrain.Move(0, 0, 0);
-        autoTimer.stop();
-        autoTimer.reset();
-        autoTimer.start();
-        autoStep++;
       }
+        else {
+          drivetrain.Move(0, 0, 0);
+          autoTimer.stop();
+          autoTimer.reset();
+          autoTimer.start();
+          autoStep++;
+        }
+        break;
     }
+  }
   // This autonomous routine is for a start in front of a cone-scoring post
   // It scores a cone, then zooms around the charging station
   // It then drives us onto the charging station, keeping us there with a gyro/brake
@@ -776,31 +863,39 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         StartautoTimer();
         break;
       case 4:
-        Spin180Gyro();
+        HitchBackupSlightly();
         break;
       case 5:
+        Spin180Gyro();
+        break;
+      case 6:
         HitchEscape();
         break;
-      case 6: 
-        HitchSlow();
-        break;
       case 7: 
-        Arrival();
-        break;
-      case 8:
-        StartautoTimer();
-        break;
-      case 9:
-        ZeroGyro();
-        break;
-      case 10:
-        Gunit();
-        break;
-      case 11:
         Balance();
         break;
-      case 12:
+      case 8:
+        HitchEnableBreaks();
         break;
+      case 9:
+        break;
+      // case 8: 
+      //   Arrival();
+      //   break;
+      // case 9:
+      //   StartautoTimer();
+      //   break;
+      // case 10:
+      //   Spin0Gyro();
+      //   break;
+      // case 11:
+      //   Gunit();
+      //   break;
+      // case 12:
+      //   Balance();
+      //   break;
+      // case 13:
+      //   break;
     }
   }
 
@@ -849,21 +944,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         IntakeRun();
         break;
       case 14:
-        ZeroGyro();
+        OneSecDelay();
         break;
-      case 15: 
+      case 15:
+        Spin0Gyro();
+        break;
+      case 16: 
         SideFormation();
         break;
-      case 16:
+      case 17:
         sConeEl();
         break;
-      case 17:
+      case 18:
         scorePrep();
         break;
-      case 18:
+      case 19:
         Score();
         break;
-      case 19:
+      case 20:
         break;
     }
   }
@@ -897,7 +995,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           IntakeRun();
           break;
         case 9:
-          ZeroGyro();
+          Spin0Gyro();
           break;
         case 10: 
           MiddleFormation();
