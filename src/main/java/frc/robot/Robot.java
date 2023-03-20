@@ -574,6 +574,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   if(drivetrain.frontleftrotations > 50){
     //     autoStep++;
     //   }
+    autoStep++;
+  }
+
+  public void SideScoreStrafe(){
+    // strafe to da side before running back to score
+    autoStep++;
+  }
+
+  public void SideHomeToCubePlatform(){
+    // move sideways until we see our correct distance from LIDAR
+    autoTimer.stop();
+    autoTimer.reset();
+    autoTimer.start();
+    autoStep++;
   }
 
   public void TokyoDrift(){
@@ -664,6 +678,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       //  }
       autoStep++;
     }
+
+    //TODO: Test this out and see if our distance changes enough to be useful for balancing
+    // Elevator extension and ultrasonic voltage output can both be calibrated to do this.
+    if(intake.distfront > 3.0){
+      drivetrain.Move(0,0 ,0);
+      autoStep++;
+    }
+
     
     if((gyro.Pitch < 0) && (gyro.RawX > 50)){
       drivetrain.Move(-0.3, 0, rotate);
@@ -950,18 +972,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Spin0Gyro();
         break;
       case 16: 
-        SideFormation();
+        SideScoreStrafe();
         break;
       case 17:
-        sConeEl();
+        SideFormation();
         break;
       case 18:
-        scorePrep();
+        SideHomeToCubePlatform();
         break;
       case 19:
-        Score();
+        sConeEl();
         break;
       case 20:
+        scorePrep();
+        break;
+      case 21:
+        Score();
+        break;
+      case 22:
         break;
     }
   }
