@@ -473,10 +473,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     switch(autonomous_direction_selected){
       case kLeft:
         double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
-          if(autoTimer.get() < 3){
-          drivetrain.Move(0, 0, rotate*0.3);
+          if(autoTimer.get() < 1){
+          drivetrain.Move(0, 0, rotate*0.4);
           }
-          else if(autoTimer.get() > 3){
+          else if(autoTimer.get() > 1){
             drivetrain.Move(0, 0, 0);
             autoTimer.stop();
             autoTimer.reset();
@@ -517,10 +517,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void AutoSetCube(){
-    if(autoTimer.get() < 1){
+    if(autoTimer.get() < 0.5){
       elevator.setElevatorPosition("ConeCubePickupLow");
     }
-    else if(autoTimer.get() > 1){
+    else if(autoTimer.get() > 0.5){
       autoTimer.stop();
       autoTimer.reset();
       autoTimer.start();
@@ -546,24 +546,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void OneSecDelay(){
-    if(autoTimer.get() < 1){
-      drivetrain.Move(0, 0, 0);
-    }
-    else if(autoTimer.get() > 1){
-      autoTimer.stop();
-      autoTimer.reset();
-      autoTimer.start();
-      autoStep++;
-    }
+    // if(autoTimer.get() < 1){
+    //   drivetrain.Move(0, 0, 0);
+    // }
+    // else if(autoTimer.get() > 1){
+    //   autoTimer.stop();
+    //   autoTimer.reset();
+    //   autoTimer.start();
+    //   autoStep++;
+    // }
+    autoStep++;
   }
   
   public void Spin0Gyro(){
     elevator.setElevatorPosition("Drive");
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
-    if(autoTimer.get() < 3){
+    if(autoTimer.get() < 1){
       drivetrain.Move(0, 0, rotate);
       }
-    else if(autoTimer.get() > 3){
+    else if(autoTimer.get() > 1){
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
@@ -586,6 +587,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideFormation(){
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
+
     elevator.setElevatorPosition("ScoreHighCube");
 
     // double Autox = 0;
@@ -595,9 +598,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   autoStep++;
     // }
 
-    drivetrain.Move(0.6, 0, 0);
+    drivetrain.Move(0.8, 0, rotate);
     
-    if(drivetrain.frontleftrotations > 90){
+    if(drivetrain.frontleftrotations > 20){
       autoStep++;
       drivetrain.Move(0, 0, 0);
     }
@@ -619,16 +622,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     if(autoTimer.get() < 1){
       if(vision.USBcamerax > 0){
-        drivetrain.Move(0, -1, rotate);
+        drivetrain.Move(0, -0.3, rotate);
       }
       if(vision.USBcamerax < 0){
-        drivetrain.Move(0, 1, rotate);
+        drivetrain.Move(0, 0.3, rotate);
       }
     if(vision.USBcameray > 0){
-      drivetrain.Move(-1, 0, rotate);
+      drivetrain.Move(-0.3, 0, rotate);
     }
     if(vision.USBcameray < 0){
-      drivetrain.Move(1, 0, rotate);
+      drivetrain.Move(0.3, 0, rotate);
     }
     }
     if(autoTimer.get() > 1){
