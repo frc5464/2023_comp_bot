@@ -459,13 +459,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Wait(){
-    if(wait.get() < 1){
-      drivetrain.Move(0, 0, 0);
-    }
-    else if(wait.get() > 1){
-      wait.stop();
-      autoStep++;
-    }
+    // if(wait.get() < 1){
+    //   drivetrain.Move(0, 0, 0);
+    // }
+    // else if(wait.get() > 1){
+    //   wait.stop();
+    //   autoStep++;
+    // }
+    autoStep++;
   }
 
   public void spinGyrototheCone(){
@@ -587,12 +588,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void SideFormation(){
     elevator.setElevatorPosition("ScoreHighCube");
 
-    double Autox = 0;
-    Autox = vision.USBcamerax;
-    drivetrain.Move(0.5, 0, Autox/100);
-    if(vision.USBcameray > 12){
-      autoStep++;
-    }
+    // double Autox = 0;
+    // Autox = vision.USBcamerax;
+    // drivetrain.Move(0.5, 0, Autox/100);
+    // if(vision.USBcameray > 12){
+    //   autoStep++;
+    // }
+
   }
 
   public void SideScoreStrafe(){
@@ -787,7 +789,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         }
         break;
     }
-    if(autoTimer.get()>1.5){
+    if(autoTimer.get() > 1){
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
@@ -805,7 +807,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         drivetrain.Move(0, 0, -0.15);
         break; 
     }
-    if(autoTimer.get()>1.5){
+    if(autoTimer.get()>1){
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
@@ -818,7 +820,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     switch(autonomous_direction_selected){
       case kLeft:
         double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle-5);
-        if(autoTimer.get()<2){
+        if(autoTimer.get()< 1){
         drivetrain.Move(0, 0, SnapSweepAngle*0.5);
       }
         else {
