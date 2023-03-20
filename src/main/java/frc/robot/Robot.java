@@ -621,20 +621,32 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
 
     if(autoTimer.get() < 1){
-      if(vision.USBcamerax > 0){
+      if(vision.USBcamerax > 4){
         drivetrain.Move(0, -0.3, rotate);
       }
-      if(vision.USBcamerax < 0){
+      if(vision.USBcamerax < 2){
         drivetrain.Move(0, 0.3, rotate);
       }
-    if(vision.USBcameray > 0){
+    if(vision.USBcameray > 14){
       drivetrain.Move(-0.3, 0, rotate);
     }
-    if(vision.USBcameray < 0){
+    if(vision.USBcameray < 12){
       drivetrain.Move(0.3, 0, rotate);
     }
     }
     if(autoTimer.get() > 1){
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+  }
+
+  public void ScoreCube(){
+    if(autoTimer.get() < 1){
+    intake.inrun();
+    }
+    else{
       autoTimer.stop();
       autoTimer.reset();
       autoTimer.start();
@@ -1045,7 +1057,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         scorePrep();
         break;
       case 23:
-        Score();
+        ScoreCube();
         break;
       case 24:
         break;
