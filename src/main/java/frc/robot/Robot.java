@@ -587,7 +587,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     double Autox = 0;
     Autox = vision.USBcamerax;
     drivetrain.Move(0.5, 0, Autox/100);
-    if(vision.USBcameray > 0){
+    if(vision.USBcameray > 12){
       autoStep++;
     }
   }
