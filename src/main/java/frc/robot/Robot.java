@@ -336,14 +336,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   
   public void Score(){      
-    if(autoTimer.get() > 4){
+    if(autoTimer.get() > 2.7){
       intake.stoprun();
       elevator.setElevatorPosition("Drive");
       autoTimer.stop();
       autoTimer.reset();
       autoStep++;
     }
-    else if(autoTimer.get() > 3){
+    else if(autoTimer.get() > 2){
       intake.outrun();      
     }
   }
@@ -557,6 +557,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
   
   public void Spin0Gyro(){
+    elevator.setElevatorPosition("Drive");
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
     if(autoTimer.get() < 3){
       drivetrain.Move(0, 0, rotate);
@@ -571,10 +572,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void PiplineRelectiveTape(){
     vision.setUsbPipelineIndex(0);
+    autoStep++;
   }
 
   public void PiplineAprilTags(){
     vision.setUsbPipelineIndex(1);
+    autoStep++;
   }
 
   public void MiddleFormation(){
