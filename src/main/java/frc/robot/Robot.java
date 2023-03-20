@@ -595,6 +595,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   autoStep++;
     // }
 
+    drivetrain.Move(0.6, 0, 0);
+    
+    if(drivetrain.frontleftrotations > 90){
+      autoStep++;
+      drivetrain.Move(0, 0, 0);
+    }
+
   }
 
   public void SideScoreStrafe(){
