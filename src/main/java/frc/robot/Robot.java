@@ -528,7 +528,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void IntakeRun(){
-    if(autoTimer.get() < 1){
+    if(autoTimer.get() < 0.5){
+      drivetrain.Move(0.3, 0, 0);
+    }
+    
+    else if(autoTimer.get() < 1){
       drivetrain.Move(0.3, 0, 0);
       intake.AutoOutconeIncubeintakerun100();
     }
