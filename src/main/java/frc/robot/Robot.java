@@ -565,29 +565,62 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
   }
 
+  public void PiplineRelectiveTape(){
+    vision.setUsbPipelineIndex(0);
+  }
+
+  public void PiplineAprilTags(){
+    vision.setUsbPipelineIndex(1);
+  }
+
   public void MiddleFormation(){
 
   }
 
   public void SideFormation(){
-    // drivetrain.Move(1.0, 0, 0);
-    //   if(drivetrain.frontleftrotations > 50){
-    //     autoStep++;
-    //   }
-    autoStep++;
+    elevator.setElevatorPosition("ScoreHighCube");
+
+    double Autox = 0;
+    Autox = vision.USBcamerax;
+    drivetrain.Move(0.5, 0, Autox/100);
+    if(vision.USBcameray > 0){
+      autoStep++;
+    }
   }
 
   public void SideScoreStrafe(){
-    // strafe to da side before running back to score
-    autoStep++;
+    drivetrain.Move(0, 0.5, 0);
+      if(vision.USBhasTargets){
+        autoTimer.stop();
+        autoTimer.reset();
+        autoTimer.start();
+        autoStep++;
+      }
   }
 
   public void SideHomeToCubePlatform(){
-    // move sideways until we see our correct distance from LIDAR
-    autoTimer.stop();
-    autoTimer.reset();
-    autoTimer.start();
-    autoStep++;
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
+
+    if(autoTimer.get() < 1){
+      if(vision.USBcamerax > 0){
+        drivetrain.Move(0, -1, rotate);
+      }
+      if(vision.USBcamerax < 0){
+        drivetrain.Move(0, 1, rotate);
+      }
+    if(vision.USBcameray > 0){
+      drivetrain.Move(-1, 0, rotate);
+    }
+    if(vision.USBcameray < 0){
+      drivetrain.Move(1, 0, rotate);
+    }
+    }
+    if(autoTimer.get() > 1){
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
   }
 
   public void TokyoDrift(){
@@ -971,25 +1004,31 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       case 15:
         Spin0Gyro();
         break;
-      case 16: 
-        SideScoreStrafe();
+      case 16:
+        PiplineRelectiveTape();
         break;
-      case 17:
+      case 17: 
         SideFormation();
         break;
       case 18:
-        SideHomeToCubePlatform();
+        PiplineAprilTags();
         break;
       case 19:
-        sConeEl();
+        SideScoreStrafe();
         break;
       case 20:
-        scorePrep();
+        SideHomeToCubePlatform();
         break;
       case 21:
-        Score();
+        sConeEl();
         break;
       case 22:
+        scorePrep();
+        break;
+      case 23:
+        Score();
+        break;
+      case 24:
         break;
     }
   }
