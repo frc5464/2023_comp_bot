@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.hal.simulation.RoboRioDataJNI;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
@@ -437,8 +438,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  }
 
   public void SideEscape(){
-    drivetrain.Move(-0.3, 0, 0);
-    if(drivetrain.frontleftrotations < -68.0){
+    drivetrain.Move(-0.6, 0, 0);
+    if(drivetrain.frontleftrotations < -45.0){
       TargetYaw = gyro.Yaw;
       elevator.setElevatorPosition("Drive"); 
       autoTimer.start();
@@ -472,7 +473,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void spinGyrototheCone(){
     switch(autonomous_direction_selected){
       case kLeft:
-        double rotate = drivetrain.SnapToAngle(gyro.Yaw, -153);
+        double rotate = drivetrain.SnapToAngle(gyro.Yaw, -160);
           if(autoTimer.get() < 1){
           drivetrain.Move(0, 0, rotate*0.4);
           }
@@ -484,7 +485,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           }
         break;
       case kRight:
-        double roll = drivetrain.SnapToAngle(gyro.Yaw, 153);
+        double roll = drivetrain.SnapToAngle(gyro.Yaw, 106);
         if(autoTimer.get() < 3){
           drivetrain.Move(0, 0, roll*0.3);
           }
@@ -568,8 +569,39 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
+      autoTimer.start();
       autoStep++;
     }
+  }
+
+  public void SideStrafeAfterAquiringaCube(){
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
+    switch(autonomous_direction_selected){
+      case kLeft:
+    if(autoTimer.get() < 2){
+      drivetrain.Move(0.6, 0.6, rotate);
+    }
+    else{
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+    break;
+    case kRight:
+    if(autoTimer.get() < 2){
+      drivetrain.Move(0.8, -0.5, rotate);
+    }
+    else{
+      drivetrain.Move(0, 0, 0);
+      autoTimer.stop();
+      autoTimer.reset();
+      autoTimer.start();
+      autoStep++;
+    }
+    break;
+  }
   }
 
   public void PiplineRelectiveTape(){
@@ -589,8 +621,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void SideFormation(){
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
 
-    elevator.setElevatorPosition("ScoreHighCube");
-
     // double Autox = 0;
     // Autox = vision.USBcamerax;
     // drivetrain.Move(0.5, 0, Autox/100);
@@ -598,9 +628,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   autoStep++;
     // }
 
-    drivetrain.Move(0.8, 0, rotate);
+    drivetrain.Move(0.6, -.6, rotate);
     
-    if(drivetrain.frontleftrotations > 20){
+    if(autoTimer.get() > 1.2){
       autoStep++;
       drivetrain.Move(0, 0, 0);
     }
@@ -608,7 +638,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideScoreStrafe(){
-    drivetrain.Move(0, 0.5, 0);
+    drivetrain.Move(0, -0.5, 0);
       if(vision.USBhasTargets){
         autoTimer.stop();
         autoTimer.reset();
@@ -618,23 +648,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideHomeToCubePlatform(){
+    elevator.setElevatorPosition("ScoreHighCube");
+
     double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
 
-    if(autoTimer.get() < 1){
+    if(autoTimer.get() < 2){
       if(vision.USBcamerax > 4){
-        drivetrain.Move(0, -0.3, rotate);
+        //drivetrain.Move(0, -0.3, rotate);
       }
       if(vision.USBcamerax < 2){
         drivetrain.Move(0, 0.3, rotate);
       }
-    if(vision.USBcameray > 14){
+    if(vision.USBcameray > 11){
       drivetrain.Move(-0.3, 0, rotate);
     }
-    if(vision.USBcameray < 12){
+    if(vision.USBcameray < 9){
       drivetrain.Move(0.3, 0, rotate);
     }
     }
-    if(autoTimer.get() > 1){
+    if(autoTimer.get() > 2){
       autoTimer.stop();
       autoTimer.reset();
       autoTimer.start();
@@ -1036,30 +1068,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         Spin0Gyro();
         break;
       case 16:
+        SideStrafeAfterAquiringaCube();
+        break;
+      case 17:
         PiplineRelectiveTape();
         break;
-      case 17: 
+      case 18: 
         SideFormation();
         break;
-      case 18:
+      case 19:
         PiplineAprilTags();
         break;
-      case 19:
+      case 20:
         SideScoreStrafe();
         break;
-      case 20:
+      case 21:
         SideHomeToCubePlatform();
         break;
-      case 21:
+      case 22:
         sConeEl();
         break;
-      case 22:
+      case 23:
         scorePrep();
         break;
-      case 23:
+      case 24:
         ScoreCube();
         break;
-      case 24:
+      case 25:
         break;
     }
   }
