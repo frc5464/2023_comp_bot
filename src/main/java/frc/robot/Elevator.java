@@ -349,8 +349,8 @@ public class Elevator {
                 extTargetRotations = 8;
                 break;
             case kConePickupHigh:
-                winchTargetRotations = 91; 
-                extTargetRotations = 32;
+                winchTargetRotations = 84; 
+                extTargetRotations = 50;
                 break;
             case kConeCubePickupLow:
                 winchTargetRotations = 2;
