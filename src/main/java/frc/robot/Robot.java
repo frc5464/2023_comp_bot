@@ -654,7 +654,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideScoreStrafe(){
-    drivetrain.Move(0, -0.5, 0);
+    drivetrain.Move(0, -0.3, 0);
       if(vision.USBhasTargets){
         autoTimer.stop();
         autoTimer.reset();
@@ -912,7 +912,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   
       switch(autonomous_direction_selected){
       case kLeft:
-        double SnapSweepAngle = drivetrain.SnapToAngle(yawWeDoBeUsing, SweepAngle-5);
+        double SnapSweepAngle = drivetrain.SnapToAngle(yawWeDoBeUsing, SweepAngle);
         if(autoTimer.get()< 1){
         drivetrain.Move(0, 0, SnapSweepAngle*0.5);
       }
