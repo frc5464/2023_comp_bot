@@ -49,11 +49,11 @@ public class Elevator {
     private static final String kScoreLowConeCube = "ScoreLowConeCube";
     private static final String KAprilTags = "AprilTagEncoder";
     private static final String kConePickupLowforHighScore = "ConePickupLowforHighScore";
+    private static final String kBalanceFullExtend = "BalanceFullExtend";
 
     private static final String kWinchSmol = "WinchSmol";
 
     private static final String kClimb = "Climb";
-
 
     public double winchDangerZone = 40;
     public double extCurrentRotations = 10;
@@ -394,6 +394,10 @@ public class Elevator {
             case kClimb:
                 winchTargetRotations = 30;
                 extTargetRotations = 8;
+                break;
+            case kBalanceFullExtend:
+                winchTargetRotations = 4;
+                extTargetRotations = 43;
                 break;
             default: 
                 extTargetRotations = 8;

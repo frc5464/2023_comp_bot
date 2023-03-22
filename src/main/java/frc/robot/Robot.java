@@ -591,11 +591,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideStrafeAfterAquiringaCube(){
-    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 0);
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 45);
     switch(autonomous_direction_selected){
       case kLeft:
-    if(autoTimer.get() < 2){
-      drivetrain.Move(0.6, 0.6, rotate);
+    if(autoTimer.get() < 1){
+      drivetrain.Move(0.6, 0, rotate);
     }
     else{
       drivetrain.Move(0, 0, 0);
@@ -644,9 +644,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   autoStep++;
     // }
 
-    drivetrain.Move(0.6, -.6, rotate);
+    drivetrain.Move(0.6, 0, rotate);
     
-    if(autoTimer.get() > 1.2){
+    if(autoTimer.get() > 0.8){
       autoStep++;
       drivetrain.Move(0, 0, 0);
     }
@@ -771,6 +771,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void Balance(){
+    elevator.setElevatorPosition("BalanceFullExtend");
     double yawWeDoBeUsing;
 
     if(gyro.Yaw > 0){
@@ -793,38 +794,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     //TODO: Test this out and see if our distance changes enough to be useful for balancing
     // Elevator extension and ultrasonic voltage output can both be calibrated to do this.
-    if(intake.distfront > 3.0){
-      drivetrain.Move(0,0 ,0);
-      autoStep++;
-    }
+    // if(intake.distfront > 3.0){
+    //   drivetrain.Move(0,0 ,0);
+    //   autoStep++;
+    // }
 
-    
-    if((gyro.Pitch < 0) && (gyro.RawX > 50)){
-      drivetrain.Move(-0.3, 0, rotate);
-    }
+  
 
-    else if(gyro.Pitch < 8){
+    if(gyro.Pitch < -12){
       drivetrain.Move(0.15,0, rotate);
-      balanceTimer.reset();
+      // balanceTimer.reset();
     }
 
-    else if(gyro.Pitch < 0){
-      drivetrain.Move(0.11,0, rotate);
-      balanceTimer.reset();
-    }
-    
-    if((gyro.Pitch > 0) && (gyro.RawX < -50)){
-      drivetrain.Move(0.3, 0, rotate);
+    // IF WE ARE AT AN ANGLE BETWEEN -8 and 0:
+    if((gyro.Pitch < 0) && (gyro.Pitch > -12)){
+      drivetrain.Move(0.15,0, rotate);
+      // balanceTimer.reset();
+      if(balanceTimer.get()>4){
+        autoStep++;
+      }
+
     }
 
-    else if(gyro.Pitch > 8){
+    if(gyro.Pitch > 8){
       drivetrain.Move(-0.15,0, rotate);
-      balanceTimer.reset();
+      // balanceTimer.reset();
     }
 
     else if(gyro.Pitch > 0){
       drivetrain.Move(-0.11,0, rotate);
-      balanceTimer.reset();
+      // balanceTimer.reset();
     }
   }
 
