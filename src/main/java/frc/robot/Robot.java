@@ -167,7 +167,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     elevator.setElevatorPosition("Drive");
     
     CameraServer.startAutomaticCapture();
-
+    setupAutoVals();
   }
 
   /**
@@ -219,6 +219,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     }
 
+
+
 // ConePickupHighenc = elevator.conepickhigh;
 
 // if(ConePickupHighenc == true){
@@ -247,6 +249,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 //       elevator.winchCurrentRotations = 0;
 //     }
 //   }
+
+  }
+
+  double sideScoreEscapeRotations;
+  double sideScoreEscapeSnapToCubeAngle;
+
+  public void setupAutoVals(){
+    SmartDashboard.putNumber("sideScoreEscapeRotations", -45);
+    SmartDashboard.putNumber("sideScoreEscapeSnapToCubeAngle", -160);    
+  }
+
+  public void checkForAutoValChanges(){
+    sideScoreEscapeRotations = SmartDashboard.getNumber("sideScoreEscapeRotations", 0);
+    sideScoreEscapeSnapToCubeAngle = SmartDashboard.getNumber("sideScoreEscapeSnapToCubeAngle", 0);
 
   }
 
@@ -439,7 +455,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   public void SideEscape(){
     drivetrain.Move(-0.6, 0, 0);
-    if(drivetrain.frontleftrotations < -45.0){
+    if(drivetrain.frontleftrotations < sideScoreEscapeRotations){
       TargetYaw = gyro.Yaw;
       elevator.setElevatorPosition("Drive"); 
       autoTimer.start();
@@ -473,7 +489,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void spinGyrototheCone(){
     switch(autonomous_direction_selected){
       case kLeft:
-        double rotate = drivetrain.SnapToAngle(gyro.Yaw, -160);
+        double rotate = drivetrain.SnapToAngle(gyro.Yaw, sideScoreEscapeSnapToCubeAngle);
           if(autoTimer.get() < 1){
           drivetrain.Move(0, 0, rotate*0.4);
           }
@@ -1226,6 +1242,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     autoStep = 0;
 
     drivetrain.DriveEncodersZeroed();
+    checkForAutoValChanges();
   }
 
     /** This function is called periodically during autonomous. */
