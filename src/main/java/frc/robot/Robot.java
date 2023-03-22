@@ -827,19 +827,31 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SweeptheHouse(){
+    // yaw, when the target angle faces away from the drivers, must be transformed.
+    // The direct opposite of the drivers will be 180 degrees.
+    // Facing totally left will be 90 degrees, and facing right is 270.
+    // This is accomplished by adding 360 in the case of a negative yaw.
+    double yawWeDoBeUsing;
+
+    if(gyro.Yaw > 0){
+      yawWeDoBeUsing = gyro.Yaw;
+    }
+    else{
+      yawWeDoBeUsing = gyro.Yaw + 360;
+    }
     switch(autonomous_direction_selected){
       case kLeft:  
       drivetrain.Move(0, 0, -0.15);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
-          SweepAngle = gyro.Yaw;
+          SweepAngle = yawWeDoBeUsing;
         }
         break;
       case kRight:
         drivetrain.Move(0, 0, 0.15);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
-          SweepAngle = gyro.Yaw;
+          SweepAngle = yawWeDoBeUsing;
         }
         break;
     }
@@ -871,9 +883,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
     public void SweepSnap(){
-    switch(autonomous_direction_selected){
+      // This function will use a transformed yaw from the previous function to snap to an angle.
+      // It will transform all negative yaws up by 360 to get a good continuous homing.
+      double yawWeDoBeUsing;
+
+      if(gyro.Yaw > 0){
+        yawWeDoBeUsing = gyro.Yaw;
+      }
+      else{
+        yawWeDoBeUsing = gyro.Yaw + 360;
+      }
+  
+      switch(autonomous_direction_selected){
       case kLeft:
-        double SnapSweepAngle = drivetrain.SnapToAngle(gyro.Yaw, SweepAngle-5);
+        double SnapSweepAngle = drivetrain.SnapToAngle(yawWeDoBeUsing, SweepAngle-5);
         if(autoTimer.get()< 1){
         drivetrain.Move(0, 0, SnapSweepAngle*0.5);
       }
@@ -1047,7 +1070,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
         SweeptheHouse();
         break;
       case 9:
-        SweepBack();
+        // SweepBack();
+        autoStep++;
         break;
       case 10:
         SweepSnap();
