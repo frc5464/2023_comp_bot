@@ -400,6 +400,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       drivetrain.Move(0, 0, 0);
       autoTimer.stop();
       autoTimer.reset();
+      autoTimer.start();
       autoStep++;
     }
   }
@@ -415,6 +416,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   public void HitchEscape(){   // This one is different than the rest
     double yawWeDoBeUsing;
 
+    if(autoTimer.get() > 1){
+      elevator.setElevatorPosition("ConeCubePickupLow");
+    }
+    
     if(gyro.Yaw > 0){
       yawWeDoBeUsing = gyro.Yaw;
     }
@@ -424,6 +429,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
     double rotate = drivetrain.SnapToAngle(yawWeDoBeUsing, 180);
     drivetrain.Move(0.5, 0, rotate);
+
     if(gyro.Pitch < -14){
       drivetrain.Move(0.2, 0, rotate);
       balanceTimer.stop();
@@ -802,22 +808,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   
 
     if(gyro.Pitch < -12){
-      drivetrain.Move(0.15,0, rotate);
+      drivetrain.Move(0.12,0, rotate);
       // balanceTimer.reset();
     }
 
     // IF WE ARE AT AN ANGLE BETWEEN -8 and 0:
     if((gyro.Pitch < 0) && (gyro.Pitch > -12)){
-      drivetrain.Move(0.15,0, rotate);
+      drivetrain.Move(0.12,0, rotate);
       // balanceTimer.reset();
-      if(balanceTimer.get()>4){
+      if(balanceTimer.get()>2){
         autoStep++;
       }
 
     }
 
     if(gyro.Pitch > 8){
-      drivetrain.Move(-0.15,0, rotate);
+      drivetrain.Move(-0.12,0, rotate);
       // balanceTimer.reset();
     }
 
