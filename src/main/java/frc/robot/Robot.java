@@ -257,6 +257,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   double sideScoreSpinToCubeWaitVal;
   double sweepSpeed;
   double sweepSnapWaitVal;
+  double sideStrafeAfterCubeAngle;
+  double sideStrafeAfterCubeTime;
+  double sideFormationTime;
+  double sideFormationSpeed;
 
   public void setupAutoVals(){
     SmartDashboard.putNumber("sideScoreEscapeRotations", -45);
@@ -264,6 +268,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     SmartDashboard.putNumber("sideScoreSpinToCubeWaitVal", 1);
     SmartDashboard.putNumber("sweepSpeed", 0.15);
     SmartDashboard.putNumber("sweepSnapWaitVal", 1);
+    SmartDashboard.putNumber("sideStrafeAfterCubeAngle", 45);
+    SmartDashboard.putNumber("sideStrafeAfterCubeTime", 1);
+    SmartDashboard.putNumber("sideFormationTime", 0.8);
+    SmartDashboard.putNumber("sideFormationSpeed", 0.6);
   }
 
   public void checkForAutoValChanges(){
@@ -272,6 +280,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     sideScoreSpinToCubeWaitVal = SmartDashboard.getNumber("sideScoreSpinToCubeWaitVal", 0);
     sweepSpeed = SmartDashboard.getNumber("sideScoreSpinToCubeWaitVal", 0);
     sweepSnapWaitVal = SmartDashboard.getNumber("sweepSnapWaitVal", 0);
+    sideStrafeAfterCubeAngle = SmartDashboard.getNumber("sideStrafeAfterCubeAngle", 0);
+    sideStrafeAfterCubeTime = SmartDashboard.getNumber("sideStrafeAfterCubeTime", 0);
+    sideFormationTime = SmartDashboard.getNumber("sideFormationTime", 0);
+    sideFormationSpeed = SmartDashboard.getNumber("sideFormationSpeed", 0);
   }
 
 
@@ -605,10 +617,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
   }
 
   public void SideStrafeAfterAquiringaCube(){
-    double rotate = drivetrain.SnapToAngle(gyro.Yaw, 45);
+    double rotate = drivetrain.SnapToAngle(gyro.Yaw, sideStrafeAfterCubeAngle);
     switch(autonomous_direction_selected){
       case kLeft:
-    if(autoTimer.get() < 1){
+    if(autoTimer.get() < sideStrafeAfterCubeTime){
       drivetrain.Move(0.6, 0, rotate);
     }
     else{
@@ -658,9 +670,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     //   autoStep++;
     // }
 
-    drivetrain.Move(0.6, 0, rotate);
+    drivetrain.Move(sideFormationSpeed, 0, rotate);
     
-    if(autoTimer.get() > 0.8){
+    if(autoTimer.get() > sideFormationTime){
       autoStep++;
       drivetrain.Move(0, 0, 0);
     }
