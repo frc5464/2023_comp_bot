@@ -27,13 +27,6 @@ public class Leds {
         int g = rgb[1];
         int b = rgb[2];
 
-        System.out.print("red:");
-        System.out.print(r);
-        System.out.print("green:");
-        System.out.print(g);
-        System.out.print("blue:");
-        System.out.println(b); 
-
         for (var i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setRGB(i,r,g,b);
         }

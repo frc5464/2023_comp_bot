@@ -31,7 +31,7 @@ public void Init(){
 }
 
 public void BreakBeam(){
-    SmartDashboard.putBoolean("Break Beam Cone", bbintake);
+    //SmartDashboard.putBoolean("Break Beam Cone", bbintake);
 }
 
 public void DisplayStats(){

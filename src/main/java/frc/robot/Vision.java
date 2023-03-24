@@ -95,17 +95,9 @@ public class Vision {
     }
 
     public void DisplayStats(){
-        SmartDashboard.putBoolean("ReflectiveTape.Target?", USBhasTargets);
-        SmartDashboard.putNumber("ReflectiveTape.targetx", USBcamerax);
-        SmartDashboard.putNumber("ReflefctiveTape.targety", USBcameray);
-
-        SmartDashboard.putBoolean("AprilTags.Target?", PihasTargets);
-        SmartDashboard.putNumber("AprilTags.targetx", Picamerax);
-        SmartDashboard.putNumber("AprilTags.targety", Picameray);
-
-        SmartDashboard.putNumber("AprilTags.tag7x", tag7x);
-        SmartDashboard.putNumber("AprilTags.tag7y", tag7y);
-
+        SmartDashboard.putBoolean("USB Cam Has Target?", USBhasTargets);
+        SmartDashboard.putNumber("USB Cam X", USBcamerax);
+        SmartDashboard.putNumber("USB Cam Y", USBcameray);
     }
 
     // ============================================= Private Functions

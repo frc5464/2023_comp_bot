@@ -59,7 +59,7 @@ public void SolBreak(){
 }
 
 public void DisplayPressure(){
-    SmartDashboard.putNumber("Compressor's Pressure", compressor.getPressure());
+    //SmartDashboard.putNumber("Compressor's Pressure", compressor.getPressure());
 }
 
 }

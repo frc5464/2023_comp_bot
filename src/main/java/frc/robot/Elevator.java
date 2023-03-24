@@ -97,20 +97,14 @@ public class Elevator {
         extCurrentRotations = elExtendEncoder.getPosition();
         winchCurrentRotations = elWinchEncoder.getPosition();
         
-        checkForPidChanges();
+        //checkForPidChanges();
         checkForSafeToExtend();
         checkForSafeToRetract();
         checkForSafeToRotate();
         
         SmartDashboard.putNumber("extension encoder",extCurrentRotations);
         SmartDashboard.putNumber("winch encoder",winchCurrentRotations);
-        SmartDashboard.putNumber("Extender Current Output", elextend.getOutputCurrent());
-        SmartDashboard.putBoolean("Rotate limit switch", elRotateLimitSwitch.get());
-        SmartDashboard.putBoolean("Extend limit switch", elExtendLimitSwitch.get());
-        SmartDashboard.putBoolean("Retract Limit Switch", elRetractLimitSwitch.get());
         SmartDashboard.putBoolean("Elevator Zeroed?", elevator_zeroed);
-        SmartDashboard.putNumber("Elevator current", elextend.getOutputCurrent());
-        SmartDashboard.putNumber("Winch current", elextend.getOutputCurrent());
     }
 
     private void checkForSafeToExtend(){
@@ -430,14 +424,14 @@ public class Elevator {
         elExtendPid.setOutputRange(extMinOutput, extMaxOutput);
         
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("ext P Gain", extP);
-        SmartDashboard.putNumber("ext I Gain", extI);
-        SmartDashboard.putNumber("ext D Gain", extD);
-        SmartDashboard.putNumber("ext I Zone", extIz);
-        SmartDashboard.putNumber("ext Feed Forward", extFF);
-        SmartDashboard.putNumber("ext Max Output", extMaxOutput);
-        SmartDashboard.putNumber("ext Min Output", extMinOutput);
-        SmartDashboard.putNumber("ext Set Rotations", extTargetRotations);
+        // SmartDashboard.putNumber("ext P Gain", extP);
+        // SmartDashboard.putNumber("ext I Gain", extI);
+        // SmartDashboard.putNumber("ext D Gain", extD);
+        // SmartDashboard.putNumber("ext I Zone", extIz);
+        // SmartDashboard.putNumber("ext Feed Forward", extFF);
+        // SmartDashboard.putNumber("ext Max Output", extMaxOutput);
+        // SmartDashboard.putNumber("ext Min Output", extMinOutput);
+        // SmartDashboard.putNumber("ext Set Rotations", extTargetRotations);
 
     }  
     
@@ -460,14 +454,14 @@ public class Elevator {
         elWinchPid.setOutputRange(winchMinOutput, winchMaxOutput);
         
         // display PID coefficients on SmartDashboard
-        SmartDashboard.putNumber("winch P Gain", winchP);
-        SmartDashboard.putNumber("winch I Gain", winchI);
-        SmartDashboard.putNumber("winch D Gain", winchD);
-        SmartDashboard.putNumber("winch I Zone", winchIz);
-        SmartDashboard.putNumber("winch Feed Forward", winchFF);
-        SmartDashboard.putNumber("winch Max Output", winchMaxOutput);
-        SmartDashboard.putNumber("winch Min Output", winchMinOutput);
-        SmartDashboard.putNumber("winch Set Rotations", winchTargetRotations);    
+        // SmartDashboard.putNumber("winch P Gain", winchP);
+        // SmartDashboard.putNumber("winch I Gain", winchI);
+        // SmartDashboard.putNumber("winch D Gain", winchD);
+        // SmartDashboard.putNumber("winch I Zone", winchIz);
+        // SmartDashboard.putNumber("winch Feed Forward", winchFF);
+        // SmartDashboard.putNumber("winch Max Output", winchMaxOutput);
+        // SmartDashboard.putNumber("winch Min Output", winchMinOutput);
+        // SmartDashboard.putNumber("winch Set Rotations", winchTargetRotations);    
         
     }
 

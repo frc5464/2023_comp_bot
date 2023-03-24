@@ -192,10 +192,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     
     SmartDashboard.putNumber("autoStep", autoStep);
     SmartDashboard.putNumber("autoTimer", autoTimer.get());
-    SmartDashboard.putNumber("intakeTimer", intakeTimer.get());
-    SmartDashboard.putNumber("balanceTimer", balanceTimer.get());
-    SmartDashboard.putBoolean("fieldOriented", Fieldoriented);
-    SmartDashboard.putNumber("PauseTime", wait.get());
+    // SmartDashboard.putNumber("intakeTimer", intakeTimer.get());
+    // SmartDashboard.putNumber("balanceTimer", balanceTimer.get());
+    // SmartDashboard.putBoolean("fieldOriented", Fieldoriented);
+    // SmartDashboard.putNumber("PauseTime", wait.get());
 
     // This button switches between manual winch/extender control and automatic.
     if(stick2.getRawButtonPressed(StartButton)){
@@ -254,16 +254,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
   double sideScoreEscapeRotations;
   double sideScoreEscapeSnapToCubeAngle;
+  double sideScoreSpinToCubeWaitVal;
+  double sweepSpeed;
+  double sweepSnapWaitVal;
 
   public void setupAutoVals(){
     SmartDashboard.putNumber("sideScoreEscapeRotations", -45);
     SmartDashboard.putNumber("sideScoreEscapeSnapToCubeAngle", -160);    
+    SmartDashboard.putNumber("sideScoreSpinToCubeWaitVal", 1);
+    SmartDashboard.putNumber("sweepSpeed", 0.15);
+    SmartDashboard.putNumber("sweepSnapWaitVal", 1);
   }
 
   public void checkForAutoValChanges(){
     sideScoreEscapeRotations = SmartDashboard.getNumber("sideScoreEscapeRotations", 0);
     sideScoreEscapeSnapToCubeAngle = SmartDashboard.getNumber("sideScoreEscapeSnapToCubeAngle", 0);
-
+    sideScoreSpinToCubeWaitVal = SmartDashboard.getNumber("sideScoreSpinToCubeWaitVal", 0);
+    sweepSpeed = SmartDashboard.getNumber("sideScoreSpinToCubeWaitVal", 0);
+    sweepSnapWaitVal = SmartDashboard.getNumber("sweepSnapWaitVal", 0);
   }
 
 
@@ -496,10 +504,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     switch(autonomous_direction_selected){
       case kLeft:
         double rotate = drivetrain.SnapToAngle(gyro.Yaw, sideScoreEscapeSnapToCubeAngle);
-          if(autoTimer.get() < 1){
+          if(autoTimer.get() < sideScoreSpinToCubeWaitVal){
           drivetrain.Move(0, 0, rotate*0.4);
           }
-          else if(autoTimer.get() > 1){
+          else if(autoTimer.get() > sideScoreSpinToCubeWaitVal){
             drivetrain.Move(0, 0, 0);
             autoTimer.stop();
             autoTimer.reset();
@@ -862,14 +870,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     }
     switch(autonomous_direction_selected){
       case kLeft:  
-      drivetrain.Move(0, 0, -0.15);
+      drivetrain.Move(0, 0, -sweepSpeed);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
           SweepAngle = yawWeDoBeUsing;
         }
         break;
       case kRight:
-        drivetrain.Move(0, 0, 0.15);
+        drivetrain.Move(0, 0, sweepSpeed);
         if(intake.distfront<SweepDistance){
           SweepDistance = intake.distfront;
           SweepAngle = yawWeDoBeUsing;
@@ -918,9 +926,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
       switch(autonomous_direction_selected){
       case kLeft:
         double SnapSweepAngle = drivetrain.SnapToAngle(yawWeDoBeUsing, SweepAngle);
-        if(autoTimer.get()< 1){
-        drivetrain.Move(0, 0, SnapSweepAngle*0.5);
-      }
+        if(autoTimer.get()< sweepSnapWaitVal){
+          drivetrain.Move(0, 0, SnapSweepAngle*0.5);
+        }
         else {
           drivetrain.Move(0, 0, 0);
           autoTimer.stop();
@@ -1288,7 +1296,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
           break;
       }
 
-      SmartDashboard.putNumber("autoSep", autoStep);
+      // SmartDashboard.putNumber("autoSep", autoStep);
     }
 
   /** This function is called once when teleop is enabled. */

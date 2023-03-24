@@ -44,14 +44,7 @@ public class Gyro {
     public void DisplayStats(){
         SmartDashboard.putNumber("Yaw", navx.getYaw());
         SmartDashboard.putNumber("Roll", navx.getRoll());
-        SmartDashboard.putNumber("Pitch", navx.getPitch());
-        SmartDashboard.putNumber("RawX", navx.getRawGyroX());
-        SmartDashboard.putNumber("RawY", navx.getRawGyroY());
-        SmartDashboard.putNumber("RawZ", navx.getRawGyroZ());
-        SmartDashboard.putNumber("dispX", navx.getDisplacementX());
-        SmartDashboard.putNumber("dispY", navx.getDisplacementY());
-        SmartDashboard.putNumber("dispZ", navx.getDisplacementZ());    
-
+        SmartDashboard.putNumber("Pitch", navx.getPitch());   
     }
     // ============================================= Private Functions
          
