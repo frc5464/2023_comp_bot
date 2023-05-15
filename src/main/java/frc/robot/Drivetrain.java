@@ -44,7 +44,7 @@ public class Drivetrain {
 
     // maximum drive speed (0 to 1.0)
     double maxspeed = 1;
-    double rampRate = 0.4;
+    double rampRate = 0.2;
 
     public void Init(){
         // put one-time setup steps here

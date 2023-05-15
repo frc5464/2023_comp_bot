@@ -43,11 +43,11 @@ public void DistanceCheck(){
     SmartDashboard.putNumber("FrontDistance", distfront);
 }
 
-public void inrun(){
+public void InConeOutCubeRun(){
         intake.set(0.6);
 }
     
-public void outrun(){
+public void OutConeInCubeRun(){
         intake.set(-0.6);
 }
 
